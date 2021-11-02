@@ -65,7 +65,6 @@ import org.objectweb.asm.Type;
  * {@code ActualValueInference} accomplishes this by examining the bytecode of the test. Naturally,
  * this is all best-effort.
  */
-@GwtIncompatible
 final class ActualValueInference {
   /** <b>Call {@link Platform#inferDescription} rather than calling this directly.</b> */
   static String describeActualValue(String className, String methodName, int lineNumber) {

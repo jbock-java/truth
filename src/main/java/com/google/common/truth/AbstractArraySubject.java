@@ -17,7 +17,6 @@ package com.google.common.truth;
 
 import java.lang.reflect.Array;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.truth.Fact.simpleFact;
 
 /**
@@ -54,7 +53,7 @@ abstract class AbstractArraySubject extends Subject {
      * @throws IllegalArgumentException if {@code length < 0}
      */
     public final void hasLength(int length) {
-        checkArgument(length >= 0, "length (%s) must be >= 0");
+        Preconditions.checkArgument(length >= 0, "length must be >= 0");
         check("length").that(length()).isEqualTo(length);
     }
 
