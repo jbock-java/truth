@@ -33,7 +33,7 @@ public final class GuavaOptionalSubject extends Subject {
   private final Optional<?> actual;
 
   GuavaOptionalSubject(
-      FailureMetadata metadata, @Nullable Optional<?> actual, @Nullable String typeDescription) {
+      FailureMetadata metadata, Optional<?> actual, String typeDescription) {
     super(metadata, actual, typeDescription);
     this.actual = actual;
   }

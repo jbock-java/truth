@@ -27,9 +27,9 @@ package com.google.common.truth;
  */
 public interface Ordered {
 
-  /**
-   * An additional assertion, implemented by some containment subjects which allows for a further
-   * constraint of orderedness.
-   */
-  void inOrder();
+    /**
+     * An additional assertion, implemented by some containment subjects which allows for a further
+     * constraint of orderedness.
+     */
+    void inOrder();
 }

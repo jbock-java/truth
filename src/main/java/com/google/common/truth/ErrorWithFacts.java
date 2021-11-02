@@ -23,5 +23,5 @@ import com.google.common.collect.ImmutableList;
  * Fact} instances.
  */
 interface ErrorWithFacts {
-  ImmutableList<Fact> facts();
+    ImmutableList<Fact> facts();
 }

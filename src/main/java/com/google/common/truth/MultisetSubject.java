@@ -29,13 +29,13 @@ public final class MultisetSubject extends IterableSubject {
 
   private final Multiset<?> actual;
 
-  MultisetSubject(FailureMetadata metadata, @Nullable Multiset<?> multiset) {
+  MultisetSubject(FailureMetadata metadata, Multiset<?> multiset) {
     super(metadata, multiset);
     this.actual = multiset;
   }
 
   /** Fails if the element does not have the given count. */
-  public final void hasCount(@Nullable Object element, int expectedCount) {
+  public final void hasCount(Object element, int expectedCount) {
     checkArgument(expectedCount >= 0, "expectedCount(%s) must be >= 0", expectedCount);
     int actualCount = ((Multiset<?>) actual).count(element);
     check("count(%s)", element).that(actualCount).isEqualTo(expectedCount);

@@ -31,4 +31,3 @@
 @CheckReturnValue
 package com.google.common.truth;
 
-import com.google.errorprone.annotations.CheckReturnValue;

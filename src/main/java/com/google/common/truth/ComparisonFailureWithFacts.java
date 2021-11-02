@@ -35,7 +35,7 @@ final class ComparisonFailureWithFacts extends PlatformComparisonFailure impleme
       ImmutableList<Fact> facts,
       String expected,
       String actual,
-      @Nullable Throwable cause) {
+      Throwable cause) {
     super(makeMessage(messages, facts), checkNotNull(expected), checkNotNull(actual), cause);
     this.facts = checkNotNull(facts);
   }

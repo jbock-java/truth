@@ -31,7 +31,7 @@ public abstract class ComparableSubject<T extends Comparable> extends Subject {
    */
   private final T actual;
 
-  protected ComparableSubject(FailureMetadata metadata, @Nullable T actual) {
+  protected ComparableSubject(FailureMetadata metadata, T actual) {
     super(metadata, actual);
     this.actual = actual;
   }

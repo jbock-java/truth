@@ -63,7 +63,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
   private final AssertionError actual;
 
   TruthFailureSubject(
-      FailureMetadata metadata, @Nullable AssertionError actual, @Nullable String typeDescription) {
+      FailureMetadata metadata, AssertionError actual, String typeDescription) {
     super(metadata, actual, typeDescription);
     this.actual = actual;
   }
@@ -121,7 +121,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
     return doFactValue(key, index);
   }
 
-  private StringSubject doFactValue(String key, @Nullable Integer index) {
+  private StringSubject doFactValue(String key, Integer index) {
     checkNotNull(key);
     if (!(actual instanceof ErrorWithFacts)) {
       failWithActual(simpleFact("expected a failure thrown by Truth's new failure API"));

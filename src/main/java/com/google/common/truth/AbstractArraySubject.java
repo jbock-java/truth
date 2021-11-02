@@ -15,11 +15,10 @@
  */
 package com.google.common.truth;
 
+import java.lang.reflect.Array;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.truth.Fact.simpleFact;
-
-import java.lang.reflect.Array;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A common supertype for Array subjects, abstracting some common display and error infrastructure.
@@ -27,39 +26,39 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Christian Gruber (cgruber@israfil.net)
  */
 abstract class AbstractArraySubject extends Subject {
-  private final Object actual;
+    private final Object actual;
 
-  AbstractArraySubject(
-      FailureMetadata metadata, @Nullable Object actual, @Nullable String typeDescription) {
-    super(metadata, actual, typeDescription);
-    this.actual = actual;
-  }
-
-  /** Fails if the array is not empty (i.e. {@code array.length > 0}). */
-  public final void isEmpty() {
-    if (length() > 0) {
-      failWithActual(simpleFact("expected to be empty"));
+    AbstractArraySubject(
+            FailureMetadata metadata, Object actual, String typeDescription) {
+        super(metadata, actual, typeDescription);
+        this.actual = actual;
     }
-  }
 
-  /** Fails if the array is empty (i.e. {@code array.length == 0}). */
-  public final void isNotEmpty() {
-    if (length() == 0) {
-      failWithoutActual(simpleFact("expected not to be empty"));
+    /** Fails if the array is not empty (i.e. {@code array.length > 0}). */
+    public final void isEmpty() {
+        if (length() > 0) {
+            failWithActual(simpleFact("expected to be empty"));
+        }
     }
-  }
 
-  /**
-   * Fails if the array does not have the given length.
-   *
-   * @throws IllegalArgumentException if {@code length < 0}
-   */
-  public final void hasLength(int length) {
-    checkArgument(length >= 0, "length (%s) must be >= 0");
-    check("length").that(length()).isEqualTo(length);
-  }
+    /** Fails if the array is empty (i.e. {@code array.length == 0}). */
+    public final void isNotEmpty() {
+        if (length() == 0) {
+            failWithoutActual(simpleFact("expected not to be empty"));
+        }
+    }
 
-  private int length() {
-    return Array.getLength(actual);
-  }
+    /**
+     * Fails if the array does not have the given length.
+     *
+     * @throws IllegalArgumentException if {@code length < 0}
+     */
+    public final void hasLength(int length) {
+        checkArgument(length >= 0, "length (%s) must be >= 0");
+        check("length").that(length()).isEqualTo(length);
+    }
+
+    private int length() {
+        return Array.getLength(actual);
+    }
 }

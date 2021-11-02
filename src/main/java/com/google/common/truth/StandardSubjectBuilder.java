@@ -63,108 +63,108 @@ public class StandardSubjectBuilder {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   public final <ComparableT extends Comparable<?>> ComparableSubject<ComparableT> that(
-      @Nullable ComparableT actual) {
+      ComparableT actual) {
     return new ComparableSubject(metadata(), actual) {};
   }
 
-  public final BigDecimalSubject that(@Nullable BigDecimal actual) {
+  public final BigDecimalSubject that(BigDecimal actual) {
     return new BigDecimalSubject(metadata(), actual);
   }
 
-  public final Subject that(@Nullable Object actual) {
+  public final Subject that(Object actual) {
     return new Subject(metadata(), actual);
   }
 
   @GwtIncompatible("ClassSubject.java")
-  public final ClassSubject that(@Nullable Class<?> actual) {
+  public final ClassSubject that(Class<?> actual) {
     return new ClassSubject(metadata(), actual);
   }
 
-  public final ThrowableSubject that(@Nullable Throwable actual) {
+  public final ThrowableSubject that(Throwable actual) {
     return new ThrowableSubject(metadata(), actual, "throwable");
   }
 
-  public final LongSubject that(@Nullable Long actual) {
+  public final LongSubject that(Long actual) {
     return new LongSubject(metadata(), actual);
   }
 
-  public final DoubleSubject that(@Nullable Double actual) {
+  public final DoubleSubject that(Double actual) {
     return new DoubleSubject(metadata(), actual);
   }
 
-  public final FloatSubject that(@Nullable Float actual) {
+  public final FloatSubject that(Float actual) {
     return new FloatSubject(metadata(), actual);
   }
 
-  public final IntegerSubject that(@Nullable Integer actual) {
+  public final IntegerSubject that(Integer actual) {
     return new IntegerSubject(metadata(), actual);
   }
 
-  public final BooleanSubject that(@Nullable Boolean actual) {
+  public final BooleanSubject that(Boolean actual) {
     return new BooleanSubject(metadata(), actual);
   }
 
-  public final StringSubject that(@Nullable String actual) {
+  public final StringSubject that(String actual) {
     return new StringSubject(metadata(), actual);
   }
 
-  public final IterableSubject that(@Nullable Iterable<?> actual) {
+  public final IterableSubject that(Iterable<?> actual) {
     return new IterableSubject(metadata(), actual);
   }
 
-  public final <T> ObjectArraySubject<T> that(@Nullable T @Nullable [] actual) {
+  public final <T> ObjectArraySubject<T> that(T [] actual) {
     return new ObjectArraySubject<>(metadata(), actual, "array");
   }
 
-  public final PrimitiveBooleanArraySubject that(boolean @Nullable [] actual) {
+  public final PrimitiveBooleanArraySubject that(boolean [] actual) {
     return new PrimitiveBooleanArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveShortArraySubject that(short @Nullable [] actual) {
+  public final PrimitiveShortArraySubject that(short [] actual) {
     return new PrimitiveShortArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveIntArraySubject that(int @Nullable [] actual) {
+  public final PrimitiveIntArraySubject that(int [] actual) {
     return new PrimitiveIntArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveLongArraySubject that(long @Nullable [] actual) {
+  public final PrimitiveLongArraySubject that(long [] actual) {
     return new PrimitiveLongArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveCharArraySubject that(char @Nullable [] actual) {
+  public final PrimitiveCharArraySubject that(char [] actual) {
     return new PrimitiveCharArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveByteArraySubject that(byte @Nullable [] actual) {
+  public final PrimitiveByteArraySubject that(byte [] actual) {
     return new PrimitiveByteArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveFloatArraySubject that(float @Nullable [] actual) {
+  public final PrimitiveFloatArraySubject that(float [] actual) {
     return new PrimitiveFloatArraySubject(metadata(), actual, "array");
   }
 
-  public final PrimitiveDoubleArraySubject that(double @Nullable [] actual) {
+  public final PrimitiveDoubleArraySubject that(double [] actual) {
     return new PrimitiveDoubleArraySubject(metadata(), actual, "array");
   }
 
-  public final GuavaOptionalSubject that(@Nullable Optional<?> actual) {
+  public final GuavaOptionalSubject that(Optional<?> actual) {
     return new GuavaOptionalSubject(metadata(), actual, "optional");
   }
 
-  public final MapSubject that(@Nullable Map<?, ?> actual) {
+  public final MapSubject that(Map<?, ?> actual) {
     return new MapSubject(metadata(), actual);
   }
 
-  public final MultimapSubject that(@Nullable Multimap<?, ?> actual) {
+  public final MultimapSubject that(Multimap<?, ?> actual) {
     return new MultimapSubject(metadata(), actual, "multimap");
   }
 
-  public final MultisetSubject that(@Nullable Multiset<?> actual) {
+  public final MultisetSubject that(Multiset<?> actual) {
     return new MultisetSubject(metadata(), actual);
   }
 
-  public final TableSubject that(@Nullable Table<?, ?, ?> actual) {
+  public final TableSubject that(Table<?, ?, ?> actual) {
     return new TableSubject(metadata(), actual);
   }
 
@@ -173,7 +173,7 @@ public class StandardSubjectBuilder {
    * this method is called multiple times, the messages will appear in the order that they were
    * specified.
    */
-  public final StandardSubjectBuilder withMessage(@Nullable String messageToPrepend) {
+  public final StandardSubjectBuilder withMessage(String messageToPrepend) {
     return withMessage("%s", messageToPrepend);
   }
 
@@ -189,7 +189,7 @@ public class StandardSubjectBuilder {
    * @throws IllegalArgumentException if the number of placeholders in the format string does not
    *     equal the number of given arguments
    */
-  public final StandardSubjectBuilder withMessage(String format, @Nullable Object... args) {
+  public final StandardSubjectBuilder withMessage(String format, Object... args) {
     return new StandardSubjectBuilder(metadata().withMessage(format, args));
   }
 

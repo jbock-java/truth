@@ -15,6 +15,19 @@
  */
 package com.google.common.truth;
 
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.base.Throwables;
+import com.google.common.truth.Truth.SimpleAssertionError;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.rules.ErrorCollector;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padStart;
@@ -23,19 +36,6 @@ import static com.google.common.base.Throwables.getStackTraceAsString;
 import static com.google.common.truth.Expect.TestPhase.AFTER;
 import static com.google.common.truth.Expect.TestPhase.BEFORE;
 import static com.google.common.truth.Expect.TestPhase.DURING;
-
-import com.google.common.annotations.GwtIncompatible;
-import com.google.common.base.Throwables;
-import com.google.common.truth.Truth.SimpleAssertionError;
-import com.google.errorprone.annotations.concurrent.GuardedBy;
-import java.util.ArrayList;
-import java.util.List;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.rules.ErrorCollector;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 
 /**
  * A {@link TestRule} that batches up all failures encountered during a test, and reports them all
@@ -84,189 +84,190 @@ import org.junit.runners.model.Statement;
 @GwtIncompatible("JUnit4")
 public final class Expect extends StandardSubjectBuilder implements TestRule {
 
-  private static final class ExpectationGatherer implements FailureStrategy {
-    @GuardedBy("this")
-    private final List<AssertionError> failures = new ArrayList<AssertionError>();
+    private static final class ExpectationGatherer implements FailureStrategy {
+        @GuardedBy("this")
+        private final List<AssertionError> failures = new ArrayList<AssertionError>();
 
-    @GuardedBy("this")
-    private TestPhase inRuleContext = BEFORE;
+        @GuardedBy("this")
+        private TestPhase inRuleContext = BEFORE;
 
-    ExpectationGatherer() {}
+        ExpectationGatherer() {
+        }
+
+        @Override
+        public synchronized void fail(AssertionError failure) {
+            record(failure);
+        }
+
+        synchronized void enterRuleContext() {
+            checkState(inRuleContext == BEFORE);
+            inRuleContext = DURING;
+        }
+
+        synchronized void leaveRuleContext(Throwable caught) throws Throwable {
+            try {
+                if (caught == null) {
+                    doLeaveRuleContext();
+                } else {
+                    doLeaveRuleContext(caught);
+                }
+                /*
+                 * We'd like to check this even if an exception was thrown, but we don't want to override
+                 * the "real" failure. TODO(cpovirk): Maybe attach as a suppressed exception once we require
+                 * a newer version of Android.
+                 */
+                checkState(inRuleContext == DURING);
+            } finally {
+                inRuleContext = AFTER;
+            }
+        }
+
+        synchronized void checkInRuleContext() {
+            doCheckInRuleContext(null);
+        }
+
+        synchronized boolean hasFailures() {
+            return !failures.isEmpty();
+        }
+
+        @Override
+        public synchronized String toString() {
+            if (failures.isEmpty()) {
+                return "No expectation failed.";
+            }
+            int numFailures = failures.size();
+            StringBuilder message =
+                    new StringBuilder(
+                            numFailures + (numFailures > 1 ? " expectations" : " expectation") + " failed:\n");
+            int countLength = String.valueOf(failures.size() + 1).length();
+            int count = 0;
+            for (AssertionError failure : failures) {
+                count++;
+                message.append("  ");
+                message.append(padStart(String.valueOf(count), countLength, ' '));
+                message.append(". ");
+                if (count == 1) {
+                    appendIndented(countLength, message, getStackTraceAsString(failure));
+                } else {
+                    appendIndented(
+                            countLength,
+                            message,
+                            printSubsequentFailure(failures.get(0).getStackTrace(), failure));
+                }
+                message.append("\n");
+            }
+
+            return message.toString();
+        }
+
+        private static void appendIndented(int countLength, StringBuilder builder, String toAppend) {
+            int indent = countLength + 4; // "  " and ". "
+            builder.append(toAppend.replace("\n", "\n" + repeat(" ", indent)));
+        }
+
+        private String printSubsequentFailure(
+                StackTraceElement[] baseTraceFrames, AssertionError toPrint) {
+            Exception e = new RuntimeException("__EXCEPTION_MARKER__", toPrint);
+            e.setStackTrace(baseTraceFrames);
+            String s = Throwables.getStackTraceAsString(e);
+            // Force single line reluctant matching
+            return s.replaceFirst("(?s)^.*?__EXCEPTION_MARKER__.*?Caused by:\\s+", "");
+        }
+
+        @GuardedBy("this")
+        private void doCheckInRuleContext(AssertionError failure) {
+            switch (inRuleContext) {
+                case BEFORE:
+                    throw new IllegalStateException(
+                            "assertion made on Expect instance, but it's not enabled as a @Rule.", failure);
+                case DURING:
+                    return;
+                case AFTER:
+                    throw new IllegalStateException(
+                            "assertion made on Expect instance, but its @Rule has already completed. Maybe "
+                                    + "you're making assertions from a background thread and not waiting for them to "
+                                    + "complete, or maybe you've shared an Expect instance across multiple tests? "
+                                    + "We're throwing this exception to warn you that your assertion would have been "
+                                    + "ignored. However, this exception might not cause any test to fail, or it "
+                                    + "might cause some subsequent test to fail rather than the test that caused the "
+                                    + "problem.",
+                            failure);
+            }
+            throw new AssertionError();
+        }
+
+        @GuardedBy("this")
+        private void doLeaveRuleContext() {
+            if (hasFailures()) {
+                throw SimpleAssertionError.createWithNoStack(this.toString());
+            }
+        }
+
+        @GuardedBy("this")
+        private void doLeaveRuleContext(Throwable caught) throws Throwable {
+            if (hasFailures()) {
+                String message =
+                        caught instanceof AssumptionViolatedException
+                                ? "Also, after those failures, an assumption was violated:"
+                                : "Also, after those failures, an exception was thrown:";
+                record(SimpleAssertionError.createWithNoStack(message, caught));
+                throw SimpleAssertionError.createWithNoStack(this.toString());
+            } else {
+                throw caught;
+            }
+        }
+
+        @GuardedBy("this")
+        private void record(AssertionError failure) {
+            doCheckInRuleContext(failure);
+            failures.add(failure);
+        }
+    }
+
+    private final ExpectationGatherer gatherer;
+
+    /** Creates a new instance. */
+    public static Expect create() {
+        return new Expect(new ExpectationGatherer());
+    }
+
+    private Expect(ExpectationGatherer gatherer) {
+        super(FailureMetadata.forFailureStrategy(gatherer));
+        this.gatherer = checkNotNull(gatherer);
+    }
+
+    public boolean hasFailures() {
+        return gatherer.hasFailures();
+    }
 
     @Override
-    public synchronized void fail(AssertionError failure) {
-      record(failure);
-    }
-
-    synchronized void enterRuleContext() {
-      checkState(inRuleContext == BEFORE);
-      inRuleContext = DURING;
-    }
-
-    synchronized void leaveRuleContext(@Nullable Throwable caught) throws Throwable {
-      try {
-        if (caught == null) {
-          doLeaveRuleContext();
-        } else {
-          doLeaveRuleContext(caught);
-        }
-        /*
-         * We'd like to check this even if an exception was thrown, but we don't want to override
-         * the "real" failure. TODO(cpovirk): Maybe attach as a suppressed exception once we require
-         * a newer version of Android.
-         */
-        checkState(inRuleContext == DURING);
-      } finally {
-        inRuleContext = AFTER;
-      }
-    }
-
-    synchronized void checkInRuleContext() {
-      doCheckInRuleContext(null);
-    }
-
-    synchronized boolean hasFailures() {
-      return !failures.isEmpty();
+    void checkStatePreconditions() {
+        gatherer.checkInRuleContext();
     }
 
     @Override
-    public synchronized String toString() {
-      if (failures.isEmpty()) {
-        return "No expectation failed.";
-      }
-      int numFailures = failures.size();
-      StringBuilder message =
-          new StringBuilder(
-              numFailures + (numFailures > 1 ? " expectations" : " expectation") + " failed:\n");
-      int countLength = String.valueOf(failures.size() + 1).length();
-      int count = 0;
-      for (AssertionError failure : failures) {
-        count++;
-        message.append("  ");
-        message.append(padStart(String.valueOf(count), countLength, ' '));
-        message.append(". ");
-        if (count == 1) {
-          appendIndented(countLength, message, getStackTraceAsString(failure));
-        } else {
-          appendIndented(
-              countLength,
-              message,
-              printSubsequentFailure(failures.get(0).getStackTrace(), failure));
-        }
-        message.append("\n");
-      }
-
-      return message.toString();
+    public Statement apply(final Statement base, Description description) {
+        checkNotNull(base);
+        checkNotNull(description);
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                gatherer.enterRuleContext();
+                Throwable caught = null;
+                try {
+                    base.evaluate();
+                } catch (Throwable t) {
+                    caught = t;
+                } finally {
+                    gatherer.leaveRuleContext(caught);
+                }
+            }
+        };
     }
 
-    private static void appendIndented(int countLength, StringBuilder builder, String toAppend) {
-      int indent = countLength + 4; // "  " and ". "
-      builder.append(toAppend.replace("\n", "\n" + repeat(" ", indent)));
+    enum TestPhase {
+        BEFORE,
+        DURING,
+        AFTER;
     }
-
-    private String printSubsequentFailure(
-        StackTraceElement[] baseTraceFrames, AssertionError toPrint) {
-      Exception e = new RuntimeException("__EXCEPTION_MARKER__", toPrint);
-      e.setStackTrace(baseTraceFrames);
-      String s = Throwables.getStackTraceAsString(e);
-      // Force single line reluctant matching
-      return s.replaceFirst("(?s)^.*?__EXCEPTION_MARKER__.*?Caused by:\\s+", "");
-    }
-
-    @GuardedBy("this")
-    private void doCheckInRuleContext(@Nullable AssertionError failure) {
-      switch (inRuleContext) {
-        case BEFORE:
-          throw new IllegalStateException(
-              "assertion made on Expect instance, but it's not enabled as a @Rule.", failure);
-        case DURING:
-          return;
-        case AFTER:
-          throw new IllegalStateException(
-              "assertion made on Expect instance, but its @Rule has already completed. Maybe "
-                  + "you're making assertions from a background thread and not waiting for them to "
-                  + "complete, or maybe you've shared an Expect instance across multiple tests? "
-                  + "We're throwing this exception to warn you that your assertion would have been "
-                  + "ignored. However, this exception might not cause any test to fail, or it "
-                  + "might cause some subsequent test to fail rather than the test that caused the "
-                  + "problem.",
-              failure);
-      }
-      throw new AssertionError();
-    }
-
-    @GuardedBy("this")
-    private void doLeaveRuleContext() {
-      if (hasFailures()) {
-        throw SimpleAssertionError.createWithNoStack(this.toString());
-      }
-    }
-
-    @GuardedBy("this")
-    private void doLeaveRuleContext(Throwable caught) throws Throwable {
-      if (hasFailures()) {
-        String message =
-            caught instanceof AssumptionViolatedException
-                ? "Also, after those failures, an assumption was violated:"
-                : "Also, after those failures, an exception was thrown:";
-        record(SimpleAssertionError.createWithNoStack(message, caught));
-        throw SimpleAssertionError.createWithNoStack(this.toString());
-      } else {
-        throw caught;
-      }
-    }
-
-    @GuardedBy("this")
-    private void record(AssertionError failure) {
-      doCheckInRuleContext(failure);
-      failures.add(failure);
-    }
-  }
-
-  private final ExpectationGatherer gatherer;
-
-  /** Creates a new instance. */
-  public static Expect create() {
-    return new Expect(new ExpectationGatherer());
-  }
-
-  private Expect(ExpectationGatherer gatherer) {
-    super(FailureMetadata.forFailureStrategy(gatherer));
-    this.gatherer = checkNotNull(gatherer);
-  }
-
-  public boolean hasFailures() {
-    return gatherer.hasFailures();
-  }
-
-  @Override
-  void checkStatePreconditions() {
-    gatherer.checkInRuleContext();
-  }
-
-  @Override
-  public Statement apply(final Statement base, Description description) {
-    checkNotNull(base);
-    checkNotNull(description);
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        gatherer.enterRuleContext();
-        Throwable caught = null;
-        try {
-          base.evaluate();
-        } catch (Throwable t) {
-          caught = t;
-        } finally {
-          gatherer.leaveRuleContext(caught);
-        }
-      }
-    };
-  }
-
-  enum TestPhase {
-    BEFORE,
-    DURING,
-    AFTER;
-  }
 }

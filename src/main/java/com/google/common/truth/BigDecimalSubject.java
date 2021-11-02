@@ -29,7 +29,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public final class BigDecimalSubject extends ComparableSubject<BigDecimal> {
   private final BigDecimal actual;
 
-  BigDecimalSubject(FailureMetadata metadata, @Nullable BigDecimal actual) {
+  BigDecimalSubject(FailureMetadata metadata, BigDecimal actual) {
     super(metadata, actual);
     this.actual = actual;
   }
@@ -75,7 +75,7 @@ public final class BigDecimalSubject extends ComparableSubject<BigDecimal> {
    * use {@link #isEqualToIgnoringScale(BigDecimal)} instead.
    */
   @Override // To express more specific javadoc
-  public void isEqualTo(@Nullable Object expected) {
+  public void isEqualTo(Object expected) {
     super.isEqualTo(expected);
   }
 

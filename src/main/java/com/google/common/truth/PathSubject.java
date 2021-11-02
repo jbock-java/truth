@@ -17,17 +17,18 @@ package com.google.common.truth;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.j2objc.annotations.J2ObjCIncompatible;
+
 import java.nio.file.Path;
 
 /** Assertions for {@link Path} instances. */
 @GwtIncompatible
 @J2ObjCIncompatible
 public final class PathSubject extends Subject {
-  private PathSubject(FailureMetadata failureMetadata, Path actual) {
-    super(failureMetadata, actual);
-  }
+    private PathSubject(FailureMetadata failureMetadata, Path actual) {
+        super(failureMetadata, actual);
+    }
 
-  public static Subject.Factory<PathSubject, Path> paths() {
-    return PathSubject::new;
-  }
+    public static Subject.Factory<PathSubject, Path> paths() {
+        return PathSubject::new;
+    }
 }

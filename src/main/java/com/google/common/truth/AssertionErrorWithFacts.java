@@ -30,10 +30,10 @@ final class AssertionErrorWithFacts extends AssertionError implements ErrorWithF
   private final ImmutableList<Fact> facts;
 
   /** Separate cause field, in case initCause() fails. */
-  private final @Nullable Throwable cause;
+  private final Throwable cause;
 
   AssertionErrorWithFacts(
-      ImmutableList<String> messages, ImmutableList<Fact> facts, @Nullable Throwable cause) {
+      ImmutableList<String> messages, ImmutableList<Fact> facts, Throwable cause) {
     super(makeMessage(messages, facts));
     this.facts = checkNotNull(facts);
 

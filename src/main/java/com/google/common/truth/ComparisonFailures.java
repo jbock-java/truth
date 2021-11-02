@@ -82,7 +82,7 @@ final class ComparisonFailures {
     return ImmutableList.of(fact("expected", expected), fact("but was", actual));
   }
 
-  private static @Nullable ImmutableList<Fact> removeCommonPrefixAndSuffix(
+  private static ImmutableList<Fact> removeCommonPrefixAndSuffix(
       String expected, String actual) {
     int originalExpectedLength = expected.length();
 

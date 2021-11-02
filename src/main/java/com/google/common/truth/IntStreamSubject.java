@@ -44,7 +44,7 @@ public final class IntStreamSubject extends Subject {
 
   private final List<?> actualList;
 
-  private IntStreamSubject(FailureMetadata failureMetadata, @Nullable IntStream stream) {
+  private IntStreamSubject(FailureMetadata failureMetadata, IntStream stream) {
     super(failureMetadata, stream);
     this.actualList =
         (stream == null) ? null : stream.boxed().collect(toCollection(ArrayList::new));
