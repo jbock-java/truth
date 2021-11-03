@@ -14,9 +14,9 @@
 package com.google.common.truth;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.truth.Preconditions.checkArgument;
+import static com.google.common.truth.Preconditions.checkState;
+import static com.google.common.truth.Iterables.getOnlyElement;
 import static java.lang.Thread.currentThread;
 
 import com.google.auto.value.AutoValue;
