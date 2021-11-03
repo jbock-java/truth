@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import javax.annotation.CheckForNull;
@@ -357,11 +358,10 @@ public final class Iterators {
    *
    * @return {@code true} if {@code collection} was modified as a result of this operation
    */
-  @CanIgnoreReturnValue
-  public static <T extends @Nullable Object> boolean addAll(
+  public static <T> boolean addAll(
       Collection<T> addTo, Iterator<? extends T> iterator) {
-    checkNotNull(addTo);
-    checkNotNull(iterator);
+    requireNonNull(addTo);
+    requireNonNull(iterator);
     boolean wasModified = false;
     while (iterator.hasNext()) {
       wasModified |= addTo.add(iterator.next());

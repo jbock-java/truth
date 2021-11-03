@@ -386,7 +386,6 @@ public class Subject {
      * b/70930431. But note that we are likely to use this from FailureMetadata, at least in the short
      * term, for better or for worse.
      */
-    @ForOverride
     protected String actualCustomStringRepresentation() {
         return formatActualOrExpected(actual);
     }

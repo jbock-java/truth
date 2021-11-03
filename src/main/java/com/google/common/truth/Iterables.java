@@ -69,4 +69,18 @@ public final class Iterables {
         }
         return !iterable.iterator().hasNext();
     }
+
+    public static String toString(Iterable<?> iterable) {
+        Iterator<?> iterator = iterable.iterator();
+        StringBuilder sb = new StringBuilder().append('[');
+        boolean first = true;
+        while (iterator.hasNext()) {
+            if (!first) {
+                sb.append(", ");
+            }
+            first = false;
+            sb.append(iterator.next());
+        }
+        return sb.append(']').toString();
+    }
 }

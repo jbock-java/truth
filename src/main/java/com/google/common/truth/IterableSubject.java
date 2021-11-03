@@ -30,6 +30,7 @@ import com.google.common.collect.Sets;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.ALL_IN_ONE_FACT;
@@ -67,6 +69,7 @@ import static com.google.common.truth.SubjectUtils.objectToTypeName;
 import static com.google.common.truth.SubjectUtils.retainMatchingToString;
 import static java.util.Arrays.asList;
 import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Propositions for {@link Iterable} subjects.
@@ -188,15 +191,20 @@ public class IterableSubject extends Subject {
 
     /** Checks that the subject does not contain duplicate elements. */
     public final void containsNoDuplicates() {
-        Stream<?> stream = StreamSupport.stream(spliteratorUnknownSize(actual.iterator(), Spliterator.ORDERED), false);
-        List<?> actualList = stream.collect(Collectors.toList());
-        List<? extends List<?>> duplicates = actualList.stream().map(o -> {
+        List<?> actualList = StreamSupport.stream(spliteratorUnknownSize(actual.iterator(), Spliterator.ORDERED),
+                false).collect(toList());
+        List<?> selection = actualList.stream()
+                .flatMap(o -> {
                     int frequency = Collections.frequency(actualList, o);
-                    return Collections.nCopies(frequency, o);
+                    return frequency <= 1 ? Stream.empty() : Stream.of(o);
                 })
-                .filter(coll -> coll.size() >= 2)
-                .collect(Collectors.toList());
-        if (!duplicates.isEmpty()) {
+                .collect(toList());
+        if (!selection.isEmpty()) {
+            List<? extends List<?>> duplicates = selection.stream()
+                    .map(candidate -> actualList.stream()
+                            .filter(candidate::equals)
+                            .collect(toList()))
+                    .collect(toList());
             failWithoutActual(
                     simpleFact("expected not to contain duplicates"),
                     fact("but contained", duplicates),
@@ -351,7 +359,7 @@ public class IterableSubject extends Subject {
         facts.add(fact("expected to contain at least", expected));
         facts.add(butWas());
 
-        failWithoutActual(facts.build());
+        failWithoutActual(facts);
         return ALREADY_FAILED;
     }
 
@@ -378,11 +386,10 @@ public class IterableSubject extends Subject {
      * #containsExactlyElementsIn(Object[])}. It makes clear that the given array is a list of
      * elements, not an element itself. This helps human readers and avoids a compiler warning.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsExactly(Object... varargs) {
-        List<Object> expected = (varargs == null) ? newArrayList((Object) null) : asList(varargs);
+        List<Object> expected = asList(varargs);
         return containsExactlyElementsIn(
-                expected, varargs != null && varargs.length == 1 && varargs[0] instanceof Iterable);
+                expected, varargs.length == 1 && varargs[0] instanceof Iterable);
     }
 
     /**
@@ -395,7 +402,6 @@ public class IterableSubject extends Subject {
      * <p>To also test that the contents appear in the given order, make a call to {@code inOrder()}
      * on the object returned by this method.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsExactlyElementsIn(Iterable<?> expected) {
         return containsExactlyElementsIn(expected, false);
     }
@@ -409,7 +415,6 @@ public class IterableSubject extends Subject {
      * <p>To also test that the contents appear in the given order, make a call to {@code inOrder()}
      * on the object returned by this method.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsExactlyElementsIn(Object[] expected) {
         return containsExactlyElementsIn(asList(expected));
     }
@@ -438,7 +443,7 @@ public class IterableSubject extends Subject {
             // cannot succeed, so we can check the rest of the elements more normally.
             // Since any previous pairs of elements we iterated over were equal, they have no
             // effect on the result now.
-            if (!Objects.equal(actualElement, requiredElement)) {
+            if (!Objects.equals(actualElement, requiredElement)) {
                 if (isFirst && !actualIter.hasNext() && !requiredIter.hasNext()) {
                     /*
                      * There's exactly one actual element and exactly one expected element, and they don't
@@ -462,12 +467,12 @@ public class IterableSubject extends Subject {
                     return ALREADY_FAILED;
                 }
                 // Missing elements; elements that are not missing will be removed as we iterate.
-                Collection<Object> missing = newArrayList();
+                Collection<Object> missing = new ArrayList<>();
                 missing.add(requiredElement);
                 Iterators.addAll(missing, requiredIter);
 
                 // Extra elements that the subject had but shouldn't have.
-                Collection<Object> extra = newArrayList();
+                Collection<Object> extra = new ArrayList<>();
 
                 // Remove all actual elements from missing, and add any that weren't in missing
                 // to extra.
@@ -507,14 +512,14 @@ public class IterableSubject extends Subject {
             return failExactly(
                     required,
                     addElementsInWarning,
-                    /* missingRawObjects= */ ImmutableList.of(),
+                    /* missingRawObjects= */ List.of(),
                     /* extraRawObjects= */ newArrayList(actualIter));
         } else if (requiredIter.hasNext()) {
             return failExactly(
                     required,
                     addElementsInWarning,
                     /* missingRawObjects= */ newArrayList(requiredIter),
-                    /* extraRawObjects= */ ImmutableList.of());
+                    /* extraRawObjects= */ List.of());
         }
 
         // If neither iterator has elements, we reached the end and the elements were in
@@ -527,7 +532,7 @@ public class IterableSubject extends Subject {
             boolean addElementsInWarning,
             Collection<?> missingRawObjects,
             Collection<?> extraRawObjects) {
-        ImmutableList.Builder<Fact> facts = ImmutableList.builder();
+        List<Fact> facts = new ArrayList<>();
         facts.addAll(
                 makeElementFactsForBoth("missing", missingRawObjects, "unexpected", extraRawObjects));
         facts.add(fact("expected", required));
@@ -540,7 +545,7 @@ public class IterableSubject extends Subject {
                                     + "containsExactlyElementsIn(Iterable) instead?"));
         }
 
-        failWithoutActual(facts.build());
+        failWithoutActual(facts);
         return ALREADY_FAILED;
     }
 
@@ -567,7 +572,7 @@ public class IterableSubject extends Subject {
         }
         facts.addAll(secondFacts);
         facts.add(simpleFact("---"));
-        return facts.build();
+        return facts;
     }
 
     /**
