@@ -39,9 +39,8 @@ tasks.withType(GenerateModuleMetadata) {
 
 dependencies {
     implementation('org.ow2.asm:asm:9.2')
-    testImplementation('org.junit.jupiter:junit-jupiter:5.8.1')
+    api('junit:junit:4.13.2')
     testImplementation('org.junit.vintage:junit-vintage-engine:5.8.1')
-    testImplementation('org.mockito:mockito-core:4.0.0')
 }
 
 jar {

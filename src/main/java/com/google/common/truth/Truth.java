@@ -15,16 +15,11 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-import com.google.common.base.Optional;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
-
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * The primary entry point for <a href="https://truth.dev">Truth</a>, a library for fluent test
@@ -157,7 +152,6 @@ public final class Truth {
         return assert_().that(actual);
     }
 
-    @GwtIncompatible("ClassSubject.java")
     public static ClassSubject assertThat(Class<?> actual) {
         return assert_().that(actual);
     }
@@ -230,7 +224,7 @@ public final class Truth {
         return assert_().that(actual);
     }
 
-    public static GuavaOptionalSubject assertThat(Optional<?> actual) {
+    public static OptionalSubject assertThat(Optional<?> actual) {
         return assert_().that(actual);
     }
 
@@ -238,17 +232,6 @@ public final class Truth {
         return assert_().that(actual);
     }
 
-    public static MultimapSubject assertThat(Multimap<?, ?> actual) {
-        return assert_().that(actual);
-    }
-
-    public static MultisetSubject assertThat(Multiset<?> actual) {
-        return assert_().that(actual);
-    }
-
-    public static TableSubject assertThat(Table<?, ?, ?> actual) {
-        return assert_().that(actual);
-    }
 
     /**
      * An {@code AssertionError} that (a) always supports a cause, even under old versions of Android
@@ -261,7 +244,7 @@ public final class Truth {
         private final Throwable cause;
 
         private SimpleAssertionError(String message, Throwable cause) {
-            super(checkNotNull(message));
+            super(requireNonNull(message));
             this.cause = cause;
 
             try {

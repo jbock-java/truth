@@ -15,49 +15,48 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.Fact.makeMessage;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import static com.google.common.truth.Fact.makeMessage;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link AssertionError} composed of structured {@link Fact} instances and other string
  * messages.
  */
-@SuppressWarnings("OverrideThrowableToString") // We intentionally hide the class name.
 final class AssertionErrorWithFacts extends AssertionError implements ErrorWithFacts {
-  private final ImmutableList<Fact> facts;
+    private final List<Fact> facts;
 
-  /** Separate cause field, in case initCause() fails. */
-  private final Throwable cause;
+    /** Separate cause field, in case initCause() fails. */
+    private final Throwable cause;
 
-  AssertionErrorWithFacts(
-      ImmutableList<String> messages, ImmutableList<Fact> facts, Throwable cause) {
-    super(makeMessage(messages, facts));
-    this.facts = checkNotNull(facts);
+    AssertionErrorWithFacts(
+            List<String> messages, List<Fact> facts, Throwable cause) {
+        super(makeMessage(messages, facts));
+        this.facts = requireNonNull(facts);
 
-    this.cause = cause;
-    try {
-      initCause(cause);
-    } catch (IllegalStateException alreadyInitializedBecauseOfHarmonyBug) {
-      // See Truth.SimpleAssertionError.
+        this.cause = cause;
+        try {
+            initCause(cause);
+        } catch (IllegalStateException alreadyInitializedBecauseOfHarmonyBug) {
+            // See Truth.SimpleAssertionError.
+        }
     }
-  }
 
-  @Override
-  @SuppressWarnings("UnsynchronizedOverridesSynchronized")
-  public Throwable getCause() {
-    return cause;
-  }
+    @Override
+    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
+    public Throwable getCause() {
+        return cause;
+    }
 
-  @Override
-  public String toString() {
-    return getLocalizedMessage();
-  }
+    @Override
+    public String toString() {
+        // We intentionally hide the class name.
+        return getLocalizedMessage();
+    }
 
-  @Override
-  public ImmutableList<Fact> facts() {
-    return facts;
-  }
+    @Override
+    public List<Fact> facts() {
+        return facts;
+    }
 }

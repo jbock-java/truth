@@ -16,7 +16,6 @@
 package com.google.common.truth;
 
 import java.util.Arrays;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Subject for {@code Object[]} and more generically {@code T[]}.
@@ -24,15 +23,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Christian Gruber
  */
 public final class ObjectArraySubject<T> extends AbstractArraySubject {
-  private final T[] actual;
+    private final T[] actual;
 
-  ObjectArraySubject(
-      FailureMetadata metadata, T [] o, String typeDescription) {
-    super(metadata, o, typeDescription);
-    this.actual = o;
-  }
+    ObjectArraySubject(
+            FailureMetadata metadata, T[] o, String typeDescription) {
+        super(metadata, o, typeDescription);
+        this.actual = o;
+    }
 
-  public IterableSubject asList() {
-    return checkNoNeedToDisplayBothValues("asList()").that(Arrays.asList(actual));
-  }
+    public IterableSubject asList() {
+        return checkNoNeedToDisplayBothValues("asList()").that(Arrays.asList(actual));
+    }
 }

@@ -16,13 +16,14 @@
 
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Strings;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.padEnd;
 import static java.lang.Math.max;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A string key-value pair in a failure message, such as "expected: abc" or "but was: xyz."
@@ -66,7 +67,7 @@ public final class Fact implements Serializable {
     final String value;
 
     private Fact(String key, String value) {
-        this.key = checkNotNull(key);
+        this.key = requireNonNull(key);
         this.value = value;
     }
 
@@ -84,7 +85,7 @@ public final class Fact implements Serializable {
      * Formats the given messages and facts into a string for use as the message of a test failure. In
      * particular, this method horizontally aligns the beginning of fact values.
      */
-    static String makeMessage(ImmutableList<String> messages, ImmutableList<Fact> facts) {
+    static String makeMessage(List<String> messages, List<Fact> facts) {
         int longestKeyLength = 0;
         boolean seenNewlineInValue = false;
         for (Fact fact : facts) {
@@ -119,7 +120,7 @@ public final class Fact implements Serializable {
                 builder.append(":\n");
                 builder.append(indent(fact.value));
             } else {
-                builder.append(padEnd(fact.key, longestKeyLength, ' '));
+                builder.append(Strings.padEnd(fact.key, longestKeyLength, ' '));
                 builder.append(": ");
                 builder.append(fact.value);
             }

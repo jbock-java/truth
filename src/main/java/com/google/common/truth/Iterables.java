@@ -16,10 +16,11 @@
 
 package com.google.common.truth;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-final class Iterables {
+public final class Iterables {
     private Iterables() {
     }
 
@@ -49,5 +50,23 @@ final class Iterables {
         sb.append('>');
 
         throw new IllegalArgumentException(sb.toString());
+    }
+
+    /**
+     * Determines if the given iterable contains no elements.
+     *
+     * <p>There is no precise {@link Iterator} equivalent to this method, since one can only ask an
+     * iterator whether it has any elements <i>remaining</i> (which one does using {@link
+     * Iterator#hasNext}).
+     *
+     * <p><b>{@code Stream} equivalent:</b> {@code !stream.findAny().isPresent()}
+     *
+     * @return {@code true} if the iterable contains no elements
+     */
+    public static boolean isEmpty(Iterable<?> iterable) {
+        if (iterable instanceof Collection) {
+            return ((Collection<?>) iterable).isEmpty();
+        }
+        return !iterable.iterator().hasNext();
     }
 }

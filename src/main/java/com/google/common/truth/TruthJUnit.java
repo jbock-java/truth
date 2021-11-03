@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
 import org.junit.internal.AssumptionViolatedException;
 
 /**
@@ -40,7 +39,6 @@ import org.junit.internal.AssumptionViolatedException;
  * @author David Saff
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@GwtIncompatible("JUnit4")
 public final class TruthJUnit {
     private static final FailureStrategy THROW_ASSUMPTION_ERROR =
             new FailureStrategy() {

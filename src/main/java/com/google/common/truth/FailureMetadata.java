@@ -18,6 +18,8 @@ package com.google.common.truth;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
@@ -182,7 +184,7 @@ public final class FailureMetadata {
                         rootCause()));
     }
 
-    void fail(ImmutableList<Fact> facts) {
+    void fail(List<Fact> facts) {
         doFail(
                 new AssertionErrorWithFacts(
                         evaluateAll(messages),

@@ -16,7 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.collect.Range;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Propositions for {@link Comparable} typed subjects.
@@ -25,89 +24,89 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <T> the type of the object being tested by this {@code ComparableSubject}
  */
 public abstract class ComparableSubject<T extends Comparable> extends Subject {
-  /**
-   * Constructor for use by subclasses. If you want to create an instance of this class itself, call
-   * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
-   */
-  private final T actual;
+    /**
+     * Constructor for use by subclasses. If you want to create an instance of this class itself, call
+     * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
+     */
+    private final T actual;
 
-  protected ComparableSubject(FailureMetadata metadata, T actual) {
-    super(metadata, actual);
-    this.actual = actual;
-  }
-
-  /** Checks that the subject is in {@code range}. */
-  public final void isIn(Range<T> range) {
-    if (!range.contains(actual)) {
-      failWithActual("expected to be in range", range);
+    protected ComparableSubject(FailureMetadata metadata, T actual) {
+        super(metadata, actual);
+        this.actual = actual;
     }
-  }
 
-  /** Checks that the subject is <i>not</i> in {@code range}. */
-  public final void isNotIn(Range<T> range) {
-    if (range.contains(actual)) {
-      failWithActual("expected not to be in range", range);
+    /** Checks that the subject is in {@code range}. */
+    public final void isIn(Range<T> range) {
+        if (!range.contains(actual)) {
+            failWithActual("expected to be in range", range);
+        }
     }
-  }
 
-  /**
-   * Checks that the subject is equivalent to {@code other} according to {@link
-   * Comparable#compareTo}, (i.e., checks that {@code a.comparesTo(b) == 0}).
-   *
-   * <p><b>Note:</b> Do not use this method for checking object equality. Instead, use {@link
-   * #isEqualTo(Object)}.
-   */
-  public void isEquivalentAccordingToCompareTo(T expected) {
-    if (actual.compareTo(expected) != 0) {
-      failWithActual("expected value that sorts equal to", expected);
+    /** Checks that the subject is <i>not</i> in {@code range}. */
+    public final void isNotIn(Range<T> range) {
+        if (range.contains(actual)) {
+            failWithActual("expected not to be in range", range);
+        }
     }
-  }
 
-  /**
-   * Checks that the subject is greater than {@code other}.
-   *
-   * <p>To check that the subject is greater than <i>or equal to</i> {@code other}, use {@link
-   * #isAtLeast}.
-   */
-  public final void isGreaterThan(T other) {
-    if (actual.compareTo(other) <= 0) {
-      failWithActual("expected to be greater than", other);
+    /**
+     * Checks that the subject is equivalent to {@code other} according to {@link
+     * Comparable#compareTo}, (i.e., checks that {@code a.comparesTo(b) == 0}).
+     *
+     * <p><b>Note:</b> Do not use this method for checking object equality. Instead, use {@link
+     * #isEqualTo(Object)}.
+     */
+    public void isEquivalentAccordingToCompareTo(T expected) {
+        if (actual.compareTo(expected) != 0) {
+            failWithActual("expected value that sorts equal to", expected);
+        }
     }
-  }
 
-  /**
-   * Checks that the subject is less than {@code other}.
-   *
-   * <p>To check that the subject is less than <i>or equal to</i> {@code other}, use {@link
-   * #isAtMost}.
-   */
-  public final void isLessThan(T other) {
-    if (actual.compareTo(other) >= 0) {
-      failWithActual("expected to be less than", other);
+    /**
+     * Checks that the subject is greater than {@code other}.
+     *
+     * <p>To check that the subject is greater than <i>or equal to</i> {@code other}, use {@link
+     * #isAtLeast}.
+     */
+    public final void isGreaterThan(T other) {
+        if (actual.compareTo(other) <= 0) {
+            failWithActual("expected to be greater than", other);
+        }
     }
-  }
 
-  /**
-   * Checks that the subject is less than or equal to {@code other}.
-   *
-   * <p>To check that the subject is <i>strictly</i> less than {@code other}, use {@link
-   * #isLessThan}.
-   */
-  public final void isAtMost(T other) {
-    if (actual.compareTo(other) > 0) {
-      failWithActual("expected to be at most", other);
+    /**
+     * Checks that the subject is less than {@code other}.
+     *
+     * <p>To check that the subject is less than <i>or equal to</i> {@code other}, use {@link
+     * #isAtMost}.
+     */
+    public final void isLessThan(T other) {
+        if (actual.compareTo(other) >= 0) {
+            failWithActual("expected to be less than", other);
+        }
     }
-  }
 
-  /**
-   * Checks that the subject is greater than or equal to {@code other}.
-   *
-   * <p>To check that the subject is <i>strictly</i> greater than {@code other}, use {@link
-   * #isGreaterThan}.
-   */
-  public final void isAtLeast(T other) {
-    if (actual.compareTo(other) < 0) {
-      failWithActual("expected to be at least", other);
+    /**
+     * Checks that the subject is less than or equal to {@code other}.
+     *
+     * <p>To check that the subject is <i>strictly</i> less than {@code other}, use {@link
+     * #isLessThan}.
+     */
+    public final void isAtMost(T other) {
+        if (actual.compareTo(other) > 0) {
+            failWithActual("expected to be at most", other);
+        }
     }
-  }
+
+    /**
+     * Checks that the subject is greater than or equal to {@code other}.
+     *
+     * <p>To check that the subject is <i>strictly</i> greater than {@code other}, use {@link
+     * #isGreaterThan}.
+     */
+    public final void isAtLeast(T other) {
+        if (actual.compareTo(other) < 0) {
+            failWithActual("expected to be at least", other);
+        }
+    }
 }
