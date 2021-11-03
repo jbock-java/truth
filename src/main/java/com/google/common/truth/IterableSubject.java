@@ -15,16 +15,12 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -33,24 +29,27 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.lenientFormat;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.ALL_IN_ONE_FACT;
@@ -67,6 +66,7 @@ import static com.google.common.truth.SubjectUtils.iterableToList;
 import static com.google.common.truth.SubjectUtils.objectToTypeName;
 import static com.google.common.truth.SubjectUtils.retainMatchingToString;
 import static java.util.Arrays.asList;
+import static java.util.Spliterators.spliteratorUnknownSize;
 
 /**
  * Propositions for {@link Iterable} subjects.
@@ -117,7 +117,7 @@ public class IterableSubject extends Subject {
     @Override
     public void isEqualTo(Object expected) {
         @SuppressWarnings("UndefinedEquals") // method contract requires testing iterables for equality
-        boolean equal = Objects.equal(actual, expected);
+        boolean equal = Objects.equals(actual, expected);
         if (equal) {
             return;
         }
@@ -126,8 +126,7 @@ public class IterableSubject extends Subject {
 
         if (actual instanceof List && expected instanceof List) {
             containsExactlyElementsIn((List<?>) expected).inOrder();
-        } else if ((actual instanceof Set && expected instanceof Set)
-                || (actual instanceof Multiset && expected instanceof Multiset)) {
+        } else if ((actual instanceof Set && expected instanceof Set)) {
             containsExactlyElementsIn((Collection<?>) expected);
         } else {
             /*
@@ -154,15 +153,16 @@ public class IterableSubject extends Subject {
 
     /** Fails if the subject does not have the given size. */
     public final void hasSize(int expectedSize) {
-        checkArgument(expectedSize >= 0, "expectedSize(%s) must be >= 0", expectedSize);
+        Preconditions.checkArgument(expectedSize >= 0, "expectedSize(%s) must be >= 0", expectedSize);
         int actualSize = size(actual);
         check("size()").that(actualSize).isEqualTo(expectedSize);
     }
 
     /** Checks (with a side-effect failure) that the subject contains the supplied item. */
     public final void contains(Object element) {
-        if (!Iterables.contains(actual, element)) {
-            List<Object> elementList = newArrayList(element);
+        if (!com.google.common.collect.Iterables.contains(actual, element)) {
+            List<Object> elementList = new ArrayList<>();
+            elementList.add(element);
             if (hasMatchingToStringPair(actual, elementList)) {
                 failWithoutActual(
                         fact("expected to contain", element),
@@ -181,19 +181,21 @@ public class IterableSubject extends Subject {
 
     /** Checks (with a side-effect failure) that the subject does not contain the supplied item. */
     public final void doesNotContain(Object element) {
-        if (Iterables.contains(actual, element)) {
+        if (com.google.common.collect.Iterables.contains(actual, element)) {
             failWithActual("expected not to contain", element);
         }
     }
 
     /** Checks that the subject does not contain duplicate elements. */
     public final void containsNoDuplicates() {
-        List<Multiset.Entry<?>> duplicates = newArrayList();
-        for (Multiset.Entry<?> entry : LinkedHashMultiset.create(actual).entrySet()) {
-            if (entry.getCount() > 1) {
-                duplicates.add(entry);
-            }
-        }
+        Stream<?> stream = StreamSupport.stream(spliteratorUnknownSize(actual.iterator(), Spliterator.ORDERED), false);
+        List<?> actualList = stream.collect(Collectors.toList());
+        List<? extends List<?>> duplicates = actualList.stream().map(o -> {
+                    int frequency = Collections.frequency(actualList, o);
+                    return Collections.nCopies(frequency, o);
+                })
+                .filter(coll -> coll.size() >= 2)
+                .collect(Collectors.toList());
         if (!duplicates.isEmpty()) {
             failWithoutActual(
                     simpleFact("expected not to contain duplicates"),
@@ -251,7 +253,6 @@ public class IterableSubject extends Subject {
      * on the object returned by this method. The expected elements must appear in the given order
      * within the actual elements, but they are not required to be consecutive.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsAtLeast(
             Object firstExpected,
             Object secondExpected,
@@ -268,13 +269,13 @@ public class IterableSubject extends Subject {
      * on the object returned by this method. The expected elements must appear in the given order
      * within the actual elements, but they are not required to be consecutive.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsAtLeastElementsIn(Iterable<?> expectedIterable) {
-        List<?> actual = Lists.newLinkedList(this.actual);
+        List<Object> actual = new LinkedList<>();
+        this.actual.forEach(actual::add);
         final Collection<?> expected = iterableToCollection(expectedIterable);
 
-        List<Object> missing = newArrayList();
-        List<Object> actualNotInOrder = newArrayList();
+        List<Object> missing = new ArrayList<>();
+        List<Object> actualNotInOrder = new ArrayList<>();
 
         boolean ordered = true;
         // step through the expected elements...
@@ -327,7 +328,6 @@ public class IterableSubject extends Subject {
      * on the object returned by this method. The expected elements must appear in the given order
      * within the actual elements, but they are not required to be consecutive.
      */
-    @CanIgnoreReturnValue
     public final Ordered containsAtLeastElementsIn(Object[] expected) {
         return containsAtLeastElementsIn(asList(expected));
     }
@@ -336,7 +336,7 @@ public class IterableSubject extends Subject {
         Collection<?> nearMissRawObjects =
                 retainMatchingToString(actual, missingRawObjects /* itemsToCheck */);
 
-        ImmutableList.Builder<Fact> facts = ImmutableList.builder();
+        List<Fact> facts = new ArrayList<>();
         facts.addAll(
                 makeElementFactsForBoth(
                         "missing", missingRawObjects, "though it did contain", nearMissRawObjects));
@@ -544,7 +544,7 @@ public class IterableSubject extends Subject {
         return ALREADY_FAILED;
     }
 
-    private static ImmutableList<Fact> makeElementFactsForBoth(
+    private static List<Fact> makeElementFactsForBoth(
             String firstKey,
             Collection<?> firstCollection,
             String secondKey,
@@ -558,9 +558,9 @@ public class IterableSubject extends Subject {
                 countDuplicatesAndMaybeAddTypeInfoReturnObject(secondCollection, addTypeInfo);
         ElementFactGrouping grouping = pickGrouping(first.entrySet(), second.entrySet());
 
-        ImmutableList.Builder<Fact> facts = ImmutableList.builder();
-        ImmutableList<Fact> firstFacts = makeElementFacts(firstKey, first, grouping);
-        ImmutableList<Fact> secondFacts = makeElementFacts(secondKey, second, grouping);
+        List<Fact> facts = new ArrayList<>();
+        List<Fact> firstFacts = makeElementFacts(firstKey, first, grouping);
+        List<Fact> secondFacts = makeElementFacts(secondKey, second, grouping);
         facts.addAll(firstFacts);
         if (firstFacts.size() > 1 && secondFacts.size() > 1) {
             facts.add(simpleFact(""));
@@ -574,17 +574,17 @@ public class IterableSubject extends Subject {
      * Returns a list of facts (zero, one, or many, depending on the number of elements and the
      * grouping policy) describing the given missing, unexpected, or near-miss elements.
      */
-    private static ImmutableList<Fact> makeElementFacts(
+    private static List<Fact> makeElementFacts(
             String label, DuplicateGroupedAndTyped elements, ElementFactGrouping grouping) {
         if (elements.isEmpty()) {
-            return ImmutableList.of();
+            return List.of();
         }
 
         if (grouping == ALL_IN_ONE_FACT) {
-            return ImmutableList.of(fact(keyToGoWithElementsString(label, elements), elements));
+            return List.of(fact(keyToGoWithElementsString(label, elements), elements));
         }
 
-        ImmutableList.Builder<Fact> facts = ImmutableList.builder();
+        List<Fact> facts = new ArrayList<>();
         facts.add(simpleFact(keyToServeAsHeader(label, elements)));
         int n = 1;
         for (Multiset.Entry<?> entry : elements.entrySet()) {
