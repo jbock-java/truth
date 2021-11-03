@@ -16,6 +16,8 @@
 
 package com.google.common.collect;
 
+import com.google.common.truth.Preconditions;
+
 /** Precondition checks useful in collection implementations. */
 final class CollectPreconditions {
 
@@ -32,4 +34,12 @@ final class CollectPreconditions {
         }
         return value;
     }
+
+  /**
+   * Precondition tester for {@code Iterator.remove()} that throws an exception with a consistent
+   * error message.
+   */
+  static void checkRemove(boolean canRemove) {
+    Preconditions.checkState(canRemove, "no calls to next() since the last call to remove()");
+  }
 }
