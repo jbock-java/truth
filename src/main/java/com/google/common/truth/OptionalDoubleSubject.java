@@ -15,10 +15,11 @@
  */
 package com.google.common.truth;
 
-import java.util.OptionalDouble;
-
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
+
+import java.util.OptionalDouble;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Propositions for Java 8 {@link OptionalDouble} subjects.
@@ -27,57 +28,57 @@ import static com.google.common.truth.Fact.simpleFact;
  */
 public final class OptionalDoubleSubject extends Subject {
 
-    private final OptionalDouble actual;
+  private final OptionalDouble actual;
 
-    OptionalDoubleSubject(
-            FailureMetadata failureMetadata,
-            OptionalDouble subject,
-            String typeDescription) {
-        super(failureMetadata, subject, typeDescription);
-        this.actual = subject;
-    }
+  OptionalDoubleSubject(
+      FailureMetadata failureMetadata,
+      @Nullable OptionalDouble subject,
+      @Nullable String typeDescription) {
+    super(failureMetadata, subject, typeDescription);
+    this.actual = subject;
+  }
 
-    /** Fails if the {@link OptionalDouble} is empty or the subject is null. */
-    public void isPresent() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected present optional"));
-        } else if (!actual.isPresent()) {
-            failWithoutActual(simpleFact("expected to be present"));
-        }
+  /** Fails if the {@link OptionalDouble} is empty or the subject is null. */
+  public void isPresent() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected present optional"));
+    } else if (!actual.isPresent()) {
+      failWithoutActual(simpleFact("expected to be present"));
     }
+  }
 
-    /** Fails if the {@link OptionalDouble} is present or the subject is null. */
-    public void isEmpty() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected empty optional"));
-        } else if (actual.isPresent()) {
-            failWithoutActual(
-                    simpleFact("expected to be empty"),
-                    fact("but was present with value", actual.getAsDouble()));
-        }
+  /** Fails if the {@link OptionalDouble} is present or the subject is null. */
+  public void isEmpty() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected empty optional"));
+    } else if (actual.isPresent()) {
+      failWithoutActual(
+          simpleFact("expected to be empty"),
+          fact("but was present with value", actual.getAsDouble()));
     }
+  }
 
-    /**
-     * Fails if the {@link OptionalDouble} does not have the given value or the subject is null. This
-     * method is <i>not</i> recommended when the code under test is doing any kind of arithmetic,
-     * since the exact result of floating point arithmetic is sensitive to apparently trivial changes.
-     * More sophisticated comparisons can be done using {@code assertThat(optional.getAsDouble())…}.
-     * This method is recommended when the code under test is specified as either copying a value
-     * without modification from its input or returning a well-defined literal or constant value.
-     */
-    public void hasValue(double expected) {
-        if (actual == null) {
-            failWithActual("expected an optional with value", expected);
-        } else if (!actual.isPresent()) {
-            failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
-        } else {
-            checkNoNeedToDisplayBothValues("getAsDouble()")
-                    .that(actual.getAsDouble())
-                    .isEqualTo(expected);
-        }
+  /**
+   * Fails if the {@link OptionalDouble} does not have the given value or the subject is null. This
+   * method is <i>not</i> recommended when the code under test is doing any kind of arithmetic,
+   * since the exact result of floating point arithmetic is sensitive to apparently trivial changes.
+   * More sophisticated comparisons can be done using {@code assertThat(optional.getAsDouble())…}.
+   * This method is recommended when the code under test is specified as either copying a value
+   * without modification from its input or returning a well-defined literal or constant value.
+   */
+  public void hasValue(double expected) {
+    if (actual == null) {
+      failWithActual("expected an optional with value", expected);
+    } else if (!actual.isPresent()) {
+      failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
+    } else {
+      checkNoNeedToDisplayBothValues("getAsDouble()")
+          .that(actual.getAsDouble())
+          .isEqualTo(expected);
     }
+  }
 
-    public static Subject.Factory<OptionalDoubleSubject, OptionalDouble> optionalDoubles() {
-        return (metadata, subject) -> new OptionalDoubleSubject(metadata, subject, "optionalDouble");
-    }
+  public static Subject.Factory<OptionalDoubleSubject, OptionalDouble> optionalDoubles() {
+    return (metadata, subject) -> new OptionalDoubleSubject(metadata, subject, "optionalDouble");
+  }
 }

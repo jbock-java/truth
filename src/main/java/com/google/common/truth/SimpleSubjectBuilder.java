@@ -17,6 +17,8 @@ package com.google.common.truth;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * In a fluent assertion chain, exposes the most common {@code that} method, which accepts a value
  * under test and returns a {@link Subject}.
@@ -30,16 +32,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * href="https://truth.dev/extension">our doc on extensions</a>.
  */
 public final class SimpleSubjectBuilder<SubjectT extends Subject, ActualT> {
-    private final FailureMetadata metadata;
-    private final Subject.Factory<SubjectT, ActualT> subjectFactory;
+  private final FailureMetadata metadata;
+  private final Subject.Factory<SubjectT, ActualT> subjectFactory;
 
-    SimpleSubjectBuilder(
-            FailureMetadata metadata, Subject.Factory<SubjectT, ActualT> subjectFactory) {
-        this.metadata = checkNotNull(metadata);
-        this.subjectFactory = checkNotNull(subjectFactory);
-    }
+  SimpleSubjectBuilder(
+      FailureMetadata metadata, Subject.Factory<SubjectT, ActualT> subjectFactory) {
+    this.metadata = checkNotNull(metadata);
+    this.subjectFactory = checkNotNull(subjectFactory);
+  }
 
-    public SubjectT that(ActualT actual) {
-        return subjectFactory.createSubject(metadata, actual);
-    }
+  public SubjectT that(@Nullable ActualT actual) {
+    return subjectFactory.createSubject(metadata, actual);
+  }
 }

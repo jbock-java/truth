@@ -15,6 +15,7 @@
  */
 package com.google.common.truth;
 
+import com.google.common.annotations.GwtIncompatible;
 import org.junit.internal.AssumptionViolatedException;
 
 /**
@@ -39,37 +40,37 @@ import org.junit.internal.AssumptionViolatedException;
  * @author David Saff
  * @author Christian Gruber (cgruber@israfil.net)
  */
+@GwtIncompatible("JUnit4")
 public final class TruthJUnit {
-    private static final FailureStrategy THROW_ASSUMPTION_ERROR =
-            new FailureStrategy() {
-                @Override
-                public void fail(AssertionError failure) {
-                    ThrowableAssumptionViolatedException assumptionViolated =
-                            new ThrowableAssumptionViolatedException(failure.getMessage(), failure.getCause());
-                    assumptionViolated.setStackTrace(failure.getStackTrace());
-                    throw assumptionViolated;
-                }
-            };
-
-    private static final StandardSubjectBuilder ASSUME =
-            StandardSubjectBuilder.forCustomFailureStrategy(THROW_ASSUMPTION_ERROR);
-
-    /**
-     * Begins a call chain with the fluent Truth API. If the check made by the chain fails, it will
-     * throw {@link AssumptionViolatedException}.
-     */
-    public static final StandardSubjectBuilder assume() {
-        return ASSUME;
-    }
-
-    // TODO(diamondm): remove this and use org.junit.AssumptionViolatedException once we're on v4.12
-    private static class ThrowableAssumptionViolatedException extends AssumptionViolatedException {
-        public ThrowableAssumptionViolatedException(String message, Throwable throwable) {
-            super(message);
-            if (throwable != null) initCause(throwable);
+  private static final FailureStrategy THROW_ASSUMPTION_ERROR =
+      new FailureStrategy() {
+        @Override
+        public void fail(AssertionError failure) {
+          ThrowableAssumptionViolatedException assumptionViolated =
+              new ThrowableAssumptionViolatedException(failure.getMessage(), failure.getCause());
+          assumptionViolated.setStackTrace(failure.getStackTrace());
+          throw assumptionViolated;
         }
-    }
+      };
 
-    private TruthJUnit() {
+  private static final StandardSubjectBuilder ASSUME =
+      StandardSubjectBuilder.forCustomFailureStrategy(THROW_ASSUMPTION_ERROR);
+
+  /**
+   * Begins a call chain with the fluent Truth API. If the check made by the chain fails, it will
+   * throw {@link AssumptionViolatedException}.
+   */
+  public static final StandardSubjectBuilder assume() {
+    return ASSUME;
+  }
+
+  // TODO(diamondm): remove this and use org.junit.AssumptionViolatedException once we're on v4.12
+  private static class ThrowableAssumptionViolatedException extends AssumptionViolatedException {
+    public ThrowableAssumptionViolatedException(String message, Throwable throwable) {
+      super(message);
+      if (throwable != null) initCause(throwable);
     }
+  }
+
+  private TruthJUnit() {}
 }

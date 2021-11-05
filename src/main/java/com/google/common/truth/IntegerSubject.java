@@ -15,6 +15,8 @@
  */
 package com.google.common.truth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Propositions for {@link Integer} subjects.
  *
@@ -23,18 +25,18 @@ package com.google.common.truth;
  * @author Kurt Alfred Kluever
  */
 public class IntegerSubject extends ComparableSubject<Integer> {
-    /**
-     * Constructor for use by subclasses. If you want to create an instance of this class itself, call
-     * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
-     */
-    protected IntegerSubject(FailureMetadata metadata, Integer integer) {
-        super(metadata, integer);
-    }
+  /**
+   * Constructor for use by subclasses. If you want to create an instance of this class itself, call
+   * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
+   */
+  protected IntegerSubject(FailureMetadata metadata, @Nullable Integer integer) {
+    super(metadata, integer);
+  }
 
-    /** @deprecated Use {@link #isEqualTo} instead. Integer comparison is consistent with equality. */
-    @Override
-    @Deprecated
-    public final void isEquivalentAccordingToCompareTo(Integer other) {
-        super.isEquivalentAccordingToCompareTo(other);
-    }
+  /** @deprecated Use {@link #isEqualTo} instead. Integer comparison is consistent with equality. */
+  @Override
+  @Deprecated
+  public final void isEquivalentAccordingToCompareTo(Integer other) {
+    super.isEquivalentAccordingToCompareTo(other);
+  }
 }

@@ -53,22 +53,22 @@ package com.google.common.truth;
  * StandardSubjectBuilder.forCustomFailureStrategy(STRATEGY)}.
  */
 public interface FailureStrategy {
-    /**
-     * Handles a failure. The parameter is an {@code AssertionError} or subclass thereof, and it
-     * contains information about the failure, which may include:
-     *
-     * <ul>
-     *   <li>message: {@link Throwable#getMessage getMessage()}
-     *   <li>cause: {@link Throwable#getCause getCause()}
-     *   <li>actual and expected values: {@link org.junit.ComparisonFailure#getActual}, {@link
-     *       org.junit.ComparisonFailure#getExpected}
-     *   <li>stack trace: {@link Throwable#getStackTrace}
-     * </ul>
-     *
-     * <!-- TODO(cpovirk): suppressed exceptions someday? -->
-     *
-     * <p>We encourage implementations to record as much of this information as practical in the
-     * exceptions they may throw or the other records they may make.
-     */
-    void fail(AssertionError failure);
+  /**
+   * Handles a failure. The parameter is an {@code AssertionError} or subclass thereof, and it
+   * contains information about the failure, which may include:
+   *
+   * <ul>
+   *   <li>message: {@link Throwable#getMessage getMessage()}
+   *   <li>cause: {@link Throwable#getCause getCause()}
+   *   <li>actual and expected values: {@link org.junit.ComparisonFailure#getActual}, {@link
+   *       org.junit.ComparisonFailure#getExpected}
+   *   <li>stack trace: {@link Throwable#getStackTrace}
+   * </ul>
+   *
+   * <!-- TODO(cpovirk): suppressed exceptions someday? -->
+   *
+   * <p>We encourage implementations to record as much of this information as practical in the
+   * exceptions they may throw or the other records they may make.
+   */
+  void fail(AssertionError failure);
 }

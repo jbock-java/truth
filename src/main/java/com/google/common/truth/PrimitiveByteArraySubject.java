@@ -16,6 +16,7 @@
 package com.google.common.truth;
 
 import com.google.common.primitives.Bytes;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Subject for {@code byte[]}.
@@ -23,15 +24,15 @@ import com.google.common.primitives.Bytes;
  * @author Kurt Alfred Kluever
  */
 public final class PrimitiveByteArraySubject extends AbstractArraySubject {
-    private final byte[] actual;
+  private final byte[] actual;
 
-    PrimitiveByteArraySubject(
-            FailureMetadata metadata, byte[] o, String typeDescription) {
-        super(metadata, o, typeDescription);
-        this.actual = o;
-    }
+  PrimitiveByteArraySubject(
+      FailureMetadata metadata, byte @Nullable [] o, @Nullable String typeDescription) {
+    super(metadata, o, typeDescription);
+    this.actual = o;
+  }
 
-    public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Bytes.asList(actual));
-    }
+  public IterableSubject asList() {
+    return checkNoNeedToDisplayBothValues("asList()").that(Bytes.asList(actual));
+  }
 }

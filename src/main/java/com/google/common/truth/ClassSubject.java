@@ -15,26 +15,30 @@
  */
 package com.google.common.truth;
 
+import com.google.common.annotations.GwtIncompatible;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Propositions for {@link Class} subjects.
  *
  * @author Kurt Alfred Kluever
  */
+@GwtIncompatible("reflection")
 public final class ClassSubject extends Subject {
-    private final Class<?> actual;
+  private final Class<?> actual;
 
-    ClassSubject(FailureMetadata metadata, Class<?> o) {
-        super(metadata, o);
-        this.actual = o;
-    }
+  ClassSubject(FailureMetadata metadata, @Nullable Class<?> o) {
+    super(metadata, o);
+    this.actual = o;
+  }
 
-    /**
-     * Fails if this class or interface is not the same as or a subclass or subinterface of, the given
-     * class or interface.
-     */
-    public void isAssignableTo(Class<?> clazz) {
-        if (!clazz.isAssignableFrom(actual)) {
-            failWithActual("expected to be assignable to", clazz.getName());
-        }
+  /**
+   * Fails if this class or interface is not the same as or a subclass or subinterface of, the given
+   * class or interface.
+   */
+  public void isAssignableTo(Class<?> clazz) {
+    if (!clazz.isAssignableFrom(actual)) {
+      failWithActual("expected to be assignable to", clazz.getName());
     }
+  }
 }

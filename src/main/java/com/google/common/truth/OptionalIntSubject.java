@@ -15,10 +15,11 @@
  */
 package com.google.common.truth;
 
-import java.util.OptionalInt;
-
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
+
+import java.util.OptionalInt;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Propositions for Java 8 {@link OptionalInt} subjects.
@@ -26,51 +27,51 @@ import static com.google.common.truth.Fact.simpleFact;
  * @author Ben Douglass
  */
 public final class OptionalIntSubject extends Subject {
-    private final OptionalInt actual;
+  private final OptionalInt actual;
 
-    OptionalIntSubject(
-            FailureMetadata failureMetadata,
-            OptionalInt subject,
-            String typeDescription) {
-        super(failureMetadata, subject, typeDescription);
-        this.actual = subject;
-    }
+  OptionalIntSubject(
+      FailureMetadata failureMetadata,
+      @Nullable OptionalInt subject,
+      @Nullable String typeDescription) {
+    super(failureMetadata, subject, typeDescription);
+    this.actual = subject;
+  }
 
-    /** Fails if the {@link OptionalInt} is empty or the subject is null. */
-    public void isPresent() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected present optional"));
-        } else if (!actual.isPresent()) {
-            failWithoutActual(simpleFact("expected to be present"));
-        }
+  /** Fails if the {@link OptionalInt} is empty or the subject is null. */
+  public void isPresent() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected present optional"));
+    } else if (!actual.isPresent()) {
+      failWithoutActual(simpleFact("expected to be present"));
     }
+  }
 
-    /** Fails if the {@link OptionalInt} is present or the subject is null. */
-    public void isEmpty() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected empty optional"));
-        } else if (actual.isPresent()) {
-            failWithoutActual(
-                    simpleFact("expected to be empty"),
-                    fact("but was present with value", actual.getAsInt()));
-        }
+  /** Fails if the {@link OptionalInt} is present or the subject is null. */
+  public void isEmpty() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected empty optional"));
+    } else if (actual.isPresent()) {
+      failWithoutActual(
+          simpleFact("expected to be empty"),
+          fact("but was present with value", actual.getAsInt()));
     }
+  }
 
-    /**
-     * Fails if the {@link OptionalInt} does not have the given value or the subject is null. More
-     * sophisticated comparisons can be done using {@code assertThat(optional.getAsInt())…}.
-     */
-    public void hasValue(int expected) {
-        if (actual == null) {
-            failWithActual("expected an optional with value", expected);
-        } else if (!actual.isPresent()) {
-            failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
-        } else {
-            checkNoNeedToDisplayBothValues("getAsInt()").that(actual.getAsInt()).isEqualTo(expected);
-        }
+  /**
+   * Fails if the {@link OptionalInt} does not have the given value or the subject is null. More
+   * sophisticated comparisons can be done using {@code assertThat(optional.getAsInt())…}.
+   */
+  public void hasValue(int expected) {
+    if (actual == null) {
+      failWithActual("expected an optional with value", expected);
+    } else if (!actual.isPresent()) {
+      failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
+    } else {
+      checkNoNeedToDisplayBothValues("getAsInt()").that(actual.getAsInt()).isEqualTo(expected);
     }
+  }
 
-    public static Subject.Factory<OptionalIntSubject, OptionalInt> optionalInts() {
-        return (metadata, subject) -> new OptionalIntSubject(metadata, subject, "optionalInt");
-    }
+  public static Subject.Factory<OptionalIntSubject, OptionalInt> optionalInts() {
+    return (metadata, subject) -> new OptionalIntSubject(metadata, subject, "optionalInt");
+  }
 }

@@ -15,6 +15,10 @@
  */
 package com.google.common.truth;
 
+import static com.google.common.truth.Truth.assertAbout;
+
+import com.google.common.annotations.GwtIncompatible;
+import com.google.j2objc.annotations.J2ObjCIncompatible;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -23,8 +27,7 @@ import java.util.OptionalLong;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
-import static com.google.common.truth.Truth.assertAbout;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The primary entry point for assertions about Java 8 types.
@@ -41,42 +44,43 @@ import static com.google.common.truth.Truth.assertAbout;
  * behavior/{@code Subject} type?</a> in the Truth FAQ.
  */
 public final class Truth8 {
-    public static OptionalSubject assertThat(Optional<?> target) {
-        return assertAbout(OptionalSubject.optionals()).that(target);
-    }
+  public static OptionalSubject assertThat(@Nullable Optional<?> target) {
+    return assertAbout(OptionalSubject.optionals()).that(target);
+  }
 
-    public static OptionalIntSubject assertThat(OptionalInt target) {
-        return assertAbout(OptionalIntSubject.optionalInts()).that(target);
-    }
+  public static OptionalIntSubject assertThat(@Nullable OptionalInt target) {
+    return assertAbout(OptionalIntSubject.optionalInts()).that(target);
+  }
 
-    public static OptionalLongSubject assertThat(OptionalLong target) {
-        return assertAbout(OptionalLongSubject.optionalLongs()).that(target);
-    }
+  public static OptionalLongSubject assertThat(@Nullable OptionalLong target) {
+    return assertAbout(OptionalLongSubject.optionalLongs()).that(target);
+  }
 
-    public static OptionalDoubleSubject assertThat(OptionalDouble target) {
-        return assertAbout(OptionalDoubleSubject.optionalDoubles()).that(target);
-    }
+  public static OptionalDoubleSubject assertThat(@Nullable OptionalDouble target) {
+    return assertAbout(OptionalDoubleSubject.optionalDoubles()).that(target);
+  }
 
-    public static StreamSubject assertThat(Stream<?> target) {
-        return assertAbout(StreamSubject.streams()).that(target);
-    }
+  public static StreamSubject assertThat(@Nullable Stream<?> target) {
+    return assertAbout(StreamSubject.streams()).that(target);
+  }
 
-    public static IntStreamSubject assertThat(IntStream target) {
-        return assertAbout(IntStreamSubject.intStreams()).that(target);
-    }
+  public static IntStreamSubject assertThat(@Nullable IntStream target) {
+    return assertAbout(IntStreamSubject.intStreams()).that(target);
+  }
 
-    public static LongStreamSubject assertThat(LongStream target) {
-        return assertAbout(LongStreamSubject.longStreams()).that(target);
-    }
+  public static LongStreamSubject assertThat(@Nullable LongStream target) {
+    return assertAbout(LongStreamSubject.longStreams()).that(target);
+  }
 
-    // TODO(b/64757353): Add support for DoubleStream?
+  // TODO(b/64757353): Add support for DoubleStream?
 
-    // Not actually a Java 8 feature, but for now this is the best option since core Truth still has
-    // to support Java environments without java.nio.file such as Android and J2CL.
-    public static PathSubject assertThat(Path target) {
-        return assertAbout(PathSubject.paths()).that(target);
-    }
+  // Not actually a Java 8 feature, but for now this is the best option since core Truth still has
+  // to support Java environments without java.nio.file such as Android and J2CL.
+  @GwtIncompatible
+  @J2ObjCIncompatible
+  public static PathSubject assertThat(@Nullable Path target) {
+    return assertAbout(PathSubject.paths()).that(target);
+  }
 
-    private Truth8() {
-    }
+  private Truth8() {}
 }

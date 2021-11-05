@@ -35,39 +35,39 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * links to further instructions.
  */
 public abstract class CustomSubjectBuilder {
-    /**
-     * In a fluent assertion chain, the argument to the "custom" overload of {@link
-     * StandardSubjectBuilder#about(CustomSubjectBuilder.Factory) about}, the method that specifies
-     * what kind of {@link Subject} to create.
-     *
-     * <p>For more information about the fluent chain, see <a
-     * href="https://truth.dev/faq#full-chain">this FAQ entry</a>.
-     *
-     * <h3>For people extending Truth</h3>
-     *
-     * <p>When you write a custom subject, see <a href="https://truth.dev/extension">our doc on
-     * extensions</a>. It explains the cases in which {@code CustomSubjectBuilder.Factory} is
-     * necessary.
-     */
-    public interface Factory<CustomSubjectBuilderT extends CustomSubjectBuilder> {
-        /** Creates a new {@link CustomSubjectBuilder} of the appropriate type. */
-        CustomSubjectBuilderT createSubjectBuilder(FailureMetadata metadata);
-    }
+  /**
+   * In a fluent assertion chain, the argument to the "custom" overload of {@link
+   * StandardSubjectBuilder#about(CustomSubjectBuilder.Factory) about}, the method that specifies
+   * what kind of {@link Subject} to create.
+   *
+   * <p>For more information about the fluent chain, see <a
+   * href="https://truth.dev/faq#full-chain">this FAQ entry</a>.
+   *
+   * <h3>For people extending Truth</h3>
+   *
+   * <p>When you write a custom subject, see <a href="https://truth.dev/extension">our doc on
+   * extensions</a>. It explains the cases in which {@code CustomSubjectBuilder.Factory} is
+   * necessary.
+   */
+  public interface Factory<CustomSubjectBuilderT extends CustomSubjectBuilder> {
+    /** Creates a new {@link CustomSubjectBuilder} of the appropriate type. */
+    CustomSubjectBuilderT createSubjectBuilder(FailureMetadata metadata);
+  }
 
-    private final FailureMetadata metadata;
+  private final FailureMetadata metadata;
 
-    /** Constructor for use by subclasses. */
-    protected CustomSubjectBuilder(FailureMetadata metadata) {
-        this.metadata = checkNotNull(metadata);
-    }
+  /** Constructor for use by subclasses. */
+  protected CustomSubjectBuilder(FailureMetadata metadata) {
+    this.metadata = checkNotNull(metadata);
+  }
 
-    /**
-     * Returns the {@link FailureMetadata} instance that {@code that} methods should pass to {@link
-     * Subject} constructors.
-     */
-    protected final FailureMetadata metadata() {
-        return metadata;
-    }
+  /**
+   * Returns the {@link FailureMetadata} instance that {@code that} methods should pass to {@link
+   * Subject} constructors.
+   */
+  protected final FailureMetadata metadata() {
+    return metadata;
+  }
 
-    // TODO(user): Better enforce that subclasses implement a that() method.
+  // TODO(user): Better enforce that subclasses implement a that() method.
 }

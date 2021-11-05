@@ -15,10 +15,11 @@
  */
 package com.google.common.truth;
 
-import java.util.OptionalLong;
-
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
+
+import java.util.OptionalLong;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Propositions for Java 8 {@link OptionalLong} subjects.
@@ -26,51 +27,51 @@ import static com.google.common.truth.Fact.simpleFact;
  * @author Ben Douglass
  */
 public final class OptionalLongSubject extends Subject {
-    private final OptionalLong actual;
+  private final OptionalLong actual;
 
-    OptionalLongSubject(
-            FailureMetadata failureMetadata,
-            OptionalLong subject,
-            String typeDescription) {
-        super(failureMetadata, subject, typeDescription);
-        this.actual = subject;
-    }
+  OptionalLongSubject(
+      FailureMetadata failureMetadata,
+      @Nullable OptionalLong subject,
+      @Nullable String typeDescription) {
+    super(failureMetadata, subject, typeDescription);
+    this.actual = subject;
+  }
 
-    /** Fails if the {@link OptionalLong} is empty or the subject is null. */
-    public void isPresent() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected present optional"));
-        } else if (!actual.isPresent()) {
-            failWithoutActual(simpleFact("expected to be present"));
-        }
+  /** Fails if the {@link OptionalLong} is empty or the subject is null. */
+  public void isPresent() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected present optional"));
+    } else if (!actual.isPresent()) {
+      failWithoutActual(simpleFact("expected to be present"));
     }
+  }
 
-    /** Fails if the {@link OptionalLong} is present or the subject is null. */
-    public void isEmpty() {
-        if (actual == null) {
-            failWithActual(simpleFact("expected empty optional"));
-        } else if (actual.isPresent()) {
-            failWithoutActual(
-                    simpleFact("expected to be empty"),
-                    fact("but was present with value", actual.getAsLong()));
-        }
+  /** Fails if the {@link OptionalLong} is present or the subject is null. */
+  public void isEmpty() {
+    if (actual == null) {
+      failWithActual(simpleFact("expected empty optional"));
+    } else if (actual.isPresent()) {
+      failWithoutActual(
+          simpleFact("expected to be empty"),
+          fact("but was present with value", actual.getAsLong()));
     }
+  }
 
-    /**
-     * Fails if the {@link OptionalLong} does not have the given value or the subject is null. More
-     * sophisticated comparisons can be done using {@code assertThat(optional.getAsLong())…}.
-     */
-    public void hasValue(long expected) {
-        if (actual == null) {
-            failWithActual("expected an optional with value", expected);
-        } else if (!actual.isPresent()) {
-            failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
-        } else {
-            checkNoNeedToDisplayBothValues("getAsLong()").that(actual.getAsLong()).isEqualTo(expected);
-        }
+  /**
+   * Fails if the {@link OptionalLong} does not have the given value or the subject is null. More
+   * sophisticated comparisons can be done using {@code assertThat(optional.getAsLong())…}.
+   */
+  public void hasValue(long expected) {
+    if (actual == null) {
+      failWithActual("expected an optional with value", expected);
+    } else if (!actual.isPresent()) {
+      failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
+    } else {
+      checkNoNeedToDisplayBothValues("getAsLong()").that(actual.getAsLong()).isEqualTo(expected);
     }
+  }
 
-    public static Subject.Factory<OptionalLongSubject, OptionalLong> optionalLongs() {
-        return (metadata, subject) -> new OptionalLongSubject(metadata, subject, "optionalLong");
-    }
+  public static Subject.Factory<OptionalLongSubject, OptionalLong> optionalLongs() {
+    return (metadata, subject) -> new OptionalLongSubject(metadata, subject, "optionalLong");
+  }
 }

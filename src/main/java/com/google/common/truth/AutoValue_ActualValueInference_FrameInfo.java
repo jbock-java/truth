@@ -1,16 +1,18 @@
 package com.google.common.truth;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 
 final class AutoValue_ActualValueInference_FrameInfo extends ActualValueInference.FrameInfo {
 
-    private final List<ActualValueInference.StackEntry> locals;
+    private final ImmutableList<ActualValueInference.StackEntry> locals;
 
-    private final List<ActualValueInference.StackEntry> stack;
+    private final ImmutableList<ActualValueInference.StackEntry> stack;
 
     AutoValue_ActualValueInference_FrameInfo(
-            List<ActualValueInference.StackEntry> locals,
-            List<ActualValueInference.StackEntry> stack) {
+            ImmutableList<ActualValueInference.StackEntry> locals,
+            ImmutableList<ActualValueInference.StackEntry> stack) {
         if (locals == null) {
             throw new NullPointerException("Null locals");
         }
@@ -22,12 +24,12 @@ final class AutoValue_ActualValueInference_FrameInfo extends ActualValueInferenc
     }
 
     @Override
-    List<ActualValueInference.StackEntry> locals() {
+    ImmutableList<ActualValueInference.StackEntry> locals() {
         return locals;
     }
 
     @Override
-    List<ActualValueInference.StackEntry> stack() {
+    ImmutableList<ActualValueInference.StackEntry> stack() {
         return stack;
     }
 

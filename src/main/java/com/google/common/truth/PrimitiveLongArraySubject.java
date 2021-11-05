@@ -16,6 +16,7 @@
 package com.google.common.truth;
 
 import com.google.common.primitives.Longs;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Subject for {@code long[]}.
@@ -23,15 +24,15 @@ import com.google.common.primitives.Longs;
  * @author Christian Gruber (cgruber@israfil.net)
  */
 public final class PrimitiveLongArraySubject extends AbstractArraySubject {
-    private final long[] actual;
+  private final long[] actual;
 
-    PrimitiveLongArraySubject(
-            FailureMetadata metadata, long[] o, String typeDescription) {
-        super(metadata, o, typeDescription);
-        this.actual = o;
-    }
+  PrimitiveLongArraySubject(
+      FailureMetadata metadata, long @Nullable [] o, @Nullable String typeDescription) {
+    super(metadata, o, typeDescription);
+    this.actual = o;
+  }
 
-    public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Longs.asList(actual));
-    }
+  public IterableSubject asList() {
+    return checkNoNeedToDisplayBothValues("asList()").that(Longs.asList(actual));
+  }
 }

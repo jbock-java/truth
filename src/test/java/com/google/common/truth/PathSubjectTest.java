@@ -15,19 +15,17 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-import com.google.j2objc.annotations.J2ObjCIncompatible;
-import java.nio.file.Path;
+import static com.google.common.truth.Truth8.assertThat;
 
-/** Assertions for {@link Path} instances. */
-@GwtIncompatible
-@J2ObjCIncompatible
-public final class PathSubject extends Subject {
-  private PathSubject(FailureMetadata failureMetadata, Path actual) {
-    super(failureMetadata, actual);
-  }
+import java.nio.file.Paths;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-  public static Subject.Factory<PathSubject, Path> paths() {
-    return PathSubject::new;
+@RunWith(JUnit4.class)
+public class PathSubjectTest {
+  @Test
+  public void basicEquality() {
+    assertThat(Paths.get("foo")).isEqualTo(Paths.get("foo"));
   }
 }

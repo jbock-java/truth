@@ -15,6 +15,8 @@
  */
 package com.google.common.truth;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Propositions for {@code long} subjects.
  *
@@ -23,58 +25,58 @@ package com.google.common.truth;
  * @author Kurt Alfred Kluever
  */
 public class LongSubject extends ComparableSubject<Long> {
-    /**
-     * Constructor for use by subclasses. If you want to create an instance of this class itself, call
-     * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
-     */
-    protected LongSubject(FailureMetadata metadata, Long actual) {
-        super(metadata, actual);
-    }
+  /**
+   * Constructor for use by subclasses. If you want to create an instance of this class itself, call
+   * {@link Subject#check(String, Object...) check(...)}{@code .that(actual)}.
+   */
+  protected LongSubject(FailureMetadata metadata, @Nullable Long actual) {
+    super(metadata, actual);
+  }
 
-    /** @deprecated Use {@link #isEqualTo} instead. Long comparison is consistent with equality. */
-    @Override
-    @Deprecated
-    public final void isEquivalentAccordingToCompareTo(Long other) {
-        super.isEquivalentAccordingToCompareTo(other);
-    }
+  /** @deprecated Use {@link #isEqualTo} instead. Long comparison is consistent with equality. */
+  @Override
+  @Deprecated
+  public final void isEquivalentAccordingToCompareTo(Long other) {
+    super.isEquivalentAccordingToCompareTo(other);
+  }
 
-    /**
-     * Checks that the subject is greater than {@code other}.
-     *
-     * <p>To check that the subject is greater than <i>or equal to</i> {@code other}, use {@link
-     * #isAtLeast}.
-     */
-    public final void isGreaterThan(int other) {
-        isGreaterThan((long) other);
-    }
+  /**
+   * Checks that the subject is greater than {@code other}.
+   *
+   * <p>To check that the subject is greater than <i>or equal to</i> {@code other}, use {@link
+   * #isAtLeast}.
+   */
+  public final void isGreaterThan(int other) {
+    isGreaterThan((long) other);
+  }
 
-    /**
-     * Checks that the subject is less than {@code other}.
-     *
-     * <p>To check that the subject is less than <i>or equal to</i> {@code other}, use {@link
-     * #isAtMost} .
-     */
-    public final void isLessThan(int other) {
-        isLessThan((long) other);
-    }
+  /**
+   * Checks that the subject is less than {@code other}.
+   *
+   * <p>To check that the subject is less than <i>or equal to</i> {@code other}, use {@link
+   * #isAtMost} .
+   */
+  public final void isLessThan(int other) {
+    isLessThan((long) other);
+  }
 
-    /**
-     * Checks that the subject is less than or equal to {@code other}.
-     *
-     * <p>To check that the subject is <i>strictly</i> less than {@code other}, use {@link
-     * #isLessThan}.
-     */
-    public final void isAtMost(int other) {
-        isAtMost((long) other);
-    }
+  /**
+   * Checks that the subject is less than or equal to {@code other}.
+   *
+   * <p>To check that the subject is <i>strictly</i> less than {@code other}, use {@link
+   * #isLessThan}.
+   */
+  public final void isAtMost(int other) {
+    isAtMost((long) other);
+  }
 
-    /**
-     * Checks that the subject is greater than or equal to {@code other}.
-     *
-     * <p>To check that the subject is <i>strictly</i> greater than {@code other}, use {@link
-     * #isGreaterThan}.
-     */
-    public final void isAtLeast(int other) {
-        isAtLeast((long) other);
-    }
+  /**
+   * Checks that the subject is greater than or equal to {@code other}.
+   *
+   * <p>To check that the subject is <i>strictly</i> greater than {@code other}, use {@link
+   * #isGreaterThan}.
+   */
+  public final void isAtLeast(int other) {
+    isAtLeast((long) other);
+  }
 }

@@ -16,14 +16,13 @@
 
 package com.google.common.truth;
 
-import com.google.common.base.Strings;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.padEnd;
 import static java.lang.Math.max;
-import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import java.io.Serializable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A string key-value pair in a failure message, such as "expected: abc" or "but was: xyz."
@@ -36,106 +35,106 @@ import static java.util.Objects.requireNonNull;
  * href="https://truth.dev/failure_messages">our tips on writing failure messages</a>.
  */
 public final class Fact implements Serializable {
-    /**
-     * Creates a fact with the given key and value, which will be printed in a format like "key:
-     * value." The value is converted to a string by calling {@code String.valueOf} on it.
-     */
-    public static Fact fact(String key, Object value) {
-        return new Fact(key, String.valueOf(value));
+  /**
+   * Creates a fact with the given key and value, which will be printed in a format like "key:
+   * value." The value is converted to a string by calling {@code String.valueOf} on it.
+   */
+  public static Fact fact(String key, @Nullable Object value) {
+    return new Fact(key, String.valueOf(value));
+  }
+
+  /**
+   * Creates a fact with no value, which will be printed in the format "key" (with no colon or
+   * value).
+   *
+   * <p>In most cases, prefer {@linkplain #fact key-value facts}, which give Truth more flexibility
+   * in how to format the fact for display. {@code simpleFact} is useful primarily for:
+   *
+   * <ul>
+   *   <li>messages from no-arg assertions. For example, {@code isNotEmpty()} would generate the
+   *       fact "expected not to be empty"
+   *   <li>prose that is part of a larger message. For example, {@code contains()} sometimes
+   *       displays facts like "expected to contain: ..." <i>"but did not"</i> "though it did
+   *       contain: ..."
+   * </ul>
+   */
+  public static Fact simpleFact(String key) {
+    return new Fact(key, null);
+  }
+
+  final String key;
+  final @Nullable String value;
+
+  private Fact(String key, @Nullable String value) {
+    this.key = checkNotNull(key);
+    this.value = value;
+  }
+
+  /**
+   * Returns a simple string representation for the fact. While this is used in the output of {@code
+   * TruthFailureSubject}, it's not used in normal failure messages, which automatically align facts
+   * horizontally and indent multiline values.
+   */
+  @Override
+  public String toString() {
+    return value == null ? key : key + ": " + value;
+  }
+
+  /**
+   * Formats the given messages and facts into a string for use as the message of a test failure. In
+   * particular, this method horizontally aligns the beginning of fact values.
+   */
+  static String makeMessage(ImmutableList<String> messages, ImmutableList<Fact> facts) {
+    int longestKeyLength = 0;
+    boolean seenNewlineInValue = false;
+    for (Fact fact : facts) {
+      if (fact.value != null) {
+        longestKeyLength = max(longestKeyLength, fact.key.length());
+        // TODO(cpovirk): Look for other kinds of newlines.
+        seenNewlineInValue |= fact.value.contains("\n");
+      }
     }
 
-    /**
-     * Creates a fact with no value, which will be printed in the format "key" (with no colon or
-     * value).
+    StringBuilder builder = new StringBuilder();
+    for (String message : messages) {
+      builder.append(message);
+      builder.append('\n');
+    }
+
+    /*
+     * *Usually* the first fact is printed at the beginning of a new line. However, when this
+     * exception is the cause of another exception, that exception will print it starting after
+     * "Caused by: " on the same line. The other exception sometimes also reuses this message as its
+     * own message. In both of those scenarios, the first line doesn't start at column 0, so the
+     * horizontal alignment is thrown off.
      *
-     * <p>In most cases, prefer {@linkplain #fact key-value facts}, which give Truth more flexibility
-     * in how to format the fact for display. {@code simpleFact} is useful primarily for:
-     *
-     * <ul>
-     *   <li>messages from no-arg assertions. For example, {@code isNotEmpty()} would generate the
-     *       fact "expected not to be empty"
-     *   <li>prose that is part of a larger message. For example, {@code contains()} sometimes
-     *       displays facts like "expected to contain: ..." <i>"but did not"</i> "though it did
-     *       contain: ..."
-     * </ul>
+     * There's not much we can do about this, short of always starting with a newline (which would
+     * leave a blank line at the beginning of the message in the normal case).
      */
-    public static Fact simpleFact(String key) {
-        return new Fact(key, null);
+    for (Fact fact : facts) {
+      if (fact.value == null) {
+        builder.append(fact.key);
+      } else if (seenNewlineInValue) {
+        builder.append(fact.key);
+        builder.append(":\n");
+        builder.append(indent(fact.value));
+      } else {
+        builder.append(padEnd(fact.key, longestKeyLength, ' '));
+        builder.append(": ");
+        builder.append(fact.value);
+      }
+      builder.append('\n');
     }
-
-    final String key;
-    final String value;
-
-    private Fact(String key, String value) {
-        this.key = requireNonNull(key);
-        this.value = value;
+    if (builder.length() > 0) {
+      builder.setLength(builder.length() - 1); // remove trailing \n
     }
+    return builder.toString();
+  }
 
-    /**
-     * Returns a simple string representation for the fact. While this is used in the output of {@code
-     * TruthFailureSubject}, it's not used in normal failure messages, which automatically align facts
-     * horizontally and indent multiline values.
-     */
-    @Override
-    public String toString() {
-        return value == null ? key : key + ": " + value;
-    }
-
-    /**
-     * Formats the given messages and facts into a string for use as the message of a test failure. In
-     * particular, this method horizontally aligns the beginning of fact values.
-     */
-    static String makeMessage(List<String> messages, List<Fact> facts) {
-        int longestKeyLength = 0;
-        boolean seenNewlineInValue = false;
-        for (Fact fact : facts) {
-            if (fact.value != null) {
-                longestKeyLength = max(longestKeyLength, fact.key.length());
-                // TODO(cpovirk): Look for other kinds of newlines.
-                seenNewlineInValue |= fact.value.contains("\n");
-            }
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (String message : messages) {
-            builder.append(message);
-            builder.append('\n');
-        }
-
-        /*
-         * *Usually* the first fact is printed at the beginning of a new line. However, when this
-         * exception is the cause of another exception, that exception will print it starting after
-         * "Caused by: " on the same line. The other exception sometimes also reuses this message as its
-         * own message. In both of those scenarios, the first line doesn't start at column 0, so the
-         * horizontal alignment is thrown off.
-         *
-         * There's not much we can do about this, short of always starting with a newline (which would
-         * leave a blank line at the beginning of the message in the normal case).
-         */
-        for (Fact fact : facts) {
-            if (fact.value == null) {
-                builder.append(fact.key);
-            } else if (seenNewlineInValue) {
-                builder.append(fact.key);
-                builder.append(":\n");
-                builder.append(indent(fact.value));
-            } else {
-                builder.append(Strings.padEnd(fact.key, longestKeyLength, ' '));
-                builder.append(": ");
-                builder.append(fact.value);
-            }
-            builder.append('\n');
-        }
-        if (builder.length() > 0) {
-            builder.setLength(builder.length() - 1); // remove trailing \n
-        }
-        return builder.toString();
-    }
-
-    private static String indent(String value) {
-        // We don't want to indent with \t because the text would align exactly with the stack trace.
-        // We don't want to indent with \t\t because it would be very far for people with 8-space tabs.
-        // Let's compromise and indent by 4 spaces, which is different than both 2- and 8-space tabs.
-        return "    " + value.replaceAll("\n", "\n    ");
-    }
+  private static String indent(String value) {
+    // We don't want to indent with \t because the text would align exactly with the stack trace.
+    // We don't want to indent with \t\t because it would be very far for people with 8-space tabs.
+    // Let's compromise and indent by 4 spaces, which is different than both 2- and 8-space tabs.
+    return "    " + value.replaceAll("\n", "\n    ");
+  }
 }
