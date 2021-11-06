@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.common.annotations.GwtIncompatible;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,44 +22,48 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static com.google.common.truth.Truth.assertThat;
+
 /** Tests for {@link ExpectFailure} used as JUnit {@link Rule}. */
 @RunWith(JUnit4.class)
 @GwtIncompatible("org.junit.Rule")
 public class ExpectFailureRuleTest {
-  @Rule public final ExpectFailure expectFailure = new ExpectFailure();
-  @Rule public final ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public final ExpectFailure expectFailure = new ExpectFailure();
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
 
-  @Test
-  public void expectFail_captureFailureAsExpected() {
-    expectFailure.whenTesting().withMessage("abc").fail();
-    assertThat(expectFailure.getFailure()).hasMessageThat().isEqualTo("abc");
-  }
+    @Test
+    public void expectFail_captureFailureAsExpected() {
+        expectFailure.whenTesting().withMessage("abc").fail();
+        assertThat(expectFailure.getFailure()).hasMessageThat().isEqualTo("abc");
+    }
 
-  @Test
-  public void expectFail_passesIfUnused() {
-    assertThat(4).isEqualTo(4);
-  }
+    @Test
+    public void expectFail_passesIfUnused() {
+        assertThat(4).isEqualTo(4);
+    }
 
-  @Test
-  public void expectFail_failsAfterTest() {
-    expectFailure.whenTesting().that(4).isEqualTo(4);
-    thrown.expectMessage("ExpectFailure.whenTesting() invoked, but no failure was caught.");
-  }
+    @Test
+    public void expectFail_failsAfterTest() {
+        expectFailure.whenTesting().that(4).isEqualTo(4);
+        thrown.expectMessage("ExpectFailure.whenTesting() invoked, but no failure was caught.");
+    }
 
-  @Test
-  public void expectFail_throwInSubject_shouldPropagateOriginalException() {
-    thrown.expectMessage("Throwing deliberately");
-    expectFailure.whenTesting().that(throwingMethod()).isEqualTo(2);
-  }
+    @Test
+    public void expectFail_throwInSubject_shouldPropagateOriginalException() {
+        thrown.expectMessage("Throwing deliberately");
+        expectFailure.whenTesting().that(throwingMethod()).isEqualTo(2);
+    }
 
-  @Test
-  public void expectFail_throwAfterSubject_shouldPropagateOriginalException() {
-    expectFailure.whenTesting().that(2).isEqualTo(2);
-    thrown.expectMessage("Throwing deliberately");
-    throwingMethod();
-  }
+    @Test
+    public void expectFail_throwAfterSubject_shouldPropagateOriginalException() {
+        expectFailure.whenTesting().that(2).isEqualTo(2);
+        thrown.expectMessage("Throwing deliberately");
+        throwingMethod();
+    }
 
-  private static long throwingMethod() {
-    throw new RuntimeException("Throwing deliberately");
-  }
+    private static long throwingMethod() {
+        throw new RuntimeException("Throwing deliberately");
+    }
 }

@@ -16,7 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.primitives.Booleans;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Subject for {@code boolean[]}.
@@ -24,15 +23,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Christian Gruber (cgruber@israfil.net)
  */
 public final class PrimitiveBooleanArraySubject extends AbstractArraySubject {
-  private final boolean[] actual;
+    private final boolean[] actual;
 
-  PrimitiveBooleanArraySubject(
-      FailureMetadata metadata, boolean @Nullable [] o, @Nullable String typeDescription) {
-    super(metadata, o, typeDescription);
-    this.actual = o;
-  }
+    PrimitiveBooleanArraySubject(
+            FailureMetadata metadata, boolean[] o, String typeDescription) {
+        super(metadata, o, typeDescription);
+        this.actual = o;
+    }
 
-  public IterableSubject asList() {
-    return checkNoNeedToDisplayBothValues("asList()").that(Booleans.asList(actual));
-  }
+    public IterableSubject asList() {
+        return checkNoNeedToDisplayBothValues("asList()").that(Booleans.asList(actual));
+    }
 }

@@ -15,11 +15,10 @@
  */
 package com.google.common.truth;
 
+import com.google.common.base.Optional;
+
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
-
-import com.google.common.base.Optional;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Propositions for Guava {@link Optional} subjects.
@@ -30,53 +29,53 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Christian Gruber
  */
 public final class GuavaOptionalSubject extends Subject {
-  private final Optional<?> actual;
+    private final Optional<?> actual;
 
-  GuavaOptionalSubject(
-      FailureMetadata metadata, @Nullable Optional<?> actual, @Nullable String typeDescription) {
-    super(metadata, actual, typeDescription);
-    this.actual = actual;
-  }
+    GuavaOptionalSubject(
+            FailureMetadata metadata, Optional<?> actual, String typeDescription) {
+        super(metadata, actual, typeDescription);
+        this.actual = actual;
+    }
 
-  /** Fails if the {@link Optional}{@code <T>} is absent or the subject is null. */
-  public void isPresent() {
-    if (actual == null) {
-      failWithActual(simpleFact("expected present optional"));
-    } else if (!actual.isPresent()) {
-      failWithoutActual(simpleFact("expected to be present"));
+    /** Fails if the {@link Optional}{@code <T>} is absent or the subject is null. */
+    public void isPresent() {
+        if (actual == null) {
+            failWithActual(simpleFact("expected present optional"));
+        } else if (!actual.isPresent()) {
+            failWithoutActual(simpleFact("expected to be present"));
+        }
     }
-  }
 
-  /** Fails if the {@link Optional}{@code <T>} is present or the subject is null. */
-  public void isAbsent() {
-    if (actual == null) {
-      failWithActual(simpleFact("expected absent optional"));
-    } else if (actual.isPresent()) {
-      failWithoutActual(
-          simpleFact("expected to be absent"), fact("but was present with value", actual.get()));
+    /** Fails if the {@link Optional}{@code <T>} is present or the subject is null. */
+    public void isAbsent() {
+        if (actual == null) {
+            failWithActual(simpleFact("expected absent optional"));
+        } else if (actual.isPresent()) {
+            failWithoutActual(
+                    simpleFact("expected to be absent"), fact("but was present with value", actual.get()));
+        }
     }
-  }
 
-  /**
-   * Fails if the {@link Optional}{@code <T>} does not have the given value or the subject is null.
-   *
-   * <p>To make more complex assertions on the optional's value split your assertion in two:
-   *
-   * <pre>{@code
-   * assertThat(myOptional).isPresent();
-   * assertThat(myOptional.get()).contains("foo");
-   * }</pre>
-   */
-  public void hasValue(Object expected) {
-    if (expected == null) {
-      throw new NullPointerException("Optional cannot have a null value.");
+    /**
+     * Fails if the {@link Optional}{@code <T>} does not have the given value or the subject is null.
+     *
+     * <p>To make more complex assertions on the optional's value split your assertion in two:
+     *
+     * <pre>{@code
+     * assertThat(myOptional).isPresent();
+     * assertThat(myOptional.get()).contains("foo");
+     * }</pre>
+     */
+    public void hasValue(Object expected) {
+        if (expected == null) {
+            throw new NullPointerException("Optional cannot have a null value.");
+        }
+        if (actual == null) {
+            failWithActual("expected an optional with value", expected);
+        } else if (!actual.isPresent()) {
+            failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
+        } else {
+            checkNoNeedToDisplayBothValues("get()").that(actual.get()).isEqualTo(expected);
+        }
     }
-    if (actual == null) {
-      failWithActual("expected an optional with value", expected);
-    } else if (!actual.isPresent()) {
-      failWithoutActual(fact("expected to have value", expected), simpleFact("but was absent"));
-    } else {
-      checkNoNeedToDisplayBothValues("get()").that(actual.get()).isEqualTo(expected);
-    }
-  }
 }

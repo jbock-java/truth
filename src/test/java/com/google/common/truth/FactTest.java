@@ -16,77 +16,77 @@
 
 package com.google.common.truth;
 
-import static com.google.common.truth.Fact.fact;
-import static com.google.common.truth.Fact.makeMessage;
-import static com.google.common.truth.Fact.simpleFact;
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static com.google.common.truth.Fact.fact;
+import static com.google.common.truth.Fact.makeMessage;
+import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Truth.assertThat;
+
 /** Tests for {@link Fact}. */
 @RunWith(JUnit4.class)
 public class FactTest {
-  @Test
-  public void string() {
-    assertThat(fact("foo", "bar").toString()).isEqualTo("foo: bar");
-  }
+    @Test
+    public void string() {
+        assertThat(fact("foo", "bar").toString()).isEqualTo("foo: bar");
+    }
 
-  @Test
-  public void stringWithoutValue() {
-    assertThat(simpleFact("foo").toString()).isEqualTo("foo");
-  }
+    @Test
+    public void stringWithoutValue() {
+        assertThat(simpleFact("foo").toString()).isEqualTo("foo");
+    }
 
-  @Test
-  public void oneFacts() {
-    assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar"))))
-        .isEqualTo("foo: bar");
-  }
+    @Test
+    public void oneFacts() {
+        assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar"))))
+                .isEqualTo("foo: bar");
+    }
 
-  @Test
-  public void twoFacts() {
-    assertThat(
-            makeMessage(
-                ImmutableList.<String>of(),
-                ImmutableList.of(fact("foo", "bar"), fact("longer name", "other value"))))
-        .isEqualTo("foo        : bar\nlonger name: other value");
-  }
+    @Test
+    public void twoFacts() {
+        assertThat(
+                makeMessage(
+                        ImmutableList.<String>of(),
+                        ImmutableList.of(fact("foo", "bar"), fact("longer name", "other value"))))
+                .isEqualTo("foo        : bar\nlonger name: other value");
+    }
 
-  @Test
-  public void oneFactWithoutValue() {
-    assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(simpleFact("foo"))))
-        .isEqualTo("foo");
-  }
+    @Test
+    public void oneFactWithoutValue() {
+        assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(simpleFact("foo"))))
+                .isEqualTo("foo");
+    }
 
-  @Test
-  public void twoFactsOneWithoutValue() {
-    assertThat(
-            makeMessage(
-                ImmutableList.<String>of(),
-                ImmutableList.of(fact("hello", "there"), simpleFact("foo"))))
-        .isEqualTo("hello: there\nfoo");
-  }
+    @Test
+    public void twoFactsOneWithoutValue() {
+        assertThat(
+                makeMessage(
+                        ImmutableList.<String>of(),
+                        ImmutableList.of(fact("hello", "there"), simpleFact("foo"))))
+                .isEqualTo("hello: there\nfoo");
+    }
 
-  @Test
-  public void newline() {
-    assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar\nbaz"))))
-        .isEqualTo("foo:\n    bar\n    baz");
-  }
+    @Test
+    public void newline() {
+        assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar\nbaz"))))
+                .isEqualTo("foo:\n    bar\n    baz");
+    }
 
-  @Test
-  public void newlineWithoutValue() {
-    assertThat(
-            makeMessage(
-                ImmutableList.<String>of(),
-                ImmutableList.of(fact("hello", "there\neveryone"), simpleFact("xyz"))))
-        .isEqualTo("hello:\n    there\n    everyone\nxyz");
-  }
+    @Test
+    public void newlineWithoutValue() {
+        assertThat(
+                makeMessage(
+                        ImmutableList.<String>of(),
+                        ImmutableList.of(fact("hello", "there\neveryone"), simpleFact("xyz"))))
+                .isEqualTo("hello:\n    there\n    everyone\nxyz");
+    }
 
-  @Test
-  public void withMessage() {
-    assertThat(makeMessage(ImmutableList.<String>of("hello"), ImmutableList.of(fact("foo", "bar"))))
-        .isEqualTo("hello\nfoo: bar");
-  }
+    @Test
+    public void withMessage() {
+        assertThat(makeMessage(ImmutableList.<String>of("hello"), ImmutableList.of(fact("foo", "bar"))))
+                .isEqualTo("hello\nfoo: bar");
+    }
 }

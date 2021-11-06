@@ -15,15 +15,14 @@
  */
 package com.google.common.truth.extension;
 
-import static com.google.common.truth.Fact.simpleFact;
-import static com.google.common.truth.Truth.assertAbout;
-
 import com.google.common.truth.ComparableSubject;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.LongSubject;
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Subject;
-import org.checkerframework.checker.nullness.qual.Nullable;
+
+import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Truth.assertAbout;
 
 /**
  * A <a href="https://github.com/google/truth">Truth</a> subject for {@link Employee}.
@@ -32,72 +31,72 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public final class EmployeeSubject extends Subject {
 
-  // User-defined entry point
-  public static EmployeeSubject assertThat(@Nullable Employee employee) {
-    return assertAbout(EMPLOYEE_SUBJECT_FACTORY).that(employee);
-  }
-
-  // Static method for getting the subject factory (for use with assertAbout())
-  public static Subject.Factory<EmployeeSubject, Employee> employees() {
-    return EMPLOYEE_SUBJECT_FACTORY;
-  }
-
-  // Boiler-plate Subject.Factory for EmployeeSubject
-  private static final Subject.Factory<EmployeeSubject, Employee> EMPLOYEE_SUBJECT_FACTORY =
-      EmployeeSubject::new;
-
-  private final Employee actual;
-
-  private EmployeeSubject(FailureMetadata failureMetadata, @Nullable Employee subject) {
-    super(failureMetadata, subject);
-    this.actual = subject;
-  }
-
-  // User-defined test assertion SPI below this point
-
-  public void hasName(String name) {
-    name().isEqualTo(name);
-  }
-
-  public void hasUsername(String username) {
-    username().isEqualTo(username);
-  }
-
-  public void hasId(long id) {
-    id().isEqualTo(id);
-  }
-
-  public void hasLocation(Employee.Location location) {
-    location().isEqualTo(location);
-  }
-
-  public void isCeo() {
-    if (!actual.isCeo()) {
-      failWithActual(simpleFact("expected to be CEO"));
+    // User-defined entry point
+    public static EmployeeSubject assertThat(Employee employee) {
+        return assertAbout(EMPLOYEE_SUBJECT_FACTORY).that(employee);
     }
-  }
 
-  public void isNotCeo() {
-    if (actual.isCeo()) {
-      failWithActual(simpleFact("expected not to be CEO"));
+    // Static method for getting the subject factory (for use with assertAbout())
+    public static Subject.Factory<EmployeeSubject, Employee> employees() {
+        return EMPLOYEE_SUBJECT_FACTORY;
     }
-  }
 
-  // Chained subjects methods below this point
+    // Boiler-plate Subject.Factory for EmployeeSubject
+    private static final Subject.Factory<EmployeeSubject, Employee> EMPLOYEE_SUBJECT_FACTORY =
+            EmployeeSubject::new;
 
-  public StringSubject name() {
-    return check("name()").that(actual.name());
-  }
+    private final Employee actual;
 
-  public StringSubject username() {
-    return check("username()").that(actual.username());
-  }
+    private EmployeeSubject(FailureMetadata failureMetadata, Employee subject) {
+        super(failureMetadata, subject);
+        this.actual = subject;
+    }
 
-  public LongSubject id() {
-    return check("id()").that(actual.id());
-  }
+    // User-defined test assertion SPI below this point
 
-  public ComparableSubject<Employee.Location> location() {
-    return check("location()").that(actual.location());
-  }
+    public void hasName(String name) {
+        name().isEqualTo(name);
+    }
+
+    public void hasUsername(String username) {
+        username().isEqualTo(username);
+    }
+
+    public void hasId(long id) {
+        id().isEqualTo(id);
+    }
+
+    public void hasLocation(Employee.Location location) {
+        location().isEqualTo(location);
+    }
+
+    public void isCeo() {
+        if (!actual.isCeo()) {
+            failWithActual(simpleFact("expected to be CEO"));
+        }
+    }
+
+    public void isNotCeo() {
+        if (actual.isCeo()) {
+            failWithActual(simpleFact("expected not to be CEO"));
+        }
+    }
+
+    // Chained subjects methods below this point
+
+    public StringSubject name() {
+        return check("name()").that(actual.name());
+    }
+
+    public StringSubject username() {
+        return check("username()").that(actual.username());
+    }
+
+    public LongSubject id() {
+        return check("id()").that(actual.id());
+    }
+
+    public ComparableSubject<Employee.Location> location() {
+        return check("location()").that(actual.location());
+    }
 }

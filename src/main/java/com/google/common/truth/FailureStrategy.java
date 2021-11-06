@@ -33,7 +33,7 @@ package com.google.common.truth;
  * <p>For more information about the fluent chain, see <a href="https://truth.dev/faq#full-chain">this
  * FAQ entry</a>.
  *
- * <h3>For people extending Truth</h3>
+ * <p><b>For people extending Truth</b>
  *
  * <p>Custom {@code FailureStrategy} implementations are unusual. If you think you need one,
  * consider these alternatives:
@@ -53,22 +53,22 @@ package com.google.common.truth;
  * StandardSubjectBuilder.forCustomFailureStrategy(STRATEGY)}.
  */
 public interface FailureStrategy {
-  /**
-   * Handles a failure. The parameter is an {@code AssertionError} or subclass thereof, and it
-   * contains information about the failure, which may include:
-   *
-   * <ul>
-   *   <li>message: {@link Throwable#getMessage getMessage()}
-   *   <li>cause: {@link Throwable#getCause getCause()}
-   *   <li>actual and expected values: {@link org.junit.ComparisonFailure#getActual}, {@link
-   *       org.junit.ComparisonFailure#getExpected}
-   *   <li>stack trace: {@link Throwable#getStackTrace}
-   * </ul>
-   *
-   * <!-- TODO(cpovirk): suppressed exceptions someday? -->
-   *
-   * <p>We encourage implementations to record as much of this information as practical in the
-   * exceptions they may throw or the other records they may make.
-   */
-  void fail(AssertionError failure);
+    /**
+     * Handles a failure. The parameter is an {@code AssertionError} or subclass thereof, and it
+     * contains information about the failure, which may include:
+     *
+     * <ul>
+     *   <li>message: {@link Throwable#getMessage getMessage()}
+     *   <li>cause: {@link Throwable#getCause getCause()}
+     *   <li>actual and expected values: {@link org.junit.ComparisonFailure#getActual}, {@link
+     *       org.junit.ComparisonFailure#getExpected}
+     *   <li>stack trace: {@link Throwable#getStackTrace}
+     * </ul>
+     *
+     * <!-- TODO(cpovirk): suppressed exceptions someday? -->
+     *
+     * <p>We encourage implementations to record as much of this information as practical in the
+     * exceptions they may throw or the other records they may make.
+     */
+    void fail(AssertionError failure);
 }

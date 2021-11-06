@@ -28,7 +28,5 @@
  * <p>For more information, see <a href="https://truth.dev" target="_top">our introduction</a> and
  * other docs.
  */
-@CheckReturnValue
 package com.google.common.truth;
 
-import com.google.errorprone.annotations.CheckReturnValue;

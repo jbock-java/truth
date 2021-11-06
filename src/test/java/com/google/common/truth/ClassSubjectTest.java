@@ -15,11 +15,11 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Tests for introspective Subject behaviour.
@@ -28,30 +28,30 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class ClassSubjectTest extends BaseSubjectTestCase {
-  @Test
-  public void testIsAssignableTo_same() {
-    assertThat(String.class).isAssignableTo(String.class);
-  }
+    @Test
+    public void testIsAssignableTo_same() {
+        assertThat(String.class).isAssignableTo(String.class);
+    }
 
-  @Test
-  public void testIsAssignableTo_parent() {
-    assertThat(String.class).isAssignableTo(Object.class);
-    assertThat(NullPointerException.class).isAssignableTo(Exception.class);
-  }
+    @Test
+    public void testIsAssignableTo_parent() {
+        assertThat(String.class).isAssignableTo(Object.class);
+        assertThat(NullPointerException.class).isAssignableTo(Exception.class);
+    }
 
-  @Test
-  public void testIsAssignableTo_reversed() {
-    expectFailureWhenTestingThat(Object.class).isAssignableTo(String.class);
-    assertFailureValue("expected to be assignable to", "java.lang.String");
-  }
+    @Test
+    public void testIsAssignableTo_reversed() {
+        expectFailureWhenTestingThat(Object.class).isAssignableTo(String.class);
+        assertFailureValue("expected to be assignable to", "java.lang.String");
+    }
 
-  @Test
-  public void testIsAssignableTo_differentTypes() {
-    expectFailureWhenTestingThat(String.class).isAssignableTo(Exception.class);
-    assertFailureValue("expected to be assignable to", "java.lang.Exception");
-  }
+    @Test
+    public void testIsAssignableTo_differentTypes() {
+        expectFailureWhenTestingThat(String.class).isAssignableTo(Exception.class);
+        assertFailureValue("expected to be assignable to", "java.lang.Exception");
+    }
 
-  private ClassSubject expectFailureWhenTestingThat(Class<?> actual) {
-    return expectFailure.whenTesting().that(actual);
-  }
+    private ClassSubject expectFailureWhenTestingThat(Class<?> actual) {
+        return expectFailure.whenTesting().that(actual);
+    }
 }

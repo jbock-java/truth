@@ -15,16 +15,17 @@
  */
 package com.google.common.truth;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import java.util.Optional;
+
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.OptionalSubject.optionals;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.Assert.fail;
-
-import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests for Java 8 {@link Optional} Subject.
@@ -34,81 +35,81 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class OptionalSubjectTest {
 
-  @Test
-  public void isPresent() {
-    assertThat(Optional.of("foo")).isPresent();
-  }
-
-  @Test
-  public void isPresentFailing() {
-    AssertionError expected =
-        expectFailure(whenTesting -> whenTesting.that(Optional.empty()).isPresent());
-    assertThat(expected).factKeys().containsExactly("expected to be present");
-  }
-
-  @Test
-  public void isPresentFailingNull() {
-    AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isPresent());
-    assertThat(expected)
-        .factKeys()
-        .containsExactly("expected present optional", "but was")
-        .inOrder();
-  }
-
-  @Test
-  public void isEmpty() {
-    assertThat(Optional.empty()).isEmpty();
-  }
-
-  @Test
-  public void isEmptyFailing() {
-    AssertionError expected =
-        expectFailure(whenTesting -> whenTesting.that(Optional.of("foo")).isEmpty());
-    assertThat(expected).factKeys().contains("expected to be empty");
-    assertThat(expected).factValue("but was present with value").isEqualTo("foo");
-  }
-
-  @Test
-  public void isEmptyFailingNull() {
-    AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isEmpty());
-    assertThat(expected).factKeys().containsExactly("expected empty optional", "but was").inOrder();
-  }
-
-  @Test
-  public void hasValue() {
-    assertThat(Optional.of("foo")).hasValue("foo");
-  }
-
-  @Test
-  public void hasValue_failingWithEmpty() {
-    AssertionError expected =
-        expectFailure(whenTesting -> whenTesting.that(Optional.empty()).hasValue("foo"));
-    assertThat(expected)
-        .factKeys()
-        .containsExactly("expected to have value", "but was empty")
-        .inOrder();
-    assertThat(expected).factValue("expected to have value").isEqualTo("foo");
-  }
-
-  @Test
-  public void hasValue_npeWithNullParameter() {
-    try {
-      assertThat(Optional.of("foo")).hasValue(null);
-      fail("Expected NPE");
-    } catch (NullPointerException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo("Optional cannot have a null value.");
+    @Test
+    public void isPresent() {
+        assertThat(Optional.of("foo")).isPresent();
     }
-  }
 
-  @Test
-  public void hasValue_failingWithWrongValue() {
-    AssertionError expected =
-        expectFailure(whenTesting -> whenTesting.that(Optional.of("foo")).hasValue("boo"));
-    assertThat(expected).factValue("value of").isEqualTo("optional.get()");
-  }
+    @Test
+    public void isPresentFailing() {
+        AssertionError expected =
+                expectFailure(whenTesting -> whenTesting.that(Optional.empty()).isPresent());
+        assertThat(expected).factKeys().containsExactly("expected to be present");
+    }
 
-  private static AssertionError expectFailure(
-      ExpectFailure.SimpleSubjectBuilderCallback<OptionalSubject, Optional<?>> assertionCallback) {
-    return ExpectFailure.expectFailureAbout(optionals(), assertionCallback);
-  }
+    @Test
+    public void isPresentFailingNull() {
+        AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isPresent());
+        assertThat(expected)
+                .factKeys()
+                .containsExactly("expected present optional", "but was")
+                .inOrder();
+    }
+
+    @Test
+    public void isEmpty() {
+        assertThat(Optional.empty()).isEmpty();
+    }
+
+    @Test
+    public void isEmptyFailing() {
+        AssertionError expected =
+                expectFailure(whenTesting -> whenTesting.that(Optional.of("foo")).isEmpty());
+        assertThat(expected).factKeys().contains("expected to be empty");
+        assertThat(expected).factValue("but was present with value").isEqualTo("foo");
+    }
+
+    @Test
+    public void isEmptyFailingNull() {
+        AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isEmpty());
+        assertThat(expected).factKeys().containsExactly("expected empty optional", "but was").inOrder();
+    }
+
+    @Test
+    public void hasValue() {
+        assertThat(Optional.of("foo")).hasValue("foo");
+    }
+
+    @Test
+    public void hasValue_failingWithEmpty() {
+        AssertionError expected =
+                expectFailure(whenTesting -> whenTesting.that(Optional.empty()).hasValue("foo"));
+        assertThat(expected)
+                .factKeys()
+                .containsExactly("expected to have value", "but was empty")
+                .inOrder();
+        assertThat(expected).factValue("expected to have value").isEqualTo("foo");
+    }
+
+    @Test
+    public void hasValue_npeWithNullParameter() {
+        try {
+            assertThat(Optional.of("foo")).hasValue(null);
+            fail("Expected NPE");
+        } catch (NullPointerException expected) {
+            assertThat(expected).hasMessageThat().isEqualTo("Optional cannot have a null value.");
+        }
+    }
+
+    @Test
+    public void hasValue_failingWithWrongValue() {
+        AssertionError expected =
+                expectFailure(whenTesting -> whenTesting.that(Optional.of("foo")).hasValue("boo"));
+        assertThat(expected).factValue("value of").isEqualTo("optional.get()");
+    }
+
+    private static AssertionError expectFailure(
+            ExpectFailure.SimpleSubjectBuilderCallback<OptionalSubject, Optional<?>> assertionCallback) {
+        return ExpectFailure.expectFailureAbout(optionals(), assertionCallback);
+    }
 }

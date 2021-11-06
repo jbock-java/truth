@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -25,43 +23,46 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.Statement;
 
+import static com.google.common.truth.Truth.assertThat;
+
 /** Test that stack traces are included in the error message created by Expect. */
 @RunWith(JUnit4.class)
 public class ExpectFailureWithStackTraceTest {
-  private static final String METHOD_NAME = "ExpectFailureWithStackTraceTest.expectTwoFailures";
+    private static final String METHOD_NAME = "ExpectFailureWithStackTraceTest.expectTwoFailures";
 
-  @Rule public final FailingExpect failToExpect = new FailingExpect();
+    @Rule
+    public final FailingExpect failToExpect = new FailingExpect();
 
-  @Test
-  public void expectTwoFailures() {
-    failToExpect.delegate.that(4).isNotEqualTo(4);
-    failToExpect.delegate.that("abc").contains("x");
-  }
-
-  /** Expect class that can examine the error message */
-  public static class FailingExpect implements TestRule {
-    final Expect delegate = Expect.create();
-
-    @Override
-    public Statement apply(Statement base, Description description) {
-      final Statement s = delegate.apply(base, description);
-      return new Statement() {
-        @Override
-        public void evaluate() throws Throwable {
-          String failureMessage = "";
-          try {
-            s.evaluate();
-          } catch (AssertionError e) {
-            failureMessage = e.getMessage();
-          }
-          // Check that error message contains stack traces. Method name should appear twice,
-          // once for each expect error.
-          int firstIndex = failureMessage.indexOf(METHOD_NAME);
-          assertThat(firstIndex).isGreaterThan(0);
-          int secondIndex = failureMessage.indexOf(METHOD_NAME, firstIndex + 1);
-          assertThat(secondIndex).isGreaterThan(firstIndex);
-        }
-      };
+    @Test
+    public void expectTwoFailures() {
+        failToExpect.delegate.that(4).isNotEqualTo(4);
+        failToExpect.delegate.that("abc").contains("x");
     }
-  }
+
+    /** Expect class that can examine the error message */
+    public static class FailingExpect implements TestRule {
+        final Expect delegate = Expect.create();
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            final Statement s = delegate.apply(base, description);
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    String failureMessage = "";
+                    try {
+                        s.evaluate();
+                    } catch (AssertionError e) {
+                        failureMessage = e.getMessage();
+                    }
+                    // Check that error message contains stack traces. Method name should appear twice,
+                    // once for each expect error.
+                    int firstIndex = failureMessage.indexOf(METHOD_NAME);
+                    assertThat(firstIndex).isGreaterThan(0);
+                    int secondIndex = failureMessage.indexOf(METHOD_NAME, firstIndex + 1);
+                    assertThat(secondIndex).isGreaterThan(firstIndex);
+                }
+            };
+        }
+    }
 }

@@ -15,63 +15,63 @@
  */
 package com.google.common.truth.extension;
 
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.extension.EmployeeSubject.assertThat;
-
 import com.google.common.truth.extension.Employee.Location;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.extension.EmployeeSubject.assertThat;
+
 @RunWith(JUnit4.class)
 public final class FakeHrDatabaseTest {
 
-  // Note: not real employee IDs :-)
+    // Note: not real employee IDs :-)
 
-  private static final Employee KURT =
-      Employee.create("kak", 37802, "Kurt Alfred Kluever", Location.NYC, false);
+    private static final Employee KURT =
+            Employee.create("kak", 37802, "Kurt Alfred Kluever", Location.NYC, false);
 
-  private static final Employee SUNDAR =
-      Employee.create("sundar", 5243, "Sundar Pichai", Location.MTV, true);
+    private static final Employee SUNDAR =
+            Employee.create("sundar", 5243, "Sundar Pichai", Location.MTV, true);
 
-  // Notice that we static import two different assertThat methods.
+    // Notice that we static import two different assertThat methods.
 
-  // These assertions use the EmployeeSubject.assertThat(Employee) overload and the
-  // EmployeeSubject-specific methods.
+    // These assertions use the EmployeeSubject.assertThat(Employee) overload and the
+    // EmployeeSubject-specific methods.
 
-  @Test
-  public void relocatePresent() {
-    FakeHrDatabase db = new FakeHrDatabase();
-    db.put(KURT);
-    db.relocate(KURT.id(), Location.MTV);
-    Employee movedKurt = db.get(KURT.id());
-    assertThat(movedKurt).hasLocation(Location.MTV);
-    assertThat(movedKurt).hasUsername("kak");
-  }
+    @Test
+    public void relocatePresent() {
+        FakeHrDatabase db = new FakeHrDatabase();
+        db.put(KURT);
+        db.relocate(KURT.id(), Location.MTV);
+        Employee movedKurt = db.get(KURT.id());
+        assertThat(movedKurt).hasLocation(Location.MTV);
+        assertThat(movedKurt).hasUsername("kak");
+    }
 
-  // These assertions use the EmployeeSubject.assertThat(Employee) overload but the assertion
-  // methods inherited from Subject.
+    // These assertions use the EmployeeSubject.assertThat(Employee) overload but the assertion
+    // methods inherited from Subject.
 
-  @Test
-  public void getPresent() {
-    FakeHrDatabase db = new FakeHrDatabase();
-    db.put(KURT);
-    assertThat(db.get(KURT.id())).isEqualTo(KURT);
-  }
+    @Test
+    public void getPresent() {
+        FakeHrDatabase db = new FakeHrDatabase();
+        db.put(KURT);
+        assertThat(db.get(KURT.id())).isEqualTo(KURT);
+    }
 
-  @Test
-  public void getAbsent() {
-    FakeHrDatabase db = new FakeHrDatabase();
-    db.put(KURT);
-    assertThat(db.get(SUNDAR.id())).isNull();
-  }
+    @Test
+    public void getAbsent() {
+        FakeHrDatabase db = new FakeHrDatabase();
+        db.put(KURT);
+        assertThat(db.get(SUNDAR.id())).isNull();
+    }
 
-  // These assertions use Truth.assertThat() overloads
+    // These assertions use Truth.assertThat() overloads
 
-  @Test
-  public void getByLocation() {
-    FakeHrDatabase db = new FakeHrDatabase();
-    db.put(KURT);
-    assertThat(db.getByLocation(Location.NYC)).containsExactly(KURT);
-  }
+    @Test
+    public void getByLocation() {
+        FakeHrDatabase db = new FakeHrDatabase();
+        db.put(KURT);
+        assertThat(db.getByLocation(Location.NYC)).containsExactly(KURT);
+    }
 }

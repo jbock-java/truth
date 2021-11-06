@@ -16,7 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.primitives.Ints;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Subject for {@code int[]}.
@@ -24,15 +23,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Christian Gruber (cgruber@israfil.net)
  */
 public final class PrimitiveIntArraySubject extends AbstractArraySubject {
-  private final int[] actual;
+    private final int[] actual;
 
-  PrimitiveIntArraySubject(
-      FailureMetadata metadata, int @Nullable [] o, @Nullable String typeDescription) {
-    super(metadata, o, typeDescription);
-    this.actual = o;
-  }
+    PrimitiveIntArraySubject(
+            FailureMetadata metadata, int[] o, String typeDescription) {
+        super(metadata, o, typeDescription);
+        this.actual = o;
+    }
 
-  public IterableSubject asList() {
-    return checkNoNeedToDisplayBothValues("asList()").that(Ints.asList(actual));
-  }
+    public IterableSubject asList() {
+        return checkNoNeedToDisplayBothValues("asList()").that(Ints.asList(actual));
+    }
 }

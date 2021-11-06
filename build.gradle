@@ -26,7 +26,6 @@ javadoc {
 
 repositories {
     mavenCentral()
-    maven { url 'https://s01.oss.sonatype.org/content/repositories/iogithubjbock-java-1100' }
 }
 
 tasks.withType(AbstractArchiveTask) {
@@ -43,6 +42,8 @@ dependencies {
     implementation('junit:junit:4.13.2')
     implementation('io.github.jbock-java:guava:31.0.1.0')
     testImplementation('org.junit.vintage:junit-vintage-engine:5.8.1')
+    testImplementation('com.google.guava:guava-testlib:31.0.1-jre')
+    testImplementation('com.google.testing.compile:compile-testing:0.19')
 }
 
 jar {

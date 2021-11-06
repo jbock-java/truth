@@ -15,11 +15,11 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Tests for {@link com.google.common.truth.PrimitiveCharArraySubject}.
@@ -29,72 +29,72 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class PrimitiveCharArraySubjectTest extends BaseSubjectTestCase {
 
-  @Test
-  public void isEqualTo() {
-    assertThat(array('a', 'q')).isEqualTo(array('a', 'q'));
-  }
+    @Test
+    public void isEqualTo() {
+        assertThat(array('a', 'q')).isEqualTo(array('a', 'q'));
+    }
 
-  @SuppressWarnings("TruthSelfEquals")
-  @Test
-  public void isEqualTo_Same() {
-    char[] same = array('a', 'q');
-    assertThat(same).isEqualTo(same);
-  }
+    @SuppressWarnings("TruthSelfEquals")
+    @Test
+    public void isEqualTo_Same() {
+        char[] same = array('a', 'q');
+        assertThat(same).isEqualTo(same);
+    }
 
-  @Test
-  public void asList() {
-    assertThat(array('a', 'q', 'z')).asList().containsAtLeast('a', 'z');
-  }
+    @Test
+    public void asList() {
+        assertThat(array('a', 'q', 'z')).asList().containsAtLeast('a', 'z');
+    }
 
-  @Test
-  public void isEqualTo_Fail_UnequalOrdering() {
-    expectFailureWhenTestingThat(array('a', 'q')).isEqualTo(array('q', 'a'));
-    assertFailureKeys("expected", "but was", "differs at index");
-    assertFailureValue("expected", "[q, a]");
-    assertFailureValue("but was", "[a, q]");
-    assertFailureValue("differs at index", "[0]");
-  }
+    @Test
+    public void isEqualTo_Fail_UnequalOrdering() {
+        expectFailureWhenTestingThat(array('a', 'q')).isEqualTo(array('q', 'a'));
+        assertFailureKeys("expected", "but was", "differs at index");
+        assertFailureValue("expected", "[q, a]");
+        assertFailureValue("but was", "[a, q]");
+        assertFailureValue("differs at index", "[0]");
+    }
 
-  @Test
-  public void isEqualTo_Fail_DifferentKindOfArray() {
-    expectFailureWhenTestingThat(array('a', 'q')).isEqualTo(new int[] {});
-    assertFailureKeys("expected", "but was", "wrong type", "expected", "but was");
-    assertFailureValueIndexed("expected", 1, "int[]");
-    assertFailureValueIndexed("but was", 1, "char[]");
-  }
+    @Test
+    public void isEqualTo_Fail_DifferentKindOfArray() {
+        expectFailureWhenTestingThat(array('a', 'q')).isEqualTo(new int[]{});
+        assertFailureKeys("expected", "but was", "wrong type", "expected", "but was");
+        assertFailureValueIndexed("expected", 1, "int[]");
+        assertFailureValueIndexed("but was", 1, "char[]");
+    }
 
-  @Test
-  public void isNotEqualTo_SameLengths() {
-    assertThat(array('a', 'q')).isNotEqualTo(array('q', 'a'));
-  }
+    @Test
+    public void isNotEqualTo_SameLengths() {
+        assertThat(array('a', 'q')).isNotEqualTo(array('q', 'a'));
+    }
 
-  @Test
-  public void isNotEqualTo_DifferentLengths() {
-    assertThat(array('a', 'q')).isNotEqualTo(array('q', 'a', 'b'));
-  }
+    @Test
+    public void isNotEqualTo_DifferentLengths() {
+        assertThat(array('a', 'q')).isNotEqualTo(array('q', 'a', 'b'));
+    }
 
-  @Test
-  public void isNotEqualTo_DifferentTypes() {
-    assertThat(array('a', 'q')).isNotEqualTo(new Object());
-  }
+    @Test
+    public void isNotEqualTo_DifferentTypes() {
+        assertThat(array('a', 'q')).isNotEqualTo(new Object());
+    }
 
-  @Test
-  public void isNotEqualTo_FailEquals() {
-    expectFailureWhenTestingThat(array('a', 'q')).isNotEqualTo(array('a', 'q'));
-  }
+    @Test
+    public void isNotEqualTo_FailEquals() {
+        expectFailureWhenTestingThat(array('a', 'q')).isNotEqualTo(array('a', 'q'));
+    }
 
-  @SuppressWarnings("TruthSelfEquals")
-  @Test
-  public void isNotEqualTo_FailSame() {
-    char[] same = array('a', 'q');
-    expectFailureWhenTestingThat(same).isNotEqualTo(same);
-  }
+    @SuppressWarnings("TruthSelfEquals")
+    @Test
+    public void isNotEqualTo_FailSame() {
+        char[] same = array('a', 'q');
+        expectFailureWhenTestingThat(same).isNotEqualTo(same);
+    }
 
-  private static char[] array(char... ts) {
-    return ts;
-  }
+    private static char[] array(char... ts) {
+        return ts;
+    }
 
-  private PrimitiveCharArraySubject expectFailureWhenTestingThat(char[] actual) {
-    return expectFailure.whenTesting().that(actual);
-  }
+    private PrimitiveCharArraySubject expectFailureWhenTestingThat(char[] actual) {
+        return expectFailure.whenTesting().that(actual);
+    }
 }

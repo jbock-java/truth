@@ -17,36 +17,34 @@ package com.google.common.truth;
 
 import static com.google.common.truth.Fact.simpleFact;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 /**
  * Propositions for boolean subjects.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
 public final class BooleanSubject extends Subject {
-  private final Boolean actual;
+    private final Boolean actual;
 
-  BooleanSubject(FailureMetadata metadata, @Nullable Boolean actual) {
-    super(metadata, actual);
-    this.actual = actual;
-  }
-
-  /** Fails if the subject is false or {@code null}. */
-  public void isTrue() {
-    if (actual == null) {
-      isEqualTo(true); // fails
-    } else if (!actual) {
-      failWithoutActual(simpleFact("expected to be true"));
+    BooleanSubject(FailureMetadata metadata, Boolean actual) {
+        super(metadata, actual);
+        this.actual = actual;
     }
-  }
 
-  /** Fails if the subject is true or {@code null}. */
-  public void isFalse() {
-    if (actual == null) {
-      isEqualTo(false); // fails
-    } else if (actual) {
-      failWithoutActual(simpleFact("expected to be false"));
+    /** Fails if the subject is false or {@code null}. */
+    public void isTrue() {
+        if (actual == null) {
+            isEqualTo(true); // fails
+        } else if (!actual) {
+            failWithoutActual(simpleFact("expected to be true"));
+        }
     }
-  }
+
+    /** Fails if the subject is true or {@code null}. */
+    public void isFalse() {
+        if (actual == null) {
+            isEqualTo(false); // fails
+        } else if (actual) {
+            failWithoutActual(simpleFact("expected to be false"));
+        }
+    }
 }

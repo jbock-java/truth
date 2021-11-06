@@ -15,14 +15,14 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
-
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 /**
  * Tests for Multiset Subjects.
@@ -32,24 +32,24 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class MultisetSubjectTest extends BaseSubjectTestCase {
 
-  @Test
-  public void hasCount() {
-    ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
-    assertThat(multiset).hasCount("kurt", 2);
-    assertThat(multiset).hasCount("kluever", 1);
-    assertThat(multiset).hasCount("alfred", 0);
+    @Test
+    public void hasCount() {
+        ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
+        assertThat(multiset).hasCount("kurt", 2);
+        assertThat(multiset).hasCount("kluever", 1);
+        assertThat(multiset).hasCount("alfred", 0);
 
-    assertWithMessage("name").that(multiset).hasCount("kurt", 2);
-  }
+        assertWithMessage("name").that(multiset).hasCount("kurt", 2);
+    }
 
-  @Test
-  public void hasCountFail() {
-    ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
-    expectFailureWhenTestingThat(multiset).hasCount("kurt", 3);
-    assertFailureValue("value of", "multiset.count(kurt)");
-  }
+    @Test
+    public void hasCountFail() {
+        ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
+        expectFailureWhenTestingThat(multiset).hasCount("kurt", 3);
+        assertFailureValue("value of", "multiset.count(kurt)");
+    }
 
-  private MultisetSubject expectFailureWhenTestingThat(Multiset<?> actual) {
-    return expectFailure.whenTesting().that(actual);
-  }
+    private MultisetSubject expectFailureWhenTestingThat(Multiset<?> actual) {
+        return expectFailure.whenTesting().that(actual);
+    }
 }

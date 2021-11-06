@@ -17,7 +17,7 @@
 package com.google.common.truth;
 
 final class TestPlatform {
-  static boolean isGwt() {
-    return false;
-  }
+    static boolean isGwt() {
+        return false;
+    }
 }

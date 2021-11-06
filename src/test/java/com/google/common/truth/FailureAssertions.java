@@ -19,17 +19,18 @@ import static com.google.common.truth.ExpectFailure.assertThat;
 
 /** Convenience methods for Java 8 Truth Subject tests, similar to BaseSubjectTestCase. */
 final class FailureAssertions {
-  static void assertFailureKeys(AssertionError e, String... keys) {
-    assertThat(e).factKeys().containsExactlyElementsIn(keys).inOrder();
-  }
+    static void assertFailureKeys(AssertionError e, String... keys) {
+        assertThat(e).factKeys().containsExactlyElementsIn(keys).inOrder();
+    }
 
-  static void assertFailureValue(AssertionError e, String key, String value) {
-    assertThat(e).factValue(key).isEqualTo(value);
-  }
+    static void assertFailureValue(AssertionError e, String key, String value) {
+        assertThat(e).factValue(key).isEqualTo(value);
+    }
 
-  static void assertFailureValueIndexed(AssertionError e, String key, int index, String value) {
-    assertThat(e).factValue(key, index).isEqualTo(value);
-  }
+    static void assertFailureValueIndexed(AssertionError e, String key, int index, String value) {
+        assertThat(e).factValue(key, index).isEqualTo(value);
+    }
 
-  private FailureAssertions() {}
+    private FailureAssertions() {
+    }
 }

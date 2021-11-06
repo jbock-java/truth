@@ -27,9 +27,9 @@ import com.google.common.truth.extension.Employee.Location;
  * demonstrate how to use a custom Truth subject.
  */
 public interface HrDatabase {
-  Employee get(long id);
+    Employee get(long id);
 
-  void relocate(long id, Location location);
+    void relocate(long id, Location location);
 
-  ImmutableSet<Employee> getByLocation(Location location);
+    ImmutableSet<Employee> getByLocation(Location location);
 }

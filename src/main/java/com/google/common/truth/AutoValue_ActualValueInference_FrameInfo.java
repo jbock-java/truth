@@ -2,8 +2,6 @@ package com.google.common.truth;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.List;
-
 final class AutoValue_ActualValueInference_FrameInfo extends ActualValueInference.FrameInfo {
 
     private final ImmutableList<ActualValueInference.StackEntry> locals;

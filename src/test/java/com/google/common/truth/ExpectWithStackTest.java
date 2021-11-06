@@ -15,9 +15,6 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -26,135 +23,140 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.Statement;
 
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
+
 @RunWith(JUnit4.class)
 public class ExpectWithStackTest {
-  private final Expect expectWithTrace = Expect.create();
+    private final Expect expectWithTrace = Expect.create();
 
-  @Rule public final TestRuleVerifier verifyAssertionError = new TestRuleVerifier(expectWithTrace);
+    @Rule
+    public final TestRuleVerifier verifyAssertionError = new TestRuleVerifier(expectWithTrace);
 
-  @Test
-  public void testExpectTrace_simpleCase() {
-    verifyAssertionError.setErrorVerifier(
-        new ErrorVerifier() {
-          @Override
-          public void verify(AssertionError expected) {
-            assertThat(expected.getStackTrace()).hasLength(0);
-            assertThat(expected).hasMessageThat().startsWith("3 expectations failed:");
-          }
-        });
+    @Test
+    public void testExpectTrace_simpleCase() {
+        verifyAssertionError.setErrorVerifier(
+                new ErrorVerifier() {
+                    @Override
+                    public void verify(AssertionError expected) {
+                        assertThat(expected.getStackTrace()).hasLength(0);
+                        assertThat(expected).hasMessageThat().startsWith("3 expectations failed:");
+                    }
+                });
 
-    expectWithTrace.that(true).isFalse();
-    expectWithTrace.that("Hello").isNull();
-    expectWithTrace.that(1).isEqualTo(2);
-  }
-
-  @Test
-  public void testExpectTrace_loop() {
-    verifyAssertionError.setErrorVerifier(
-        new ErrorVerifier() {
-          @Override
-          public void verify(AssertionError expected) {
-            assertThat(expected.getStackTrace()).hasLength(0);
-            assertThat(expected).hasMessageThat().startsWith("4 expectations failed:");
-            assertWithMessage("test method name should only show up once with following omitted")
-                .that(expected.getMessage().split("testExpectTrace_loop"))
-                .hasLength(2);
-          }
-        });
-
-    for (int i = 0; i < 4; i++) {
-      expectWithTrace.that(true).isFalse();
-    }
-  }
-
-  @Test
-  public void testExpectTrace_callerException() {
-    verifyAssertionError.setErrorVerifier(
-        new ErrorVerifier() {
-          @Override
-          public void verify(AssertionError expected) {
-            assertThat(expected.getStackTrace()).hasLength(0);
-            assertThat(expected).hasMessageThat().startsWith("2 expectations failed:");
-          }
-        });
-
-    expectWithTrace.that(true).isFalse();
-    expectWithTrace
-        .that(alwaysFailWithCause(getFirstException("First", getSecondException("Second", null))))
-        .isEqualTo(5);
-  }
-
-  @Test
-  public void testExpectTrace_onlyCallerException() {
-    verifyAssertionError.setErrorVerifier(
-        new ErrorVerifier() {
-          @Override
-          public void verify(AssertionError expected) {
-            assertWithMessage("Should throw exception as it is if only caller exception")
-                .that(expected.getStackTrace().length)
-                .isAtLeast(2);
-          }
-        });
-
-    expectWithTrace
-        .that(alwaysFailWithCause(getFirstException("First", getSecondException("Second", null))))
-        .isEqualTo(5);
-  }
-
-  private static long alwaysFailWithCause(Throwable throwable) {
-    throw new AssertionError("Always fail", throwable);
-  }
-
-  private static Exception getFirstException(String message, Throwable cause) {
-    if (cause != null) {
-      return new RuntimeException(message, cause);
-    } else {
-      return new RuntimeException(message);
-    }
-  }
-
-  private static Exception getSecondException(String message, Throwable cause) {
-    if (cause != null) {
-      return new RuntimeException(message, cause);
-    } else {
-      return new RuntimeException(message);
-    }
-  }
-
-  private static final class TestRuleVerifier implements TestRule {
-    private final TestRule ruleToVerify;
-    private ErrorVerifier errorVerifier = NO_VERIFIER;
-
-    TestRuleVerifier(TestRule ruleToVerify) {
-      this.ruleToVerify = ruleToVerify;
+        expectWithTrace.that(true).isFalse();
+        expectWithTrace.that("Hello").isNull();
+        expectWithTrace.that(1).isEqualTo(2);
     }
 
-    void setErrorVerifier(ErrorVerifier verifier) {
-      this.errorVerifier = verifier;
-    }
+    @Test
+    public void testExpectTrace_loop() {
+        verifyAssertionError.setErrorVerifier(
+                new ErrorVerifier() {
+                    @Override
+                    public void verify(AssertionError expected) {
+                        assertThat(expected.getStackTrace()).hasLength(0);
+                        assertThat(expected).hasMessageThat().startsWith("4 expectations failed:");
+                        assertWithMessage("test method name should only show up once with following omitted")
+                                .that(expected.getMessage().split("testExpectTrace_loop"))
+                                .hasLength(2);
+                    }
+                });
 
-    @Override
-    public Statement apply(final Statement base, final Description description) {
-      return new Statement() {
-        @Override
-        public void evaluate() throws Throwable {
-          try {
-            ruleToVerify.apply(base, description).evaluate();
-          } catch (AssertionError caught) {
-            errorVerifier.verify(caught);
-          }
+        for (int i = 0; i < 4; i++) {
+            expectWithTrace.that(true).isFalse();
         }
-      };
     }
-  }
 
-  interface ErrorVerifier {
-    void verify(AssertionError error);
-  }
+    @Test
+    public void testExpectTrace_callerException() {
+        verifyAssertionError.setErrorVerifier(
+                new ErrorVerifier() {
+                    @Override
+                    public void verify(AssertionError expected) {
+                        assertThat(expected.getStackTrace()).hasLength(0);
+                        assertThat(expected).hasMessageThat().startsWith("2 expectations failed:");
+                    }
+                });
 
-  private static final ErrorVerifier NO_VERIFIER =
-      new ErrorVerifier() {
+        expectWithTrace.that(true).isFalse();
+        expectWithTrace
+                .that(alwaysFailWithCause(getFirstException("First", getSecondException("Second", null))))
+                .isEqualTo(5);
+    }
+
+    @Test
+    public void testExpectTrace_onlyCallerException() {
+        verifyAssertionError.setErrorVerifier(
+                new ErrorVerifier() {
+                    @Override
+                    public void verify(AssertionError expected) {
+                        assertWithMessage("Should throw exception as it is if only caller exception")
+                                .that(expected.getStackTrace().length)
+                                .isAtLeast(2);
+                    }
+                });
+
+        expectWithTrace
+                .that(alwaysFailWithCause(getFirstException("First", getSecondException("Second", null))))
+                .isEqualTo(5);
+    }
+
+    private static long alwaysFailWithCause(Throwable throwable) {
+        throw new AssertionError("Always fail", throwable);
+    }
+
+    private static Exception getFirstException(String message, Throwable cause) {
+        if (cause != null) {
+            return new RuntimeException(message, cause);
+        } else {
+            return new RuntimeException(message);
+        }
+    }
+
+    private static Exception getSecondException(String message, Throwable cause) {
+        if (cause != null) {
+            return new RuntimeException(message, cause);
+        } else {
+            return new RuntimeException(message);
+        }
+    }
+
+    private static final class TestRuleVerifier implements TestRule {
+        private final TestRule ruleToVerify;
+        private ErrorVerifier errorVerifier = NO_VERIFIER;
+
+        TestRuleVerifier(TestRule ruleToVerify) {
+            this.ruleToVerify = ruleToVerify;
+        }
+
+        void setErrorVerifier(ErrorVerifier verifier) {
+            this.errorVerifier = verifier;
+        }
+
         @Override
-        public void verify(AssertionError expected) {}
-      };
+        public Statement apply(final Statement base, final Description description) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    try {
+                        ruleToVerify.apply(base, description).evaluate();
+                    } catch (AssertionError caught) {
+                        errorVerifier.verify(caught);
+                    }
+                }
+            };
+        }
+    }
+
+    interface ErrorVerifier {
+        void verify(AssertionError error);
+    }
+
+    private static final ErrorVerifier NO_VERIFIER =
+            new ErrorVerifier() {
+                @Override
+                public void verify(AssertionError expected) {
+                }
+            };
 }

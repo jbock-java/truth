@@ -15,30 +15,27 @@
  */
 package com.google.common.truth.extension;
 
-import com.google.auto.value.AutoValue;
-
 /** Represents an employee. */
-@AutoValue
 public abstract class Employee {
-  public static Employee create(
-      String username, long id, String name, Location location, boolean isCeo) {
-    return new AutoValue_Employee(username, id, name, location, isCeo);
-  }
+    public static Employee create(
+            String username, long id, String name, Location location, boolean isCeo) {
+        return new AutoValue_Employee(username, id, name, location, isCeo);
+    }
 
-  abstract String username();
+    abstract String username();
 
-  abstract long id();
+    abstract long id();
 
-  abstract String name();
+    abstract String name();
 
-  abstract Location location();
+    abstract Location location();
 
-  abstract boolean isCeo();
+    abstract boolean isCeo();
 
-  public enum Location {
-    MTV,
-    PIT,
-    CHI,
-    NYC
-  }
+    public enum Location {
+        MTV,
+        PIT,
+        CHI,
+        NYC
+    }
 }

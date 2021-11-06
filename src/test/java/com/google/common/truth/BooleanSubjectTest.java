@@ -15,11 +15,11 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Tests for Boolean Subjects.
@@ -29,45 +29,45 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class BooleanSubjectTest extends BaseSubjectTestCase {
 
-  @Test
-  public void isTrue() {
-    assertThat(true).isTrue();
-  }
+    @Test
+    public void isTrue() {
+        assertThat(true).isTrue();
+    }
 
-  @Test
-  public void nullIsTrueFailing() {
-    expectFailureWhenTestingThat(null).isTrue();
-    assertFailureKeys("expected", "but was");
-    assertFailureValue("expected", "true");
-    assertFailureValue("but was", "null");
-  }
+    @Test
+    public void nullIsTrueFailing() {
+        expectFailureWhenTestingThat(null).isTrue();
+        assertFailureKeys("expected", "but was");
+        assertFailureValue("expected", "true");
+        assertFailureValue("but was", "null");
+    }
 
-  @Test
-  public void nullIsFalseFailing() {
-    expectFailureWhenTestingThat(null).isFalse();
-    assertFailureKeys("expected", "but was");
-    assertFailureValue("expected", "false");
-    assertFailureValue("but was", "null");
-  }
+    @Test
+    public void nullIsFalseFailing() {
+        expectFailureWhenTestingThat(null).isFalse();
+        assertFailureKeys("expected", "but was");
+        assertFailureValue("expected", "false");
+        assertFailureValue("but was", "null");
+    }
 
-  @Test
-  public void isTrueFailing() {
-    expectFailureWhenTestingThat(false).isTrue();
-    assertFailureKeys("expected to be true");
-  }
+    @Test
+    public void isTrueFailing() {
+        expectFailureWhenTestingThat(false).isTrue();
+        assertFailureKeys("expected to be true");
+    }
 
-  @Test
-  public void isFalse() {
-    assertThat(false).isFalse();
-  }
+    @Test
+    public void isFalse() {
+        assertThat(false).isFalse();
+    }
 
-  @Test
-  public void isFalseFailing() {
-    expectFailureWhenTestingThat(true).isFalse();
-    assertFailureKeys("expected to be false");
-  }
+    @Test
+    public void isFalseFailing() {
+        expectFailureWhenTestingThat(true).isFalse();
+        assertFailureKeys("expected to be false");
+    }
 
-  private BooleanSubject expectFailureWhenTestingThat(Boolean actual) {
-    return expectFailure.whenTesting().that(actual);
-  }
+    private BooleanSubject expectFailureWhenTestingThat(Boolean actual) {
+        return expectFailure.whenTesting().that(actual);
+    }
 }
