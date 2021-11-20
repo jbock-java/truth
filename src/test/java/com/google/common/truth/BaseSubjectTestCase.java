@@ -19,26 +19,63 @@ import static com.google.common.truth.ExpectFailure.assertThat;
 
 /** Base class for truth subject tests to extend. */
 abstract class BaseSubjectTestCase extends PlatformBaseSubjectTestCase {
+    final void assertFailureKeys(
+            AssertionError failure,
+            String... keys) {
+        assertThat(failure).factKeys().containsExactlyElementsIn(keys).inOrder();
+    }
+
+    /**
+     * @deprecated use {@link #assertFailureKeys(AssertionError, String...)}
+     * instead
+     */
+    @Deprecated(forRemoval = true)
     final void assertFailureKeys(String... keys) {
-        assertThatFailure().factKeys().containsExactlyElementsIn(keys).inOrder();
+        throw new UnsupportedOperationException();
     }
 
     final void assertFailureValue(
-            ComparisonFailureWithFacts failure,
+            AssertionError failure,
             String key,
             String value) {
         assertThat(failure).factValue(key).isEqualTo(value);
     }
 
+    /**
+     * @deprecated use {@link #assertFailureValue(AssertionError, String, String)}
+     * instead
+     */
+    @Deprecated(forRemoval = true)
     final void assertFailureValue(String key, String value) {
-        assertThatFailure().factValue(key).isEqualTo(value);
+        throw new UnsupportedOperationException();
     }
 
+    final void assertFailureValueIndexed(
+            AssertionError failure,
+            String key,
+            int index,
+            String value) {
+        assertThatFailure(failure).factValue(key, index).isEqualTo(value);
+    }
+
+    /**
+     * @deprecated use {@link #assertFailureValueIndexed(AssertionError, String, int, String)}
+     * instead
+     */
+    @Deprecated(forRemoval = true)
     final void assertFailureValueIndexed(String key, int index, String value) {
-        assertThatFailure().factValue(key, index).isEqualTo(value);
+        throw new UnsupportedOperationException();
     }
 
+    final TruthFailureSubject assertThatFailure(AssertionError failure) {
+        return assertThat(failure);
+    }
+
+    /**
+     * @deprecated use {@link #assertThatFailure(AssertionError)} instead
+     */
+    @Deprecated(forRemoval = true)
     final TruthFailureSubject assertThatFailure() {
-        return assertThat(expectFailure.getFailure());
+        throw new UnsupportedOperationException();
     }
 }
