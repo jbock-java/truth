@@ -32,6 +32,7 @@ import static com.google.common.truth.TestCorrespondences.WITHIN_10_OF;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link Map} subjects.
@@ -1143,12 +1144,15 @@ public class MapSubjectTest extends BaseSubjectTestCase {
     @Test
     public void failMapContainsKeyWithValue() {
         ImmutableMap<String, String> actual = ImmutableMap.of("a", "A");
-        expectFailureWhenTestingThat(actual).containsEntry("a", "a");
-        assertFailureValue("value of", "map.get(a)");
-        assertFailureValue("expected", "a");
-        assertFailureValue("but was", "A");
-        assertFailureValue("map was", "{a=A}");
-        assertThat(expectFailure.getFailure())
+        ComparisonFailureWithFacts failure = assertThrows(
+                ComparisonFailureWithFacts.class,
+                () -> assertThat(actual).containsEntry("a", "a"));
+        expectFailureWhenTestingThat(failure, actual).containsEntry("a", "a");
+        assertFailureValue(failure, "value of", "map.get(a)");
+        assertFailureValue(failure, "expected", "a");
+        assertFailureValue(failure, "but was", "A");
+        assertFailureValue(failure, "map was", "{a=A}");
+        assertThat(failure)
                 .hasMessageThat()
                 .doesNotContain(KEY_IS_PRESENT_WITH_DIFFERENT_VALUE);
     }
@@ -2160,6 +2164,12 @@ public class MapSubjectTest extends BaseSubjectTestCase {
         assertFailureValue("expected value", "200");
         assertFailureValue("but got value", "201");
         assertFailureValue("diff", "1");
+    }
+
+    private MapSubject expectFailureWhenTestingThat(
+            ComparisonFailureWithFacts failure,
+            Map<?, ?> actual) {
+        return expectFailure.whenTesting().that(actual);
     }
 
     private MapSubject expectFailureWhenTestingThat(Map<?, ?> actual) {

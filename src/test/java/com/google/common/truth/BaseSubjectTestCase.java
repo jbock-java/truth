@@ -23,6 +23,13 @@ abstract class BaseSubjectTestCase extends PlatformBaseSubjectTestCase {
         assertThatFailure().factKeys().containsExactlyElementsIn(keys).inOrder();
     }
 
+    final void assertFailureValue(
+            ComparisonFailureWithFacts failure,
+            String key,
+            String value) {
+        assertThat(failure).factValue(key).isEqualTo(value);
+    }
+
     final void assertFailureValue(String key, String value) {
         assertThatFailure().factValue(key).isEqualTo(value);
     }
