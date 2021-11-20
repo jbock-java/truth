@@ -24,7 +24,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static com.google.common.truth.ComparisonFailures.makeComparisonFailureFacts;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.LazyMessage.evaluateAll;
-import static com.google.common.truth.Platform.cleanStackTrace;
 import static com.google.common.truth.Platform.inferDescription;
 import static com.google.common.truth.Platform.makeComparisonFailure;
 import static com.google.common.truth.SubjectUtils.append;
@@ -192,7 +191,6 @@ public final class FailureMetadata {
     }
 
     private void doFail(AssertionError failure) {
-        cleanStackTrace(failure);
         strategy.fail(failure);
     }
 

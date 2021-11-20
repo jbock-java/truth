@@ -25,8 +25,6 @@ package com.google.common.truth;
  *
  * <ul>
  *   <li>{@linkplain Truth#assert_ assertions}
- *   <li>{@linkplain Expect expectations}
- *   <li>{@linkplain TruthJUnit#assume assumptions}
  *   <li>(and some useful only to people who implement custom subjects, described below)
  * </ul>
  *
@@ -39,7 +37,6 @@ package com.google.common.truth;
  * consider these alternatives:
  *
  * <ul>
- *   <li>To test a custom subject, use {@link ExpectFailure}.
  *   <li>To create subjects for other objects related to your actual value (for chained assertions),
  *       use {@link Subject#check(String, Object...)}, which preserves the existing {@code
  *       FailureStrategy} and other context.
@@ -60,8 +57,7 @@ public interface FailureStrategy {
      * <ul>
      *   <li>message: {@link Throwable#getMessage getMessage()}
      *   <li>cause: {@link Throwable#getCause getCause()}
-     *   <li>actual and expected values: {@link org.junit.ComparisonFailure#getActual}, {@link
-     *       org.junit.ComparisonFailure#getExpected}
+     *   <li>actual and expected values
      *   <li>stack trace: {@link Throwable#getStackTrace}
      * </ul>
      *

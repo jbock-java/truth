@@ -19,7 +19,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import org.junit.ComparisonFailure;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -69,66 +68,13 @@ final class Platform {
         }
     }
 
-    static void cleanStackTrace(Throwable throwable) {
-        StackTraceCleaner.cleanStackTrace(throwable);
-    }
-
     /**
      * Tries to infer a name for the root actual value from the bytecode. The "root" actual value is
      * the value passed to {@code assertThat} or {@code that}, as distinct from any later actual
      * values produced by chaining calls like {@code hasMessageThat}.
      */
     static String inferDescription() {
-        if (isInferDescriptionDisabled()) {
-            return null;
-        }
-
-        AssertionError stack = new AssertionError();
-        /*
-         * cleanStackTrace() lets users turn off cleaning, so it's possible that we'll end up operating
-         * on an uncleaned stack trace. That should be mostly harmless. We could try force-enabling
-         * cleaning for inferDescription() only, but if anyone is turning it off, it might be because of
-         * bugs or confusing stack traces. Force-enabling it here might trigger those same problems.
-         */
-        cleanStackTrace(stack);
-        if (stack.getStackTrace().length == 0) {
-            return null;
-        }
-        StackTraceElement top = stack.getStackTrace()[0];
-        try {
-            /*
-             * Invoke ActualValueInference reflectively so that Truth can be compiled and run without its
-             * dependency, ASM, on the classpath.
-             *
-             * Also, mildly obfuscate the class name that we're looking up. The obfuscation prevents R8
-             * from detecting the usage of ActualValueInference. That in turn lets users exclude it from
-             * the compile-time classpath if they want. (And then *that* probably makes it easier and/or
-             * safer for R8 users (i.e., Android users) to exclude it from the *runtime* classpath. It
-             * would do no good there, anyway, since ASM won't find any .class files to load under
-             * Android. Perhaps R8 will even omit ASM automatically once it detects that it's "unused?")
-             *
-             * TODO(cpovirk): Add a test that runs R8 without ASM present.
-             */
-            String clazz =
-                    Joiner.on('.').join("com", "google", "common", "truth", "ActualValueInference");
-            return (String)
-                    Class.forName(clazz)
-                            .getDeclaredMethod("describeActualValue", String.class, String.class, int.class)
-                            .invoke(null, top.getClassName(), top.getMethodName(), top.getLineNumber());
-        } catch (IllegalAccessException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | ClassNotFoundException
-                | LinkageError
-                | RuntimeException e) {
-            // Some possible reasons:
-            // - Inside Google, we omit ActualValueInference entirely under Android.
-            // - Outside Google, someone is running without ASM on the classpath.
-            // - There's a bug.
-            // - We don't handle a new bytecode feature.
-            // TODO(cpovirk): Log a warning, at least for non-ClassNotFoundException, non-LinkageError?
-            return null;
-        }
+        return null;
     }
 
     private static final String DIFF_KEY = "diff (-expected +actual)";
@@ -241,18 +187,6 @@ final class Platform {
     /** Tests if current platform is Android. */
     static boolean isAndroid() {
         return System.getProperty("java.runtime.name").contains("Android");
-    }
-
-    // TODO(cpovirk): Share code with StackTraceCleaner?
-    private static boolean isInferDescriptionDisabled() {
-        // Reading system properties might be forbidden.
-        try {
-            return Boolean.parseBoolean(
-                    System.getProperty("com.google.common.truth.disable_infer_description"));
-        } catch (SecurityException e) {
-            // Hope for the best.
-            return false;
-        }
     }
 
     static AssertionError makeComparisonFailure(
