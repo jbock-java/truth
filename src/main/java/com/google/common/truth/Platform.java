@@ -155,17 +155,26 @@ final class Platform {
         return ImmutableList.copyOf(Splitter.onPattern("\r?\n").split(s));
     }
 
-    abstract static class PlatformComparisonFailure extends ComparisonFailure {
+    abstract static class PlatformComparisonFailure extends AssertionError {
         private final String message;
+
+        /*
+         * We have to use the f prefix until the next major release to ensure
+         * serialization compatibility.
+         * See https://github.com/junit-team/junit4/issues/976
+         */
+        private final String fExpected;
+        private final String fActual;
 
         /** Separate cause field, in case initCause() fails. */
         private final Throwable cause;
 
         PlatformComparisonFailure(
                 String message, String expected, String actual, Throwable cause) {
-            super(message, expected, actual);
             this.message = message;
             this.cause = cause;
+            this.fActual = actual;
+            this.fExpected = expected;
 
             try {
                 initCause(cause);
@@ -177,6 +186,24 @@ final class Platform {
         @Override
         public final String getMessage() {
             return message;
+        }
+
+        /**
+         * Returns the actual string value
+         *
+         * @return the actual string value
+         */
+        public String getActual() {
+            return fActual;
+        }
+
+        /**
+         * Returns the expected string value
+         *
+         * @return the expected string value
+         */
+        public String getExpected() {
+            return fExpected;
         }
 
         @Override
