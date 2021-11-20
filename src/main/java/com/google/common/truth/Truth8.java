@@ -35,9 +35,6 @@ import static com.google.common.truth.Truth.assertAbout;
  * assertWithMessage(...).about(}{@link OptionalSubject#optionals optionals()}{@code ).that(...)}
  * (or similarly for the other types).
  *
- * <p>Likewise, to use different failure strategies like {@link Expect}, use {@code
- * expect.about(}{@link OptionalSubject#optionals optionals()}{@code ).that(...)}.
- *
  * <p>For more information about combining different messages, failure strategies, and subjects, see
  * <a href="https://truth.dev/faq#full-chain">How do I specify a custom message/failure
  * behavior/{@code Subject} type?</a> in the Truth FAQ.

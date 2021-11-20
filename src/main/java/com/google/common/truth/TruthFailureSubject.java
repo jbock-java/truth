@@ -31,8 +31,7 @@ import static com.google.common.truth.Fact.simpleFact;
  * that are set by other subjects that the main subject delegates to. This keeps tests shorter and
  * less fragile.
  *
- * <p>To create an instance, call {@link ExpectFailure#assertThat}. Or, if you're using a custom
- * message or failure strategy, pass {@link #truthFailures} to your {@code about(...)} call.
+ * <p>To create an instance, pass {@link #truthFailures} to your {@code about(...)} call.
  *
  * <p>This class accepts any {@code AssertionError} value, but it will throw an exception if a
  * caller tries to access the facts of an error that wasn't produced by Truth.
@@ -44,8 +43,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
                             + "use factKeys().contains(...) or a similar method.");
 
     /**
-     * Factory for creating {@link TruthFailureSubject} instances. Most users will just use {@link
-     * ExpectFailure#assertThat}.
+     * Factory for creating {@link TruthFailureSubject} instances.
      */
     public static Factory<TruthFailureSubject, AssertionError> truthFailures() {
         return FACTORY;

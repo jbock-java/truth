@@ -41,8 +41,6 @@ import static com.google.common.truth.SubjectUtils.concat;
  *   <li>If you're writing a test: {@link Truth#assertAbout(Subject.Factory)}{@code .that(...)}
  *   <li>If you're creating a derived subject from within another subject: {@code
  *       check(...).about(...).that(...)}
- *   <li>If you're testing your subject to verify that assertions fail when they should: {@link
- *       ExpectFailure}
  * </ul>
  *
  * <p>(One exception: Implementations of {@link CustomSubjectBuilder} do directly call constructors,
