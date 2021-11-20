@@ -16,9 +16,7 @@
 package com.google.common.truth;
 
 import com.google.testing.compile.JavaFileObjects;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 
@@ -30,7 +28,6 @@ import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
 public class ComparableSubjectCompileTest {
     @Test
     public void comparableMixedTypesDontCompile() {

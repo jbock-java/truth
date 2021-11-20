@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.junit.ComparisonFailure;
-import org.junit.rules.TestRule;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -216,17 +215,6 @@ final class Platform {
     static boolean isAndroid() {
         return System.getProperty("java.runtime.name").contains("Android");
     }
-
-    /**
-     * Wrapping interface of {@link TestRule} to be used within truth.
-     *
-     * <p>Note that the sole purpose of this interface is to allow it to be swapped in GWT
-     * implementation.
-     */
-    interface JUnitTestRule extends TestRule {
-    }
-
-    static final String EXPECT_FAILURE_WARNING_IF_GWT = "";
 
     // TODO(cpovirk): Share code with StackTraceCleaner?
     private static boolean isInferDescriptionDisabled() {

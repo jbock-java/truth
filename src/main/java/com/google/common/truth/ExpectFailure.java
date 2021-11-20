@@ -17,6 +17,7 @@ package com.google.common.truth;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.truth.Truth.SimpleAssertionError;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -64,7 +65,7 @@ import static com.google.common.truth.TruthFailureSubject.truthFailures;
  * also checks that the assertion you're testing uses the supplied {@link FailureStrategy} and calls
  * {@link FailureStrategy#fail} only once.
  */
-public final class ExpectFailure implements Platform.JUnitTestRule {
+public final class ExpectFailure implements TestRule {
     private final FailureStrategy strategy =
             new FailureStrategy() {
                 @Override
@@ -126,8 +127,7 @@ public final class ExpectFailure implements Platform.JUnitTestRule {
     void ensureFailureCaught() {
         if (failureExpected && failure == null) {
             throw new AssertionError(
-                    "ExpectFailure.whenTesting() invoked, but no failure was caught."
-                            + Platform.EXPECT_FAILURE_WARNING_IF_GWT);
+                    "ExpectFailure.whenTesting() invoked, but no failure was caught.");
         }
     }
 

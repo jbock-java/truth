@@ -41,6 +41,7 @@ dependencies {
     implementation('org.ow2.asm:asm:9.2')
     api('junit:junit:4.13.2')
     api('io.github.jbock-java:guava:31.0.1.0')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.8.1')
     testImplementation('org.junit.vintage:junit-vintage-engine:5.8.1')
     testImplementation('com.google.guava:guava-testlib:31.0.1-jre')
     testImplementation('com.google.testing.compile:compile-testing:0.19')

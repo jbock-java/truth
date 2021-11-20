@@ -19,9 +19,7 @@ package com.google.common.truth;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.base.Strings.repeat;
 import static com.google.common.testing.SerializableTester.reserialize;
@@ -31,7 +29,6 @@ import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Truth.assertThat;
 
 /** Test for {@link ComparisonFailureWithFacts}. */
-@RunWith(JUnit4.class)
 public class ComparisonFailureWithFactsTest {
     @Test
     public void formatAllDifferent() {

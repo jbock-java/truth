@@ -15,11 +15,8 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -27,8 +24,6 @@ import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.ExpectFailure.expectFailure;
 
 /** Tests for {@link ActualValueInference}. */
-@GwtIncompatible // Inference doesn't work under GWT.
-@RunWith(JUnit4.class)
 public final class ActualValueInferenceTest {
     @Test
     public void simple() {
