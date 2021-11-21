@@ -142,13 +142,25 @@ public class MapSubjectTest extends BaseSubjectTestCase {
     @Test
     public void containsExactlyExtraKey() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("feb", 2, "jan", 1);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("feb", 2, "jan", 1));
         assertFailureKeys(
+                failure,
                 "unexpected keys", "for key", "unexpected value", "---", "expected", "but was");
-        assertFailureValue("for key", "march");
-        assertFailureValue("unexpected value", "3");
-        assertFailureValue("expected", "{feb=2, jan=1}");
-        assertFailureValue("but was", "{jan=1, feb=2, march=3}");
+        assertFailureValue(
+                failure,
+                "for key", "march");
+        assertFailureValue(
+                failure,
+                "unexpected value", "3");
+        assertFailureValue(
+                failure,
+                "expected", "{feb=2, jan=1}");
+        assertFailureValue(
+                failure,
+                "but was", "{jan=1, feb=2, march=3}");
     }
 
     @Test
