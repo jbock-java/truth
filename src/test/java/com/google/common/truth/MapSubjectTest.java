@@ -78,17 +78,25 @@ public class MapSubjectTest extends BaseSubjectTestCase {
     @Test
     public void containsExactlyEmpty_fails() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1);
-
-        expectFailureWhenTestingThat(actual).containsExactly();
-        assertFailureKeys("expected to be empty", "but was");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly());
+        assertFailureKeys(
+                failure,
+                "expected to be empty", "but was");
     }
 
     @Test
     public void containsExactlyEntriesInEmpty_fails() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1);
-
-        expectFailureWhenTestingThat(actual).containsExactlyEntriesIn(ImmutableMap.of());
-        assertFailureKeys("expected to be empty", "but was");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactlyEntriesIn(ImmutableMap.of()));
+        assertFailureKeys(
+                failure,
+                "expected to be empty", "but was");
     }
 
     @Test
@@ -166,27 +174,50 @@ public class MapSubjectTest extends BaseSubjectTestCase {
     @Test
     public void containsExactlyExtraKeyInOrder() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("feb", 2, "jan", 1).inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("feb", 2, "jan", 1)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "unexpected keys", "for key", "unexpected value", "---", "expected", "but was");
-        assertFailureValue("for key", "march");
-        assertFailureValue("unexpected value", "3");
+        assertFailureValue(
+                failure,
+                "for key", "march");
+        assertFailureValue(
+                failure,
+                "unexpected value", "3");
     }
 
     @Test
     public void containsExactlyMissingKey() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", 3, "feb", 2);
-        assertFailureKeys("missing keys", "for key", "expected value", "---", "expected", "but was");
-        assertFailureValue("for key", "march");
-        assertFailureValue("expected value", "3");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", 3, "feb", 2)
+                        .inOrder());
+        assertFailureKeys(
+                failure,
+                "missing keys", "for key", "expected value", "---", "expected", "but was");
+        assertFailureValue(
+                failure,
+                "for key", "march");
+        assertFailureValue(
+                failure,
+                "expected value", "3");
     }
 
     @Test
     public void containsExactlyWrongValue() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", 33, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", 33, "feb", 2));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -194,17 +225,27 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValue("for key", "march");
-        assertFailureValue("expected value", "33");
-        assertFailureValue("but got value", "3");
+        assertFailureValue(
+                failure,
+                "for key", "march");
+        assertFailureValue(
+                failure,
+                "expected value", "33");
+        assertFailureValue(
+                failure,
+                "but got value", "3");
     }
 
     @Test
     public void containsExactlyWrongValueWithNull() {
         // Test for https://github.com/google/truth/issues/468
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", null, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", null, "feb", 2));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -212,16 +253,26 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValue("for key", "march");
-        assertFailureValue("expected value", "null");
-        assertFailureValue("but got value", "3");
+        assertFailureValue(
+                failure,
+                "for key", "march");
+        assertFailureValue(
+                failure,
+                "expected value", "null");
+        assertFailureValue(
+                failure,
+                "but got value", "3");
     }
 
     @Test
     public void containsExactlyExtraKeyAndMissingKey() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "feb", 2));
         assertFailureKeys(
+                failure,
                 "missing keys",
                 "for key",
                 "expected value",
@@ -231,17 +282,29 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "feb");
-        assertFailureValue("expected value", "2");
-        assertFailureValueIndexed("for key", 1, "march");
-        assertFailureValue("unexpected value", "3");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "feb");
+        assertFailureValue(
+                failure,
+                "expected value", "2");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "march");
+        assertFailureValue(
+                failure,
+                "unexpected value", "3");
     }
 
     @Test
     public void containsExactlyExtraKeyAndWrongValue() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "feb", 2, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", 33);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", 33));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -252,18 +315,33 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "march");
-        assertFailureValue("expected value", "33");
-        assertFailureValue("but got value", "3");
-        assertFailureValueIndexed("for key", 1, "feb");
-        assertFailureValue("unexpected value", "2");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "march");
+        assertFailureValue(
+                failure,
+                "expected value", "33");
+        assertFailureValue(
+                failure,
+                "but got value", "3");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "feb");
+        assertFailureValue(
+                failure,
+                "unexpected value", "2");
     }
 
     @Test
     public void containsExactlyMissingKeyAndWrongValue() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", 33, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", 33, "feb", 2));
+
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -274,18 +352,32 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "march");
-        assertFailureValueIndexed("expected value", 0, "33");
-        assertFailureValue("but got value", "3");
-        assertFailureValueIndexed("for key", 1, "feb");
-        assertFailureValueIndexed("expected value", 1, "2");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "march");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 0, "33");
+        assertFailureValue(
+                failure,
+                "but got value", "3");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "feb");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 1, "2");
     }
 
     @Test
     public void containsExactlyExtraKeyAndMissingKeyAndWrongValue() {
         ImmutableMap<String, Integer> actual = ImmutableMap.of("jan", 1, "march", 3);
-        expectFailureWhenTestingThat(actual).containsExactly("march", 33, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("march", 33, "feb", 2));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -299,13 +391,27 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "march");
-        assertFailureValueIndexed("expected value", 0, "33");
-        assertFailureValue("but got value", "3");
-        assertFailureValueIndexed("for key", 1, "feb");
-        assertFailureValueIndexed("expected value", 1, "2");
-        assertFailureValueIndexed("for key", 2, "jan");
-        assertFailureValue("unexpected value", "1");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "march");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 0, "33");
+        assertFailureValue(
+                failure,
+                "but got value", "3");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "feb");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 1, "2");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 2, "jan");
+        assertFailureValue(
+                failure,
+                "unexpected value", "1");
     }
 
     @Test
@@ -315,10 +421,20 @@ public class MapSubjectTest extends BaseSubjectTestCase {
         assertThat(actual).containsExactlyEntriesIn(actual).inOrder();
 
         assertThat(actual).containsExactly("jan", 1, "march", 3, "feb", 2);
-        expectFailureWhenTestingThat(actual).containsExactly("jan", 1, "march", 3, "feb", 2).inOrder();
-        assertFailureKeys("entries match, but order was wrong", "expected", "but was");
-        assertFailureValue("expected", "{jan=1, march=3, feb=2}");
-        assertFailureValue("but was", "{jan=1, feb=2, march=3}");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsExactly("jan", 1, "march", 3, "feb", 2)
+                        .inOrder());
+        assertFailureKeys(
+                failure,
+                "entries match, but order was wrong", "expected", "but was");
+        assertFailureValue(
+                failure,
+                "expected", "{jan=1, march=3, feb=2}");
+        assertFailureValue(
+                failure,
+                "but was", "{jan=1, feb=2, march=3}");
     }
 
     @Test
@@ -344,9 +460,12 @@ public class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     public void containsExactlyWrongValue_sameToStringForValues() {
-        expectFailureWhenTestingThat(ImmutableMap.of("jan", 1L, "feb", 2L))
-                .containsExactly("jan", 1, "feb", 2);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableMap.of("jan", 1L, "feb", 2L))
+                        .containsExactly("jan", 1, "feb", 2));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -357,19 +476,34 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "jan");
-        assertFailureValueIndexed("expected value", 0, "1 (java.lang.Integer)");
-        assertFailureValueIndexed("but got value", 0, "1 (java.lang.Long)");
-        assertFailureValueIndexed("for key", 1, "feb");
-        assertFailureValueIndexed("expected value", 1, "2 (java.lang.Integer)");
-        assertFailureValueIndexed("but got value", 1, "2 (java.lang.Long)");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "jan");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 0, "1 (java.lang.Integer)");
+        assertFailureValueIndexed(
+                failure,
+                "but got value", 0, "1 (java.lang.Long)");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "feb");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 1, "2 (java.lang.Integer)");
+        assertFailureValueIndexed(
+                failure,
+                "but got value", 1, "2 (java.lang.Long)");
     }
 
     @Test
     public void containsExactlyWrongValue_sameToStringForKeys() {
-        expectFailureWhenTestingThat(ImmutableMap.of(1L, "jan", 1, "feb"))
-                .containsExactly(1, "jan", 1L, "feb");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableMap.of(1L, "jan", 1, "feb"))
+                        .containsExactly(1, "jan", 1L, "feb"));
         assertFailureKeys(
+                failure,
                 "keys with wrong values",
                 "for key",
                 "expected value",
@@ -380,19 +514,34 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "1 (java.lang.Integer)");
-        assertFailureValueIndexed("expected value", 0, "jan");
-        assertFailureValueIndexed("but got value", 0, "feb");
-        assertFailureValueIndexed("for key", 1, "1 (java.lang.Long)");
-        assertFailureValueIndexed("expected value", 1, "feb");
-        assertFailureValueIndexed("but got value", 1, "jan");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "1 (java.lang.Integer)");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 0, "jan");
+        assertFailureValueIndexed(
+                failure,
+                "but got value", 0, "feb");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "1 (java.lang.Long)");
+        assertFailureValueIndexed(
+                failure,
+                "expected value", 1, "feb");
+        assertFailureValueIndexed(
+                failure,
+                "but got value", 1, "jan");
     }
 
     @Test
     public void containsExactlyExtraKeyAndMissingKey_failsWithSameToStringForKeys() {
-        expectFailureWhenTestingThat(ImmutableMap.of(1L, "jan", 2, "feb"))
-                .containsExactly(1, "jan", 2, "feb");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableMap.of(1L, "jan", 2, "feb"))
+                        .containsExactly(1, "jan", 2, "feb"));
         assertFailureKeys(
+                failure,
                 "missing keys",
                 "for key",
                 "expected value",
@@ -402,10 +551,18 @@ public class MapSubjectTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValueIndexed("for key", 0, "1 (java.lang.Integer)");
-        assertFailureValue("expected value", "jan");
-        assertFailureValueIndexed("for key", 1, "1 (java.lang.Long)");
-        assertFailureValue("unexpected value", "jan");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "1 (java.lang.Integer)");
+        assertFailureValue(
+                failure,
+                "expected value", "jan");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "1 (java.lang.Long)");
+        assertFailureValue(
+                failure,
+                "unexpected value", "jan");
     }
 
     @Test
