@@ -23,9 +23,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.TestCorrespondences.CASE_INSENSITIVE_EQUALITY;
 import static com.google.common.truth.TestCorrespondences.CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE;
@@ -40,11 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Daniel Ploch
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class MultimapSubjectTest extends BaseSubjectTestCase {
+class MultimapSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void listMultimapIsEqualTo_passes() {
+    void listMultimapIsEqualTo_passes() {
         ImmutableListMultimap<String, String> multimapA =
                 ImmutableListMultimap.<String, String>builder()
                         .putAll("kurt", "kluever", "russell", "cobain")
@@ -60,7 +57,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void listMultimapIsEqualTo_fails() {
+    void listMultimapIsEqualTo_fails() {
         ImmutableListMultimap<String, String> multimapA =
                 ImmutableListMultimap.<String, String>builder()
                         .putAll("kurt", "kluever", "russell", "cobain")
@@ -92,7 +89,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void setMultimapIsEqualTo_passes() {
+    void setMultimapIsEqualTo_passes() {
         ImmutableSetMultimap<String, String> multimapA =
                 ImmutableSetMultimap.<String, String>builder()
                         .putAll("kurt", "kluever", "russell", "cobain")
@@ -108,7 +105,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void setMultimapIsEqualTo_fails() {
+    void setMultimapIsEqualTo_fails() {
         ImmutableSetMultimap<String, String> multimapA =
                 ImmutableSetMultimap.<String, String>builder()
                         .putAll("kurt", "kluever", "russell", "cobain")
@@ -119,7 +116,6 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 AssertionError.class,
                 () -> assertThat(multimapA)
                         .isEqualTo(multimapB));
-        expectFailureWhenTestingThat(multimapA).isEqualTo(multimapB);
         assertFailureKeys(
                 failure,
                 "unexpected", "---", "expected", "but was");
@@ -135,7 +131,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void setMultimapIsEqualToListMultimap_fails() {
+    void setMultimapIsEqualToListMultimap_fails() {
         ImmutableSetMultimap<String, String> multimapA =
                 ImmutableSetMultimap.<String, String>builder()
                         .putAll("kurt", "kluever", "russell", "cobain")
@@ -164,7 +160,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isEqualTo_failsWithSameToString() {
+    void isEqualTo_failsWithSameToString() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of(1, "a", 1, "b", 2, "c"))
@@ -187,13 +183,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void multimapIsEmpty() {
+    void multimapIsEmpty() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of();
         assertThat(multimap).isEmpty();
     }
 
     @Test
-    public void multimapIsEmptyWithFailure() {
+    void multimapIsEmptyWithFailure() {
         ImmutableMultimap<Integer, Integer> multimap = ImmutableMultimap.of(1, 5);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -205,13 +201,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void multimapIsNotEmpty() {
+    void multimapIsNotEmpty() {
         ImmutableMultimap<Integer, Integer> multimap = ImmutableMultimap.of(1, 5);
         assertThat(multimap).isNotEmpty();
     }
 
     @Test
-    public void multimapIsNotEmptyWithFailure() {
+    void multimapIsNotEmptyWithFailure() {
         ImmutableMultimap<Integer, Integer> multimap = ImmutableMultimap.of();
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -223,17 +219,17 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void hasSize() {
+    void hasSize() {
         assertThat(ImmutableMultimap.of(1, 2, 3, 4)).hasSize(2);
     }
 
     @Test
-    public void hasSizeZero() {
+    void hasSizeZero() {
         assertThat(ImmutableMultimap.of()).hasSize(0);
     }
 
     @Test
-    public void hasSizeNegative() {
+    void hasSizeNegative() {
         try {
             assertThat(ImmutableMultimap.of(1, 2)).hasSize(-1);
             fail();
@@ -242,13 +238,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsKey() {
+    void containsKey() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         assertThat(multimap).containsKey("kurt");
     }
 
     @Test
-    public void containsKeyFailure() {
+    void containsKeyFailure() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -269,14 +265,14 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsKeyNull() {
+    void containsKeyNull() {
         Multimap<String, String> multimap = HashMultimap.create();
         multimap.put(null, "null");
         assertThat(multimap).containsKey(null);
     }
 
     @Test
-    public void containsKeyNullFailure() {
+    void containsKeyNullFailure() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -297,7 +293,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsKey_failsWithSameToString() {
+    void containsKey_failsWithSameToString() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of(1L, "value1a", 1L, "value1b", 2L, "value2", "1", "value3"))
@@ -320,14 +316,14 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void doesNotContainKey() {
+    void doesNotContainKey() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         assertThat(multimap).doesNotContainKey("daniel");
         assertThat(multimap).doesNotContainKey(null);
     }
 
     @Test
-    public void doesNotContainKeyFailure() {
+    void doesNotContainKeyFailure() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -348,7 +344,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void doesNotContainNullKeyFailure() {
+    void doesNotContainNullKeyFailure() {
         Multimap<String, String> multimap = HashMultimap.create();
         multimap.put(null, "null");
         AssertionError failure = assertThrows(
@@ -370,13 +366,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsEntry() {
+    void containsEntry() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         assertThat(multimap).containsEntry("kurt", "kluever");
     }
 
     @Test
-    public void containsEntryFailure() {
+    void containsEntryFailure() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -394,14 +390,14 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsEntryWithNullValueNullExpected() {
+    void containsEntryWithNullValueNullExpected() {
         ListMultimap<String, String> actual = ArrayListMultimap.create();
         actual.put("a", null);
         assertThat(actual).containsEntry("a", null);
     }
 
     @Test
-    public void failContainsEntry() {
+    void failContainsEntry() {
         ImmutableMultimap<String, String> actual = ImmutableMultimap.of("a", "A");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -419,7 +415,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void failContainsEntryFailsWithWrongValueForKey() {
+    void failContainsEntryFailsWithWrongValueForKey() {
         ImmutableMultimap<String, String> actual = ImmutableMultimap.of("a", "A");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -437,7 +433,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void failContainsEntryWithNullValuePresentExpected() {
+    void failContainsEntryWithNullValuePresentExpected() {
         ListMultimap<String, String> actual = ArrayListMultimap.create();
         actual.put("a", null);
         AssertionError failure = assertThrows(
@@ -456,7 +452,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void failContainsEntryWithPresentValueNullExpected() {
+    void failContainsEntryWithPresentValueNullExpected() {
         ImmutableMultimap<String, String> actual = ImmutableMultimap.of("a", "A");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -474,7 +470,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void failContainsEntryFailsWithWrongKeyForValue() {
+    void failContainsEntryFailsWithWrongKeyForValue() {
         ImmutableMultimap<String, String> actual = ImmutableMultimap.of("a", "A");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -492,7 +488,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsEntry_failsWithSameToString() {
+    void containsEntry_failsWithSameToString() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.builder()
@@ -524,13 +520,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void doesNotContainEntry() {
+    void doesNotContainEntry() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         assertThat(multimap).doesNotContainEntry("daniel", "ploch");
     }
 
     @Test
-    public void doesNotContainEntryFailure() {
+    void doesNotContainEntryFailure() {
         ImmutableMultimap<String, String> multimap = ImmutableMultimap.of("kurt", "kluever");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -551,7 +547,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void valuesForKey() {
+    void valuesForKey() {
         ImmutableMultimap<Integer, String> multimap =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -562,7 +558,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void valuesForKeyListMultimap() {
+    void valuesForKeyListMultimap() {
         ImmutableListMultimap<Integer, String> multimap =
                 ImmutableListMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -570,7 +566,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyEntriesIn() {
+    void containsExactlyEntriesIn() {
         ImmutableListMultimap<Integer, String> listMultimap =
                 ImmutableListMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableSetMultimap<Integer, String> setMultimap = ImmutableSetMultimap.copyOf(listMultimap);
@@ -579,7 +575,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyNoArg() {
+    void containsExactlyNoArg() {
         ImmutableMultimap<Integer, String> actual = ImmutableMultimap.of();
 
         assertThat(actual).containsExactly();
@@ -595,7 +591,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyEmpty() {
+    void containsExactlyEmpty() {
         ImmutableListMultimap<Integer, String> actual = ImmutableListMultimap.of();
         ImmutableSetMultimap<Integer, String> expected = ImmutableSetMultimap.of();
 
@@ -604,7 +600,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyRejectsNull() {
+    void containsExactlyRejectsNull() {
         ImmutableMultimap<Integer, String> multimap =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -616,7 +612,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyRespectsDuplicates() {
+    void containsExactlyRespectsDuplicates() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
         ImmutableListMultimap<Integer, String> expected =
@@ -626,7 +622,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyRespectsDuplicatesFailure() {
+    void containsExactlyRespectsDuplicatesFailure() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
         ImmutableSetMultimap<Integer, String> expected = ImmutableSetMultimap.copyOf(actual);
@@ -649,7 +645,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureMissing() {
+    void containsExactlyFailureMissing() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -668,7 +664,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureExtra() {
+    void containsExactlyFailureExtra() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -688,7 +684,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureBoth() {
+    void containsExactlyFailureBoth() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -713,7 +709,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureWithEmptyStringMissing() {
+    void containsExactlyFailureWithEmptyStringMissing() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of())
@@ -733,7 +729,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureWithEmptyStringExtra() {
+    void containsExactlyFailureWithEmptyStringExtra() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of("a", "", "", ""))
@@ -753,7 +749,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyFailureWithEmptyStringBoth() {
+    void containsExactlyFailureWithEmptyStringBoth() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of("a", ""))
@@ -776,7 +772,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyInOrder() {
+    void containsExactlyInOrder() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
@@ -786,7 +782,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyInOrderDifferentTypes() {
+    void containsExactlyInOrderDifferentTypes() {
         ImmutableListMultimap<Integer, String> listMultimap =
                 ImmutableListMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableSetMultimap<Integer, String> setMultimap = ImmutableSetMultimap.copyOf(listMultimap);
@@ -795,7 +791,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyInOrderFailure() {
+    void containsExactlyInOrderFailure() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
@@ -805,7 +801,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
-                        .containsExactlyEntriesIn(expected));
+                        .containsExactlyEntriesIn(expected).inOrder());
         assertFailureKeys(
                 failure,
                 "contents match, but order was wrong",
@@ -820,7 +816,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyInOrderFailureValuesOnly() {
+    void containsExactlyInOrderFailureValuesOnly() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
@@ -845,7 +841,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVararg() {
+    void containsExactlyVararg() {
         ImmutableListMultimap<Integer, String> listMultimap =
                 ImmutableListMultimap.of(1, "one", 3, "six", 3, "two");
 
@@ -853,7 +849,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargWithNull() {
+    void containsExactlyVarargWithNull() {
         Multimap<Integer, String> listMultimap =
                 LinkedListMultimap.create(ImmutableListMultimap.of(1, "one", 3, "six", 3, "two"));
         listMultimap.put(4, null);
@@ -862,7 +858,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargFailureMissing() {
+    void containsExactlyVarargFailureMissing() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -887,7 +883,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargFailureExtra() {
+    void containsExactlyVarargFailureExtra() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -907,7 +903,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargFailureBoth() {
+    void containsExactlyVarargFailureBoth() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -932,7 +928,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargRespectsDuplicates() {
+    void containsExactlyVarargRespectsDuplicates() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
 
@@ -940,7 +936,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargRespectsDuplicatesFailure() {
+    void containsExactlyVarargRespectsDuplicatesFailure() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
 
@@ -957,7 +953,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargInOrder() {
+    void containsExactlyVarargInOrder() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -967,7 +963,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargInOrderFailure() {
+    void containsExactlyVarargInOrderFailure() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -991,7 +987,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyVarargInOrderFailureValuesOnly() {
+    void containsExactlyVarargInOrderFailureValuesOnly() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -1014,7 +1010,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyEntriesIn_homogeneousMultimap_failsWithSameToString() {
+    void containsExactlyEntriesIn_homogeneousMultimap_failsWithSameToString() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of(1, "a", 1, "b", 2, "c"))
@@ -1031,7 +1027,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyEntriesIn_heterogeneousMultimap_failsWithSameToString() {
+    void containsExactlyEntriesIn_heterogeneousMultimap_failsWithSameToString() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(ImmutableMultimap.of(1, "a", 1, "b", 2L, "c"))
@@ -1054,7 +1050,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastEntriesIn() {
+    void containsAtLeastEntriesIn() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableSetMultimap<Integer, String> expected =
@@ -1064,7 +1060,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastEmpty() {
+    void containsAtLeastEmpty() {
         ImmutableListMultimap<Integer, String> actual = ImmutableListMultimap.of(3, "one");
         ImmutableSetMultimap<Integer, String> expected = ImmutableSetMultimap.of();
 
@@ -1073,7 +1069,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastRejectsNull() {
+    void containsAtLeastRejectsNull() {
         ImmutableMultimap<Integer, String> multimap =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -1085,7 +1081,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastRespectsDuplicates() {
+    void containsAtLeastRespectsDuplicates() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
         ImmutableListMultimap<Integer, String> expected =
@@ -1095,41 +1091,64 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastRespectsDuplicatesFailure() {
+    void containsAtLeastRespectsDuplicatesFailure() {
         ImmutableListMultimap<Integer, String> expected =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
         ImmutableSetMultimap<Integer, String> actual = ImmutableSetMultimap.copyOf(expected);
-
-        expectFailureWhenTestingThat(actual).containsAtLeastEntriesIn(expected);
-        assertFailureKeys("missing", "---", "expected to contain at least", "but was");
-        assertFailureValue("missing", "{3=[one], 4=[five]}");
-        assertFailureValue("expected to contain at least", "{3=[one, two, one], 4=[five, five]}");
-        assertFailureValue("but was", "{3=[one, two], 4=[five]}");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeastEntriesIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing", "---", "expected to contain at least", "but was");
+        assertFailureValue(
+                failure,
+                "missing", "{3=[one], 4=[five]}");
+        assertFailureValue(
+                failure,
+                "expected to contain at least", "{3=[one, two, one], 4=[five, five]}");
+        assertFailureValue(
+                failure,
+                "but was", "{3=[one, two], 4=[five]}");
     }
 
     @Test
-    public void containsAtLeastFailureMissing() {
+    void containsAtLeastFailureMissing() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
         actual.remove(3, "six");
         actual.remove(4, "five");
         actual.put(50, "hawaii");
-
-        expectFailureWhenTestingThat(actual).containsAtLeastEntriesIn(expected);
-        assertFailureKeys("missing", "---", "expected to contain at least", "but was");
-        assertFailureValue("missing", "{3=[six], 4=[five]}");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeastEntriesIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing", "---", "expected to contain at least", "but was");
+        assertFailureValue(
+                failure,
+                "missing", "{3=[six], 4=[five]}");
     }
 
     @Test
-    public void containsAtLeastFailureWithEmptyStringMissing() {
-        expectFailureWhenTestingThat(ImmutableMultimap.of("key", "value")).containsAtLeast("", "a");
-        assertFailureKeys("missing", "---", "expected to contain at least", "but was");
-        assertFailureValue("missing", "{\"\" (empty String)=[a]}");
+    void containsAtLeastFailureWithEmptyStringMissing() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableMultimap.of("key", "value"))
+                        .containsAtLeast("", "a"));
+        assertFailureKeys(
+                failure,
+                "missing", "---", "expected to contain at least", "but was");
+        assertFailureValue(
+                failure,
+                "missing", "{\"\" (empty String)=[a]}");
     }
 
     @Test
-    public void containsAtLeastInOrder() {
+    void containsAtLeastInOrder() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
@@ -1139,7 +1158,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastInOrderDifferentTypes() {
+    void containsAtLeastInOrderDifferentTypes() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableSetMultimap<Integer, String> expected =
@@ -1149,46 +1168,63 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastInOrderFailure() {
+    void containsAtLeastInOrderFailure() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(4, "four", 3, "six", 3, "two", 3, "one");
 
         assertThat(actual).containsAtLeastEntriesIn(expected);
-        expectFailureWhenTestingThat(actual).containsAtLeastEntriesIn(expected).inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeastEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong",
                 "keys are not in order",
                 "keys with out-of-order values",
                 "---",
                 "expected to contain at least",
                 "but was");
-        assertFailureValue("keys with out-of-order values", "[3]");
-        assertFailureValue("expected to contain at least", "{4=[four], 3=[six, two, one]}");
-        assertFailureValue("but was", "{3=[one, six, two], 4=[five, four]}");
+        assertFailureValue(
+                failure,
+                "keys with out-of-order values", "[3]");
+        assertFailureValue(
+                failure,
+                "expected to contain at least", "{4=[four], 3=[six, two, one]}");
+        assertFailureValue(
+                failure,
+                "but was", "{3=[one, six, two], 4=[five, four]}");
     }
 
     @Test
-    public void containsAtLeastInOrderFailureValuesOnly() {
+    void containsAtLeastInOrderFailureValuesOnly() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "six", 3, "one", 4, "five", 4, "four");
-
         assertThat(actual).containsAtLeastEntriesIn(expected);
-        expectFailureWhenTestingThat(actual).containsAtLeastEntriesIn(expected).inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeastEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong",
                 "keys with out-of-order values",
                 "---",
                 "expected to contain at least",
                 "but was");
-        assertFailureValue("keys with out-of-order values", "[3]");
+        assertFailureValue(
+                failure,
+                "keys with out-of-order values", "[3]");
     }
 
     @Test
-    public void containsAtLeastVararg() {
+    void containsAtLeastVararg() {
         ImmutableListMultimap<Integer, String> listMultimap =
                 ImmutableListMultimap.of(1, "one", 3, "six", 3, "two", 3, "one");
 
@@ -1196,7 +1232,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastVarargWithNull() {
+    void containsAtLeastVarargWithNull() {
         Multimap<Integer, String> listMultimap =
                 LinkedListMultimap.create(ImmutableListMultimap.of(1, "one", 3, "six", 3, "two"));
         listMultimap.put(4, null);
@@ -1205,7 +1241,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastVarargFailureMissing() {
+    void containsAtLeastVarargFailureMissing() {
         ImmutableMultimap<Integer, String> expected =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
         ListMultimap<Integer, String> actual = LinkedListMultimap.create(expected);
@@ -1213,14 +1249,20 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         actual.remove(4, "five");
         actual.put(3, "nine");
 
-        expectFailureWhenTestingThat(actual)
-                .containsAtLeast(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
-        assertFailureKeys("missing", "---", "expected to contain at least", "but was");
-        assertFailureValue("missing", "{3=[six], 4=[five]}");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeast(3, "one", 3, "six", 3, "two", 4, "five", 4, "four"));
+        assertFailureKeys(
+                failure,
+                "missing", "---", "expected to contain at least", "but was");
+        assertFailureValue(
+                failure,
+                "missing", "{3=[six], 4=[five]}");
     }
 
     @Test
-    public void containsAtLeastVarargRespectsDuplicates() {
+    void containsAtLeastVarargRespectsDuplicates() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 3, "one", 4, "five", 4, "five");
 
@@ -1228,17 +1270,24 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastVarargRespectsDuplicatesFailure() {
+    void containsAtLeastVarargRespectsDuplicatesFailure() {
         ImmutableListMultimap<Integer, String> actual =
                 ImmutableListMultimap.of(3, "one", 3, "two", 4, "five", 4, "five");
 
-        expectFailureWhenTestingThat(actual).containsAtLeast(3, "one", 3, "one", 3, "one", 4, "five");
-        assertFailureKeys("missing", "---", "expected to contain at least", "but was");
-        assertFailureValue("missing", "{3=[one [2 copies]]}");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeast(3, "one", 3, "one", 3, "one", 4, "five"));
+        assertFailureKeys(
+                failure,
+                "missing", "---", "expected to contain at least", "but was");
+        assertFailureValue(
+                failure,
+                "missing", "{3=[one [2 copies]]}");
     }
 
     @Test
-    public void containsAtLeastVarargInOrder() {
+    void containsAtLeastVarargInOrder() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
@@ -1246,46 +1295,60 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastVarargInOrderFailure() {
+    void containsAtLeastVarargInOrderFailure() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
         assertThat(actual).containsAtLeast(4, "four", 3, "six", 3, "two", 3, "one");
-        expectFailureWhenTestingThat(actual)
-                .containsAtLeast(4, "four", 3, "six", 3, "two", 3, "one")
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeast(4, "four", 3, "six", 3, "two", 3, "one")
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong",
                 "keys are not in order",
                 "keys with out-of-order values",
                 "---",
                 "expected to contain at least",
                 "but was");
-        assertFailureValue("keys with out-of-order values", "[3]");
-        assertFailureValue("expected to contain at least", "{4=[four], 3=[six, two, one]}");
-        assertFailureValue("but was", "{3=[one, six, two], 4=[five, four]}");
+        assertFailureValue(
+                failure,
+                "keys with out-of-order values", "[3]");
+        assertFailureValue(
+                failure,
+                "expected to contain at least", "{4=[four], 3=[six, two, one]}");
+        assertFailureValue(
+                failure,
+                "but was", "{3=[one, six, two], 4=[five, four]}");
     }
 
     @Test
-    public void containsAtLeastVarargInOrderFailureValuesOnly() {
+    void containsAtLeastVarargInOrderFailureValuesOnly() {
         ImmutableMultimap<Integer, String> actual =
                 ImmutableMultimap.of(3, "one", 3, "six", 3, "two", 4, "five", 4, "four");
 
         assertThat(actual).containsAtLeast(3, "two", 3, "one", 4, "five", 4, "four");
-        expectFailureWhenTestingThat(actual)
-                .containsAtLeast(3, "two", 3, "one", 4, "five", 4, "four")
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .containsAtLeast(3, "two", 3, "one", 4, "five", 4, "four")
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong",
                 "keys with out-of-order values",
                 "---",
                 "expected to contain at least",
                 "but was");
-        assertFailureValue("keys with out-of-order values", "[3]");
+        assertFailureValue(
+                failure,
+                "keys with out-of-order values", "[3]");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_success() {
+    void comparingValuesUsing_containsEntry_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
         assertThat(actual)
@@ -1294,64 +1357,86 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_failsExpectedKeyHasWrongValues() {
+    void comparingValuesUsing_containsEntry_failsExpectedKeyHasWrongValues() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsEntry("def", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsEntry("def", 123));
         assertFailureKeys(
+                failure,
                 "expected to contain entry",
                 "testing whether",
                 "but did not",
                 "though it did contain values for that key",
                 "full contents");
-        assertFailureValue("expected to contain entry", "def=123");
-        assertFailureValue("testing whether", "actual value parses to expected value");
-        assertFailureValue("though it did contain values for that key", "[+456, +789]");
-        assertFailureValue("full contents", "{abc=[+123], def=[+456, +789]}");
+        assertFailureValue(
+                failure,
+                "expected to contain entry", "def=123");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual value parses to expected value");
+        assertFailureValue(
+                failure,
+                "though it did contain values for that key", "[+456, +789]");
+        assertFailureValue(
+                failure,
+                "full contents", "{abc=[+123], def=[+456, +789]}");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_failsWrongKeyHasExpectedValue() {
+    void comparingValuesUsing_containsEntry_failsWrongKeyHasExpectedValue() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsEntry("xyz", 789);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsEntry("xyz", 789));
         assertFailureKeys(
+                failure,
                 "expected to contain entry",
                 "testing whether",
                 "but did not",
                 "though it did contain entries with matching values",
                 "full contents");
-        assertFailureValue("though it did contain entries with matching values", "[def=+789]");
+        assertFailureValue(
+                failure,
+                "though it did contain entries with matching values", "[def=+789]");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_failsMissingExpectedKeyAndValue() {
+    void comparingValuesUsing_containsEntry_failsMissingExpectedKeyAndValue() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsEntry("xyz", 321);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsEntry("xyz", 321));
         assertFailureKeys(
+                failure,
                 "expected to contain entry", "testing whether", "but did not", "full contents");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_handlesException_expectedKeyHasWrongValues() {
+    void comparingValuesUsing_containsEntry_handlesException_expectedKeyHasWrongValues() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, "two");
         actual.put(2, "deux");
         actual.put(2, null);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsEntry(2, "ZWEI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsEntry(2, "ZWEI"));
         // The test fails because the expected key doesn't have a match for the expected value. We are
         // bound also to hit a NPE from compare(null, ZWEI) along the way, and should also report that.
         assertFailureKeys(
+                failure,
                 "expected to contain entry",
                 "testing whether",
                 "but did not",
@@ -1359,25 +1444,28 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing values",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ZWEI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_handlesException_wrongKeyHasExpectedValue() {
+    void comparingValuesUsing_containsEntry_handlesException_wrongKeyHasExpectedValue() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(3, "two");
         actual.put(3, null);
         actual.put(3, "zwei");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsEntry(2, "ZWEI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsEntry(2, "ZWEI"));
         // The test fails and does not contain the expected key, but does contain the expected value
         // we the wrong key. We are bound also to hit a NPE from compare(null, ZWEI) along the way, and
         // should also report that.
         assertFailureKeys(
+                failure,
                 "expected to contain entry",
                 "testing whether",
                 "but did not",
@@ -1385,45 +1473,53 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing values",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ZWEI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_handlesException_alwaysFails() {
+    void comparingValuesUsing_containsEntry_handlesException_alwaysFails() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, "two");
         actual.put(2, null);
         actual.put(2, "zwei");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsEntry(2, "ZWEI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsEntry(2, "ZWEI"));
         // The multimap does contain the expected entry, but no reasonable implementation could find
         // it without hitting the NPE from compare(null, ZWEI) first, so we are contractually required
         // to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing values",
                 "first exception",
                 "expected to contain entry",
                 "testing whether",
                 "found match (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ZWEI) threw java.lang.NullPointerException");
-        assertFailureValue("found match (but failing because of exception)", "2=zwei");
+        assertFailureValue(
+                failure,
+                "found match (but failing because of exception)", "2=zwei");
     }
 
     @Test
-    public void comparingValuesUsing_containsEntry_wrongTypeInActual() {
+    void comparingValuesUsing_containsEntry_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", 789);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsEntry("def", 789);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsEntry("def", 789));
         assertFailureKeys(
+                failure,
                 "expected to contain entry",
                 "testing whether",
                 "but did not",
@@ -1431,13 +1527,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing values",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(789, 789) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_successExcludeKeyHasWrongValues() {
+    void comparingValuesUsing_doesNotContainEntry_successExcludeKeyHasWrongValues() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
         assertThat(actual)
@@ -1446,7 +1542,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_successWrongKeyHasExcludedValue() {
+    void comparingValuesUsing_doesNotContainEntry_successWrongKeyHasExcludedValue() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
         assertThat(actual)
@@ -1455,7 +1551,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_successMissingExcludedKeyAndValue() {
+    void comparingValuesUsing_doesNotContainEntry_successMissingExcludedKeyAndValue() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
         assertThat(actual)
@@ -1464,92 +1560,112 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_failure() {
+    void comparingValuesUsing_doesNotContainEntry_failure() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", "+789");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .doesNotContainEntry("def", 789);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .doesNotContainEntry("def", 789));
         assertFailureKeys(
+                failure,
                 "expected not to contain entry",
                 "testing whether",
                 "but contained that key with matching values",
                 "full contents");
-        assertFailureValue("expected not to contain entry", "def=789");
-        assertFailureValue("testing whether", "actual value parses to expected value");
-        assertFailureValue("but contained that key with matching values", "[+789]");
-        assertFailureValue("full contents", "{abc=[+123], def=[+456, +789]}");
+        assertFailureValue(
+                failure,
+                "expected not to contain entry", "def=789");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual value parses to expected value");
+        assertFailureValue(
+                failure,
+                "but contained that key with matching values", "[+789]");
+        assertFailureValue(
+                failure,
+                "full contents", "{abc=[+123], def=[+456, +789]}");
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_handlesException_didContainEntry() {
+    void comparingValuesUsing_doesNotContainEntry_handlesException_didContainEntry() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, "two");
         actual.put(2, null);
         actual.put(2, "zwei");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .doesNotContainEntry(2, "ZWEI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .doesNotContainEntry(2, "ZWEI"));
         // The test fails because it does contain the expected entry. We are bound to also hit the NPE
         // from compare(null, ZWEI) along the way, and should also report that.
         assertFailureKeys(
+                failure,
                 "expected not to contain entry",
                 "testing whether",
                 "but contained that key with matching values",
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing values",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ZWEI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_handlesException_didNotContainEntry() {
+    void comparingValuesUsing_doesNotContainEntry_handlesException_didNotContainEntry() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, "two");
         actual.put(2, "deux");
         actual.put(2, null);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .doesNotContainEntry(2, "ZWEI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .doesNotContainEntry(2, "ZWEI"));
         // The test would pass if compare(null, ZWEI) returned false. But it actually throws NPE, and
         // we are bound to hit that, so we are contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing values",
                 "first exception",
                 "expected not to contain entry",
                 "testing whether",
                 "found no match (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ZWEI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_doesNotContainEntry_wrongTypeInActual() {
+    void comparingValuesUsing_doesNotContainEntry_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+456", "def", 789);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .doesNotContainEntry("def", 789);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .doesNotContainEntry("def", 789));
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing values",
                 "first exception",
                 "expected not to contain entry",
                 "testing whether",
                 "found no match (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(789, 789) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_success() {
+    void comparingValuesUsing_containsExactlyEntriesIn_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
@@ -1560,49 +1676,69 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_missingKey() {
+    void comparingValuesUsing_containsExactlyEntriesIn_missingKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 128, "def", 64, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected);
-        assertFailureKeys("missing (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "abc=123");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (1)", "abc=123");
         // TODO(b/69154276): Address the fact that we show "expected" as a list of entries and "but was"
         // as a multimap, which looks a bit odd.
-        assertFailureValue("expected", "[def=64, def=128, def=64, abc=123]");
         assertFailureValue(
+                failure,
+                "expected", "[def=64, def=128, def=64, abc=123]");
+        assertFailureValue(
+                failure,
                 "testing whether",
                 "actual element has a key that is equal to and a value that parses to the key and value of"
                         + " expected element");
-        assertFailureValue("but was", "{def=[+64, 0x40, +128]}");
+        assertFailureValue(
+                failure,
+                "but was", "{def=[+64, 0x40, +128]}");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_extraKey() {
+    void comparingValuesUsing_containsExactlyEntriesIn_extraKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 128, "def", 64);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected);
-        assertFailureKeys("unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("unexpected (1)", "abc=+123");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected));
+        assertFailureKeys(
+                failure,
+                "unexpected (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "abc=+123");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_wrongValueForKey() {
+    void comparingValuesUsing_containsExactlyEntriesIn_wrongValueForKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 128, "def", 128, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -1613,12 +1749,14 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "def=128");
-        assertThatFailure().factValue("unexpected (1)").isAnyOf("[def=+64]", "[def=0x40]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=128");
+        assertThatFailure(failure).factValue("unexpected (1)").isAnyOf("[def=+64]", "[def=0x40]");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_handlesException() {
+    void comparingValuesUsing_containsExactlyEntriesIn_handlesException() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, null);
@@ -1626,10 +1764,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         actual.put(2, "zwei");
         ImmutableListMultimap<Integer, String> expected =
                 ImmutableListMultimap.of(1, "ONE", 2, "TWO", 2, "DEUX", 2, "ZWEI");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsExactlyEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsExactlyEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "unexpected (1)",
                 "---",
@@ -1638,15 +1779,19 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "2=TWO");
-        assertFailureValue("unexpected (1)", "[2=null]");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "2=TWO");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[2=null]");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(2=null, 2=TWO) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_handlesException_alwaysFails() {
+    void comparingValuesUsing_containsExactlyEntriesIn_handlesException_alwaysFails() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, null);
@@ -1657,36 +1802,42 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         expected.put(2, "TWO");
         expected.put(2, "DEUX");
         expected.put(2, null);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
-                .containsExactlyEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
+                        .containsExactlyEntriesIn(expected));
         // CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE.compare(null, null) returns true, so there is a
         // mapping between actual and expected entries where they all correspond. However, no
         // reasonable implementation would find that mapping without hitting the (null, "TWO") case
         // along the way, and that throws NPE, so we are contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected",
                 "testing whether",
                 "found all expected elements (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(2=null, 2=TWO) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_wrongTypeInActual() {
+    void comparingValuesUsing_containsExactlyEntriesIn_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
                 ImmutableListMultimap.<String, Object>of(
                         "abc", "+123", "def", "+64", "def", "0x40", "def", 999);
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 123, "def", 64, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "unexpected (1)",
                 "---",
@@ -1695,15 +1846,19 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "def=123");
-        assertFailureValue("unexpected (1)", "[def=999]");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=123");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[def=999]");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(def=999, def=64) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_inOrder_success() {
+    void comparingValuesUsing_containsExactlyEntriesIn_inOrder_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
@@ -1714,37 +1869,47 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_inOrder_wrongKeyOrder() {
+    void comparingValuesUsing_containsExactlyEntriesIn_inOrder_wrongKeyOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 64, "def", 128, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong", "expected", "testing whether", "but was");
-        assertFailureValue("expected", "[def=64, def=64, def=128, abc=123]");
+        assertFailureValue(
+                failure,
+                "expected", "[def=64, def=64, def=128, abc=123]");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyEntriesIn_inOrder_wrongValueOrder() {
+    void comparingValuesUsing_containsExactlyEntriesIn_inOrder_wrongValueOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("abc", 123, "def", 64, "def", 128, "def", 64);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyEntriesIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong", "expected", "testing whether", "but was");
-        assertFailureValue("expected", "[abc=123, def=64, def=128, def=64]");
+        assertFailureValue(
+                failure,
+                "expected", "[abc=123, def=64, def=128, def=64]");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactlyNoArgs() {
+    void comparingValuesUsing_containsExactlyNoArgs() {
         ImmutableListMultimap<String, String> actual = ImmutableListMultimap.of();
 
         assertThat(actual)
@@ -1754,15 +1919,18 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactly()
                 .inOrder();
-
-        expectFailureWhenTestingThat(ImmutableListMultimap.of("abc", "+123"))
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly();
-        assertFailureKeys("expected to be empty", "but was");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableListMultimap.of("abc", "+123"))
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly());
+        assertFailureKeys(
+                failure,
+                "expected to be empty", "but was");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_success() {
+    void comparingValuesUsing_containsExactly_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         assertThat(actual)
@@ -1771,35 +1939,50 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_missingKey() {
+    void comparingValuesUsing_containsExactly_missingKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("def", 64, "def", 128, "def", 64, "abc", 123);
-        assertFailureKeys("missing (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "abc=123");
-    }
-
-    @Test
-    public void comparingValuesUsing_containsExactly_extraKey() {
-        ImmutableListMultimap<String, String> actual =
-                ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("def", 64, "def", 128, "def", 64);
-        assertFailureKeys("unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("unexpected (1)", "abc=+123");
-    }
-
-    @Test
-    public void comparingValuesUsing_containsExactly_wrongValueForKey() {
-        ImmutableListMultimap<String, String> actual =
-                ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("def", 64, "def", 128, "def", 128, "abc", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("def", 64, "def", 128, "def", 64, "abc", 123));
         assertFailureKeys(
+                failure,
+                "missing (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (1)", "abc=123");
+    }
+
+    @Test
+    void comparingValuesUsing_containsExactly_extraKey() {
+        ImmutableListMultimap<String, String> actual =
+                ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("def", 64, "def", 128, "def", 64));
+        assertFailureKeys(
+                failure,
+                "unexpected (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "abc=+123");
+    }
+
+    @Test
+    void comparingValuesUsing_containsExactly_wrongValueForKey() {
+        ImmutableListMultimap<String, String> actual =
+                ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("def", 64, "def", 128, "def", 128, "abc", 123));
+        assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -1810,19 +1993,24 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "def=128");
-        assertThatFailure().factValue("unexpected (1)").isAnyOf("[def=+64]", "[def=0x40]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=128");
+        assertThatFailure(failure).factValue("unexpected (1)").isAnyOf("[def=+64]", "[def=0x40]");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_wrongTypeInActual() {
+    void comparingValuesUsing_containsExactly_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
                 ImmutableListMultimap.<String, Object>of(
                         "abc", "+123", "def", "+64", "def", "0x40", "def", 999);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("def", 64, "def", 123, "def", 64, "abc", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("def", 64, "def", 123, "def", 64, "abc", 123));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "unexpected (1)",
                 "---",
@@ -1831,15 +2019,19 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "def=123");
-        assertFailureValue("unexpected (1)", "[def=999]");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=123");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[def=999]");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(def=999, def=64) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_nullKey() {
+    void comparingValuesUsing_containsExactly_nullKey() {
         ListMultimap<String, String> actual = ArrayListMultimap.create();
         actual.put(null, "+123");
         assertThat(actual)
@@ -1848,7 +2040,7 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_inOrder_success() {
+    void comparingValuesUsing_containsExactly_inOrder_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         assertThat(actual)
@@ -1857,33 +2049,43 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_inOrder_wrongKeyOrder() {
+    void comparingValuesUsing_containsExactly_inOrder_wrongKeyOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("def", 64, "def", 64, "def", 128, "abc", 123)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("def", 64, "def", 64, "def", 128, "abc", 123)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong", "expected", "testing whether", "but was");
-        assertFailureValue("expected", "[def=64, def=64, def=128, abc=123]");
+        assertFailureValue(
+                failure,
+                "expected", "[def=64, def=64, def=128, abc=123]");
     }
 
     @Test
-    public void comparingValuesUsing_containsExactly_inOrder_wrongValueOrder() {
+    void comparingValuesUsing_containsExactly_inOrder_wrongValueOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly("abc", 123, "def", 64, "def", 128, "def", 64)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly("abc", 123, "def", 64, "def", 128, "def", 64)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong", "expected", "testing whether", "but was");
-        assertFailureValue("expected", "[abc=123, def=64, def=128, def=64]");
+        assertFailureValue(
+                failure,
+                "expected", "[abc=123, def=64, def=128, def=64]");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_success() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
@@ -1894,29 +2096,37 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_missingKey() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_missingKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("def", "+64", "def", "0x40", "def", "+128", "abc", "+99");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 128, "def", 64, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (1)", "abc=123");
+        assertFailureValue(
+                failure,
+                "missing (1)", "abc=123");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_wrongValueForKey() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_wrongValueForKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("abc", "+123", "def", "+64", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 128, "def", 128, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and a subset of the actual"
                         + " elements, each actual element matches as least one expected element, and vice"
                         + " versa, but there was no 1:1 mapping",
@@ -1926,11 +2136,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "expected to contain at least",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "def=128");
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=128");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_handlesException() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_handlesException() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, null);
@@ -1938,10 +2150,13 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         actual.put(2, "zwei");
         ImmutableListMultimap<Integer, String> expected =
                 ImmutableListMultimap.of(1, "ONE", 2, "TWO", 2, "DEUX");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsAtLeastEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsAtLeastEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "---",
                 "expected to contain at least",
@@ -1949,14 +2164,16 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "2=TWO");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "2=TWO");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(2=null, 2=TWO) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_handlesException_alwaysFails() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_handlesException_alwaysFails() {
         ListMultimap<Integer, String> actual = LinkedListMultimap.create();
         actual.put(1, "one");
         actual.put(2, null);
@@ -1967,37 +2184,45 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
         expected.put(2, "TWO");
         expected.put(2, "DEUX");
         expected.put(2, null);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
-                .containsAtLeastEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
+                        .containsAtLeastEntriesIn(expected));
         // CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE.compare(null, null) returns true, so there is a
         // mapping between actual and expected entries where they all correspond. However, no
         // reasonable implementation would find that mapping without hitting the (null, "TWO") case
         // along the way, and that throws NPE, so we are contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected to contain at least",
                 "testing whether",
                 "found all expected elements (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(2=null, 2=TWO) threw java.lang.NullPointerException");
-        assertFailureValue("expected to contain at least", "[1=ONE, 2=TWO, 2=DEUX, 2=null]");
+        assertFailureValue(
+                failure,
+                "expected to contain at least", "[1=ONE, 2=TWO, 2=DEUX, 2=null]");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_wrongTypeInActual() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
                 ImmutableListMultimap.<String, Object>of(
                         "abc", "+123", "def", "+64", "def", "0x40", "def", 999);
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 123, "def", 64, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastEntriesIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastEntriesIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "---",
                 "expected to contain at least",
@@ -2005,14 +2230,16 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "def=123");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=123");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(def=999, def=64) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_success() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "def", "+64", "abc", "+123", "def", "0x40", "m", "+1", "def", "+128");
@@ -2024,47 +2251,55 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_wrongKeyOrder() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_wrongKeyOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "m", "+1", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("def", 64, "def", 64, "def", 128, "abc", 123);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastEntriesIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "required elements were all found, but order was wrong",
                 "expected order for required elements",
                 "testing whether",
                 "but was");
         assertFailureValue(
+                failure,
                 "expected order for required elements", "[def=64, def=64, def=128, abc=123]");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_wrongValueOrder() {
+    void comparingValuesUsing_containsAtLeastEntriesIn_inOrder_wrongValueOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "m", "+1", "def", "0x40", "def", "+128");
         ImmutableListMultimap<String, Integer> expected =
                 ImmutableListMultimap.of("abc", 123, "def", 64, "def", 128, "def", 64);
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastEntriesIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastEntriesIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "required elements were all found, but order was wrong",
                 "expected order for required elements",
                 "testing whether",
                 "but was");
         assertFailureValue(
+                failure,
                 "expected order for required elements", "[abc=123, def=64, def=128, def=64]");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_success() {
+    void comparingValuesUsing_containsAtLeast_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "m", "+1", "def", "0x40", "def", "+128");
@@ -2074,26 +2309,34 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_missingKey() {
+    void comparingValuesUsing_containsAtLeast_missingKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of("def", "+64", "def", "0x40", "m", "+1", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast("def", 64, "def", 128, "def", 64, "abc", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast("def", 64, "def", 128, "def", 64, "abc", 123));
         assertFailureKeys(
+                failure,
                 "missing (1)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (1)", "abc=123");
+        assertFailureValue(
+                failure,
+                "missing (1)", "abc=123");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_wrongValueForKey() {
+    void comparingValuesUsing_containsAtLeast_wrongValueForKey() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "m", "+1", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast("def", 64, "def", 128, "def", 128, "abc", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast("def", 64, "def", 128, "def", 128, "abc", 123));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and a subset of the actual"
                         + " elements, each actual element matches as least one expected element, and vice"
                         + " versa, but there was no 1:1 mapping",
@@ -2103,18 +2346,23 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "expected to contain at least",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "def=128");
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=128");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_wrongTypeInActual() {
+    void comparingValuesUsing_containsAtLeast_wrongTypeInActual() {
         ImmutableListMultimap<String, Object> actual =
-                ImmutableListMultimap.<String, Object>of(
+                ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "def", "0x40", "def", 999, "m", "+1");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast("def", 64, "def", 123, "def", 64, "abc", 123);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast("def", 64, "def", 123, "def", 64, "abc", 123));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "---",
                 "expected to contain at least",
@@ -2122,14 +2370,16 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (1)", "def=123");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (1)", "def=123");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(def=999, def=64) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_inOrder_success() {
+    void comparingValuesUsing_containsAtLeast_inOrder_success() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "m", "+1", "def", "0x40", "def", "+128");
@@ -2139,42 +2389,46 @@ public class MultimapSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_inOrder_wrongKeyOrder() {
+    void comparingValuesUsing_containsAtLeast_inOrder_wrongKeyOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "def", "+64", "def", "0x40", "m", "+1", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast("def", 64, "def", 64, "def", 128, "abc", 123)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast("def", 64, "def", 64, "def", 128, "abc", 123)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "required elements were all found, but order was wrong",
                 "expected order for required elements",
                 "testing whether",
                 "but was");
         assertFailureValue(
+                failure,
                 "expected order for required elements", "[def=64, def=64, def=128, abc=123]");
     }
 
     @Test
-    public void comparingValuesUsing_containsAtLeast_inOrder_wrongValueOrder() {
+    void comparingValuesUsing_containsAtLeast_inOrder_wrongValueOrder() {
         ImmutableListMultimap<String, String> actual =
                 ImmutableListMultimap.of(
                         "abc", "+123", "m", "+1", "def", "+64", "def", "0x40", "def", "+128");
-        expectFailureWhenTestingThat(actual)
-                .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast("abc", 123, "def", 64, "def", 128, "def", 64)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingValuesUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast("abc", 123, "def", 64, "def", 128, "def", 64)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "required elements were all found, but order was wrong",
                 "expected order for required elements",
                 "testing whether",
                 "but was");
         assertFailureValue(
+                failure,
                 "expected order for required elements", "[abc=123, def=64, def=128, def=64]");
-    }
-
-    private MultimapSubject expectFailureWhenTestingThat(Multimap<?, ?> actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
