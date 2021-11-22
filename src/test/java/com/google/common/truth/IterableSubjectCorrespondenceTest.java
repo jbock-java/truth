@@ -41,6 +41,7 @@ import static com.google.common.truth.TestCorrespondences.STRING_PARSES_TO_INTEG
 import static com.google.common.truth.TestCorrespondences.WITHIN_10_OF;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link IterableSubject} APIs that use {@link Correspondence}.
@@ -66,34 +67,43 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     public void contains_failure() {
         ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .contains(2345);
-        assertFailureKeys("expected to contain", "testing whether", "but was");
-        assertFailureValue("expected to contain", "2345");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but was", "[not a number, +123, +456, +789]");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .contains(2345));
+        assertFailureKeys(
+                failure,
+                "expected to contain", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "expected to contain", "2345");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but was", "[not a number, +123, +456, +789]");
     }
 
     @Test
     public void contains_handlesExceptions() {
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .contains("DEF");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .contains("DEF"));
         // We fail with the more helpful failure message about the missing value, not the NPE.
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, DEF) threw java.lang.NullPointerException");
     }
@@ -101,23 +111,26 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     public void contains_handlesExceptions_alwaysFails() {
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .contains("GHI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .contains("GHI"));
         // The actual list does contain the required match. However, no reasonable implementation would
         // find that mapping without hitting the null along the way, and that throws NPE, so we are
         // contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected to contain",
                 "testing whether",
                 "found match (but failing because of exception)",
                 "full contents");
-        assertFailureValue("found match (but failing because of exception)", "ghi");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "found match (but failing because of exception)", "ghi");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, GHI) threw java.lang.NullPointerException");
     }
