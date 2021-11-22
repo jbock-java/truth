@@ -17,9 +17,7 @@ package com.google.common.truth;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.truth.TestCorrespondences.Record;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,11 +51,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @author Pete Gillin
  */
-@RunWith(JUnit4.class)
-public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
+class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
-    public void contains_success() {
+    void contains_success() {
         ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -65,7 +62,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void contains_failure() {
+    void contains_failure() {
         ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -87,7 +84,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void contains_handlesExceptions() {
+    void contains_handlesExceptions() {
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList("abc", null, "ghi");
         AssertionError failure = assertThrows(
@@ -109,7 +106,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void contains_handlesExceptions_alwaysFails() {
+    void contains_handlesExceptions_alwaysFails() {
         List<String> actual = asList("abc", null, "ghi");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -136,7 +133,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_contains() {
+    void displayingDiffsPairedBy_1arg_contains() {
         Record expected = Record.create(2, 200);
         ImmutableList<Record> actual =
                 ImmutableList.of(
@@ -145,13 +142,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(4, 400),
                         Record.create(2, 189),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .contains(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .contains(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but did not",
@@ -162,14 +160,22 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "diff",
                 "---",
                 "full contents");
-        assertFailureValue("#1", "2/211");
-        assertFailureValueIndexed("diff", 0, "score:11");
-        assertFailureValue("#2", "2/189");
-        assertFailureValueIndexed("diff", 1, "score:-11");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 0, "score:11");
+        assertFailureValue(
+                failure,
+                "#2", "2/189");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 1, "score:-11");
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_contains_noDiff() {
+    void displayingDiffsPairedBy_1arg_contains_noDiff() {
         Record expected = Record.create(2, 200);
         ImmutableList<Record> actual =
                 ImmutableList.of(
@@ -178,75 +184,81 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(4, 400),
                         Record.create(2, 189),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10_NO_DIFF)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .contains(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10_NO_DIFF)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .contains(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but did not",
                 "though it did contain elements with correct key (2)",
                 "---",
                 "full contents");
-        assertFailureValue("though it did contain elements with correct key (2)", "[2/211, 2/189]");
+        assertFailureValue(
+                failure,
+                "though it did contain elements with correct key (2)", "[2/211, 2/189]");
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_contains_handlesActualKeyerExceptions() {
+    void displayingDiffsPairedBy_1arg_contains_handlesActualKeyerExceptions() {
         Record expected = Record.create(0, 999);
         List<Record> actual = asList(Record.create(1, 100), null, Record.create(4, 400));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .contains(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .contains(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but was",
                 "additionally, one or more exceptions were thrown while keying elements for pairing",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("actualKeyFunction.apply(null) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_contains_handlesExpectedKeyerExceptions() {
+    void displayingDiffsPairedBy_1arg_contains_handlesExpectedKeyerExceptions() {
         List<Record> actual =
                 asList(Record.create(1, 100), Record.create(2, 200), Record.create(4, 400));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .contains(null);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .contains(null));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but was",
                 "additionally, one or more exceptions were thrown while keying elements for pairing",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("expectedKeyFunction.apply(null) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_contains_handlesFormatDiffExceptions() {
+    void displayingDiffsPairedBy_1arg_contains_handlesFormatDiffExceptions() {
         Record expected = Record.create(0, 999);
         List<Record> actual = asList(Record.create(1, 100), null, Record.create(4, 400));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
-                .contains(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
+                        .contains(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but did not",
@@ -255,13 +267,13 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "full contents",
                 "additionally, one or more exceptions were thrown while formatting diffs",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("formatDiff(null, 0/999) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void contains_null() {
+    void contains_null() {
         List<String> actual = Arrays.asList("+123", null, "+789");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -269,26 +281,27 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void wrongTypeInActual() {
+    void wrongTypeInActual() {
         ImmutableList<?> actual = ImmutableList.of("valid", 123);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .contains(456);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .contains(456));
         assertFailureKeys(
+                failure,
                 "expected to contain",
                 "testing whether",
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(123, 456) threw java.lang.ClassCastException");
     }
 
     @Test
-    public void doesNotContain_success() {
+    void doesNotContain_success() {
         ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -296,68 +309,79 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void doesNotContains_failure() {
+    void doesNotContains_failure() {
         ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .doesNotContain(456);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .doesNotContain(456));
         assertFailureKeys(
+                failure,
                 "expected not to contain", "testing whether", "but contained", "full contents");
-        assertFailureValue("expected not to contain", "456");
-        assertFailureValue("but contained", "[+456]");
+        assertFailureValue(
+                failure,
+                "expected not to contain", "456");
+        assertFailureValue(
+                failure,
+                "but contained", "[+456]");
     }
 
     @Test
-    public void doesNotContain_handlesExceptions() {
+    void doesNotContain_handlesExceptions() {
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .doesNotContain("GHI");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .doesNotContain("GHI"));
         // We fail with the more helpful failure message about the unexpected value, not the NPE.
         assertFailureKeys(
+                failure,
                 "expected not to contain",
                 "testing whether",
                 "but contained",
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, GHI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void doesNotContain_handlesExceptions_alwaysFails() {
+    void doesNotContain_handlesExceptions_alwaysFails() {
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .doesNotContain("DEF");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .doesNotContain("DEF"));
         // The actual list does not contain the forbidden match. However, we cannot establish that
         // without hitting the null along the way, and that throws NPE, so we are contractually required
         // to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected not to contain",
                 "testing whether",
                 "found no match (but failing because of exception)",
                 "full contents");
-        assertFailureValue("expected not to contain", "DEF");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "expected not to contain", "DEF");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, DEF) threw java.lang.NullPointerException");
-        assertFailureValue("expected not to contain", "DEF");
+        assertFailureValue(
+                failure,
+                "expected not to contain", "DEF");
     }
 
     @Test
-    public void containsExactlyElementsIn_inOrder_success() {
+    void containsExactlyElementsIn_inOrder_success() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80");
         assertThat(actual)
@@ -367,7 +391,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyElementsIn_successOutOfOrder() {
+    void containsExactlyElementsIn_successOutOfOrder() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
         assertThat(actual)
@@ -376,23 +400,23 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyElementsIn_outOfOrderDoesNotStringify() {
+    void containsExactlyElementsIn_outOfOrderDoesNotStringify() {
         CountsToStringCalls o = new CountsToStringCalls();
         List<Object> actual = asList(o, 1);
         List<Object> expected = asList(1, o);
         assertThat(actual).comparingElementsUsing(equality()).containsExactlyElementsIn(expected);
         assertThat(o.calls).isEqualTo(0);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(equality())
-                .containsExactlyElementsIn(expected)
-                .inOrder();
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(equality())
+                        .containsExactlyElementsIn(expected)
+                        .inOrder());
         assertThat(o.calls).isGreaterThan(0);
     }
 
     @Test
-    public void containsExactlyElementsIn_successNonGreedy() {
+    void containsExactlyElementsIn_successNonGreedy() {
         // (We use doubles with approximate equality for this test, because we can't illustrate this
         // case with the string parsing correspondence used in the other tests, because one string
         // won't parse to more than one integer.)
@@ -410,24 +434,34 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMissingOneCandidate() {
+    void containsExactlyElementsIn_failsMissingOneCandidate() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x40", "0x80");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("missing (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
-        assertFailureValue("expected", "[64, 128, 256, 128]");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but was", "[+64, +128, 0x40, 0x80]");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
+        assertFailureValue(
+                failure,
+                "expected", "[64, 128, 256, 128]");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but was", "[+64, +128, 0x40, 0x80]");
     }
 
     @Test
-    public void containsExactlyElementsIn_inOrder_passesWhenBothEmpty() {
+    void containsExactlyElementsIn_inOrder_passesWhenBothEmpty() {
         ImmutableList<Integer> expected = ImmutableList.of();
         ImmutableList<String> actual = ImmutableList.of();
         assertThat(actual)
@@ -437,136 +471,170 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyElementsIn_failsExpectedIsEmpty() {
+    void containsExactlyElementsIn_failsExpectedIsEmpty() {
         ImmutableList<Integer> expected = ImmutableList.of();
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x40", "0x80");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("expected to be empty", "but was");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "expected to be empty", "but was");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMultipleMissingCandidates() {
+    void containsExactlyElementsIn_failsMultipleMissingCandidates() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+64", "0x40", "0x40");
         // Actual list has candidate matches for 64 only, and is missing 128, 256, and the other 128.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("missing (3)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (3)", "128 [2 copies], 256");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing (3)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (3)", "128 [2 copies], 256");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsOrderedMissingOneCandidate() {
+    void containsExactlyElementsIn_failsOrderedMissingOneCandidate() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 512);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256");
         // Actual list has in-order candidate matches for 64, 128, and 256, but is missing 512.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("missing (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "512");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (1)", "512");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsExtraCandidates() {
+    void containsExactlyElementsIn_failsExtraCandidates() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "cheese");
         // Actual list has candidate matches for all the expected, but has extra cheese.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("unexpected (1)", "cheese");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "unexpected (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "cheese");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsOrderedExtraCandidates() {
+    void containsExactlyElementsIn_failsOrderedExtraCandidates() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80", "cheese");
         // Actual list has in-order candidate matches for all the expected, but has extra cheese.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("unexpected (1)", "cheese");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "unexpected (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "cheese");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMissingAndExtraCandidates() {
+    void containsExactlyElementsIn_failsMissingAndExtraCandidates() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "jalapenos", "cheese");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256 and has
         // extra jalapenos and cheese.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "unexpected (2)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
-        assertFailureValue("unexpected (2)", "[jalapenos, cheese]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
+        assertFailureValue(
+                failure,
+                "unexpected (2)", "[jalapenos, cheese]");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMissingAndExtraNull() {
+    void containsExactlyElementsIn_failsMissingAndExtraNull() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         List<String> actual = asList("+64", "+128", "0x80", null);
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256 and has
         // extra null. (N.B. This tests a previous regression from calling extra.toString().)
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
-        assertFailureValue("unexpected (1)", "[null]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[null]");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsNullMissingAndExtra() {
+    void containsExactlyElementsIn_failsNullMissingAndExtra() {
         List<Integer> expected = asList(64, 128, null, 128);
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x80", "cheese");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing null and has
         // extra cheese.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "null");
-        assertFailureValue("unexpected (1)", "[cheese]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "null");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[cheese]");
     }
 
     @Test
-    public void containsExactlyElementsIn_handlesExceptions() {
+    void containsExactlyElementsIn_handlesExceptions() {
         ImmutableList<String> expected = ImmutableList.of("ABC", "DEF", "GHI", "JKL");
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList(null, "xyz", "abc", "def");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsExactlyElementsIn(expected));
         // We fail with the more helpful failure message about the mis-matched values, not the NPE.
         assertFailureKeys(
+                failure,
                 "missing (2)",
                 "unexpected (2)",
                 "---",
@@ -575,48 +643,54 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertFailureValue("missing (2)", "GHI, JKL");
-        assertFailureValue("unexpected (2)", "null, xyz");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "missing (2)", "GHI, JKL");
+        assertFailureValue(
+                failure,
+                "unexpected (2)", "null, xyz");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ABC) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsExactlyElementsIn_handlesExceptions_alwaysFails() {
+    void containsExactlyElementsIn_handlesExceptions_alwaysFails() {
         List<String> expected = asList("ABC", "DEF", "GHI", null);
         List<String> actual = asList(null, "def", "ghi", "abc");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
+                        .containsExactlyElementsIn(expected));
         // CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE.compare(null, null) returns true, so there is a
         // mapping between actual and expected elements where they all correspond. However, no
         // reasonable implementation would find that mapping without hitting the (null, "ABC") case
         // along the way, and that throws NPE, so we are contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected",
                 "testing whether",
                 "found all expected elements (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ABC) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsExactlyElementsIn_diffOneMissingSomeExtraCandidate() {
+    void containsExactlyElementsIn_diffOneMissingSomeExtraCandidate() {
         ImmutableList<Integer> expected = ImmutableList.of(30, 60, 90);
         ImmutableList<Integer> actual = ImmutableList.of(101, 65, 35, 190);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(WITHIN_10_OF)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(WITHIN_10_OF)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "unexpected (2)",
                 "#1",
@@ -627,15 +701,25 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "90");
-        assertFailureValue("#1", "101");
-        assertFailureValueIndexed("diff", 0, "11");
-        assertFailureValue("#2", "190");
-        assertFailureValueIndexed("diff", 1, "100");
+        assertFailureValue(
+                failure,
+                "missing (1)", "90");
+        assertFailureValue(
+                failure,
+                "#1", "101");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 0, "11");
+        assertFailureValue(
+                failure,
+                "#2", "190");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 1, "100");
     }
 
     @Test
-    public void displayingDiffsPairedBy_1arg_containsExactlyElementsIn() {
+    void displayingDiffsPairedBy_1arg_containsExactlyElementsIn() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -648,13 +732,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 211),
                         Record.create(4, 400),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -669,17 +754,29 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "testing whether",
                 "but was");
         // the key=2 values:
-        assertFailureValue("for key", "2");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("#1", "2/211");
-        assertFailureValue("diff", "score:11");
+        assertFailureValue(
+                failure,
+                "for key", "2");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValue(
+                failure,
+                "diff", "score:11");
         // the values without matching keys:
-        assertFailureValue("missing (2)", "3/300, none/900");
-        assertFailureValue("unexpected (2)", "4/400, none/999");
+        assertFailureValue(
+                failure,
+                "missing (2)", "3/300, none/900");
+        assertFailureValue(
+                failure,
+                "unexpected (2)", "4/400, none/999");
     }
 
     @Test
-    public void displayingDiffsPairedBy_2arg_containsExactlyElementsIn() {
+    void displayingDiffsPairedBy_2arg_containsExactlyElementsIn() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -687,13 +784,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(3, 300),
                         Record.createWithoutId(900));
         ImmutableList<String> actual = ImmutableList.of("1/100", "2/211", "4/400", "none/999");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(PARSED_RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(PARSED_RECORD_ID, RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(PARSED_RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(PARSED_RECORD_ID, RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -708,17 +806,29 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "testing whether",
                 "but was");
         // the key=2 values:
-        assertFailureValue("for key", "2");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("#1", "2/211");
-        assertFailureValue("diff", "score:11");
+        assertFailureValue(
+                failure,
+                "for key", "2");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValue(
+                failure,
+                "diff", "score:11");
         // the values without matching keys:
-        assertFailureValue("missing (2)", "3/300, none/900");
-        assertFailureValue("unexpected (2)", "4/400, none/999");
+        assertFailureValue(
+                failure,
+                "missing (2)", "3/300, none/900");
+        assertFailureValue(
+                failure,
+                "unexpected (2)", "4/400, none/999");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_onlyKeyed() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_onlyKeyed() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -731,13 +841,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 211),
                         Record.create(3, 303),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -747,14 +858,22 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("for key", "2");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("#1", "2/211");
-        assertFailureValue("diff", "score:11");
+        assertFailureValue(
+                failure,
+                "for key", "2");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValue(
+                failure,
+                "diff", "score:11");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_noKeyed() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_noKeyed() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -767,13 +886,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 201),
                         Record.create(4, 400),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "elements without matching keys:",
                 "missing (2)",
                 "unexpected (2)",
@@ -781,12 +901,16 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (2)", "3/300, none/900");
-        assertFailureValue("unexpected (2)", "4/400, none/999");
+        assertFailureValue(
+                failure,
+                "missing (2)", "3/300, none/900");
+        assertFailureValue(
+                failure,
+                "unexpected (2)", "4/400, none/999");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_noDiffs() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_noDiffs() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -799,20 +923,25 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 211),
                         Record.create(3, 303),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10_NO_DIFF)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10_NO_DIFF)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key", "missing", "unexpected (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("unexpected (1)", "[2/211]");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "unexpected (1)", "[2/211]");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_passing() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_passing() {
         // The contract on displayingDiffsPairedBy requires that it should not affect whether the test
         // passes or fails. This test asserts that a test which would pass on the basis of its
         // correspondence still passes even if the user specifies a key function such that none of the
@@ -827,7 +956,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_notUnique() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_notUnique() {
         // The missing elements here are not uniquely keyed by the key function, so the key function
         // should be ignored, but a warning about this should be appended to the failure message.
         ImmutableList<Record> expected =
@@ -843,13 +972,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 211),
                         Record.create(4, 400),
                         Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (4)",
                 "unexpected (3)",
                 "---",
@@ -858,22 +988,27 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (4)", "2/200, 3/300, 3/301, none/900");
-        assertFailureValue("unexpected (3)", "2/211, 4/400, none/999");
+        assertFailureValue(
+                failure,
+                "missing (4)", "2/200, 3/300, 3/301, none/900");
+        assertFailureValue(
+                failure,
+                "unexpected (3)", "2/211, 4/400, none/999");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_handlesActualKeyerExceptions() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_handlesActualKeyerExceptions() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(4, 400));
         List<Record> actual = asList(Record.create(1, 101), Record.create(2, 211), null);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -889,23 +1024,24 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while keying elements for pairing",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("actualKeyFunction.apply(null) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_handlesExpectedKeyerExceptions() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_handlesExpectedKeyerExceptions() {
         List<Record> expected = asList(Record.create(1, 100), Record.create(2, 200), null);
         List<Record> actual =
                 asList(Record.create(1, 101), Record.create(2, 211), Record.create(4, 400));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -921,23 +1057,24 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while keying elements for pairing",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("expectedKeyFunction.apply(null) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsExactlyElementsIn_handlesFormatDiffExceptions() {
+    void displayingDiffsPairedBy_containsExactlyElementsIn_handlesFormatDiffExceptions() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual = asList(Record.create(1, 101), Record.create(2, 211), null);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (1)",
@@ -953,21 +1090,22 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while formatting diffs",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("formatDiff(null, 0/999) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMissingElementInOneToOne() {
+    void containsExactlyElementsIn_failsMissingElementInOneToOne() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -977,19 +1115,22 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "128");
+        assertFailureValue(
+                failure,
+                "missing (1)", "128");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsExtraElementInOneToOne() {
+    void containsExactlyElementsIn_failsExtraElementInOneToOne() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x80", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -999,19 +1140,20 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertThatFailure().factValue("unexpected (1)").isAnyOf("+64", "0x40");
+        assertThatFailure(failure).factValue("unexpected (1)").isAnyOf("+64", "0x40");
     }
 
     @Test
-    public void containsExactlyElementsIn_failsMissingAndExtraInOneToOne() {
+    void containsExactlyElementsIn_failsMissingAndExtraInOneToOne() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -1022,20 +1164,23 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "128");
-        assertThatFailure().factValue("unexpected (1)").isAnyOf("[+64]", "[0x40]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "128");
+        assertThatFailure(failure).factValue("unexpected (1)").isAnyOf("[+64]", "[0x40]");
     }
 
     @Test
-    public void containsExactlyElementsIn_diffOneMissingAndExtraInOneToOne() {
+    void containsExactlyElementsIn_diffOneMissingAndExtraInOneToOne() {
         ImmutableList<Integer> expected = ImmutableList.of(30, 30, 60);
         ImmutableList<Integer> actual = ImmutableList.of(25, 55, 65);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(WITHIN_10_OF)
-                .containsExactlyElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(WITHIN_10_OF)
+                        .containsExactlyElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -1048,28 +1193,33 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "30");
-        assertThatFailure().factValue("#1").isAnyOf("55", "65");
-        assertThatFailure().factValue("diff").isAnyOf("25", "35");
+        assertFailureValue(
+                failure,
+                "missing (1)", "30");
+        assertThatFailure(failure).factValue("#1").isAnyOf("55", "65");
+        assertThatFailure(failure).factValue("diff").isAnyOf("25", "35");
     }
 
     @Test
-    public void containsExactlyElementsIn_inOrder_failsOutOfOrder() {
+    void containsExactlyElementsIn_inOrder_failsOutOfOrder() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "contents match, but order was wrong", "expected", "testing whether", "but was");
-        assertFailureValue("expected", "[64, 128, 256, 128]");
+        assertFailureValue(
+                failure,
+                "expected", "[64, 128, 256, 128]");
     }
 
     @Test
-    public void containsExactlyElementsIn_null() {
+    void containsExactlyElementsIn_null() {
         List<Integer> expected = Arrays.asList(128, null);
         List<String> actual = Arrays.asList(null, "0x80");
         assertThat(actual)
@@ -1078,25 +1228,26 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactlyElementsIn_array() {
+    void containsExactlyElementsIn_array() {
         Integer[] expected = new Integer[]{64, 128, 256, 128};
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
-        assertThat(actual)
+        assertThat(ImmutableList.of("+128", "+64", "0x80", "+256"))
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactlyElementsIn(expected);
-
-        actual = ImmutableList.of("+64", "+128", "0x40", "0x80");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactlyElementsIn(expected);
-        assertFailureKeys("missing (1)", "---", "expected", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableList.of("+64", "+128", "0x40", "0x80"))
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactlyElementsIn(expected));
+        assertFailureKeys(
+                failure,
+                "missing (1)", "---", "expected", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
     }
 
     @Test
-    public void containsExactly_inOrder_success() {
+    void containsExactly_inOrder_success() {
         ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1105,7 +1256,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactly_successOutOfOrder() {
+    void containsExactly_successOutOfOrder() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1113,14 +1264,15 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactly_failsMissingAndExtraInOneToOne() {
+    void containsExactly_failsMissingAndExtraInOneToOne() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsExactly(64, 128, 256, 128);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsExactly(64, 128, 256, 128));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and the actual elements,"
                         + " each actual element matches as least one expected element, and vice versa, but"
                         + " there was no 1:1 mapping",
@@ -1131,12 +1283,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "128");
-        assertThatFailure().factValue("unexpected (1)").isAnyOf("[+64]", "[0x40]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "128");
+        assertThatFailure(failure).factValue("unexpected (1)").isAnyOf("[+64]", "[0x40]");
     }
 
     @Test
-    public void containsExactly_nullValueInArray() {
+    void containsExactly_nullValueInArray() {
         List<String> actual = Arrays.asList(null, "0x80");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1144,7 +1298,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsExactly_nullArray() {
+    void containsExactly_nullArray() {
         // Truth is tolerant of this erroneous varargs call.
         List<String> actual = Arrays.asList((String) null);
         assertThat(actual)
@@ -1154,7 +1308,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn() {
+    void containsAtLeastElementsIn() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
@@ -1165,7 +1319,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn_inOrder_success() {
+    void containsAtLeastElementsIn_inOrder_success() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
@@ -1176,7 +1330,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn_successOutOfOrder() {
+    void containsAtLeastElementsIn_successOutOfOrder() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
@@ -1186,23 +1340,23 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn_outOfOrderDoesNotStringify() {
+    void containsAtLeastElementsIn_outOfOrderDoesNotStringify() {
         CountsToStringCalls o = new CountsToStringCalls();
         List<Object> actual = asList(o, 1);
         List<Object> expected = asList(1, o);
         assertThat(actual).comparingElementsUsing(equality()).containsAtLeastElementsIn(expected);
         assertThat(o.calls).isEqualTo(0);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(equality())
-                .containsAtLeastElementsIn(expected)
-                .inOrder();
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(equality())
+                        .containsAtLeastElementsIn(expected)
+                        .inOrder());
         assertThat(o.calls).isGreaterThan(0);
     }
 
     @Test
-    public void containsAtLeastElementsIn_successNonGreedy() {
+    void containsAtLeastElementsIn_successNonGreedy() {
         // (We use doubles with approximate equality for this test, because we can't illustrate this
         // case with the string parsing correspondence used in the other tests, because one string
         // won't parse to more than one integer.)
@@ -1220,36 +1374,46 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn_failsMissingOneCandidate() {
+    void containsAtLeastElementsIn_failsMissingOneCandidate() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
-        assertFailureValue("expected to contain at least", "[64, 128, 256, 128]");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but was", "[fee, +64, +128, fi, fo, 0x40, 0x80, fum]");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
+        assertFailureValue(
+                failure,
+                "expected to contain at least", "[64, 128, 256, 128]");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but was", "[fee, +64, +128, fi, fo, 0x40, 0x80, fum]");
     }
 
     @Test
-    public void containsAtLeastElementsIn_handlesExceptions() {
+    void containsAtLeastElementsIn_handlesExceptions() {
         ImmutableList<String> expected = ImmutableList.of("ABC", "DEF", "GHI");
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList(null, "xyz", "abc", "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsAtLeastElementsIn(expected));
         // We fail with the more helpful failure message about the mis-matched values, not the NPE.
         assertFailureKeys(
+                failure,
                 "missing (1)",
                 "---",
                 "expected to contain at least",
@@ -1257,38 +1421,39 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ABC) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsAtLeastElementsIn_handlesExceptions_alwaysFails() {
+    void containsAtLeastElementsIn_handlesExceptions_alwaysFails() {
         List<String> expected = asList("ABC", "DEF", null);
         List<String> actual = asList(null, "def", "ghi", "abc");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE)
+                        .containsAtLeastElementsIn(expected));
         // CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE.compare(null, null) returns true, so there is a
         // mapping between actual and expected elements which includes all the expected. However, no
         // reasonable implementation would find that mapping without hitting the (null, "ABC") case
         // along the way, and that throws NPE, so we are contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected to contain at least",
                 "testing whether",
                 "found all expected elements (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, ABC) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void displayingElementsPairedBy_containsAtLeastElementsIn() {
+    void displayingElementsPairedBy_containsAtLeastElementsIn() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
         ImmutableList<Record> actual =
@@ -1298,13 +1463,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 222),
                         Record.create(3, 303),
                         Record.createWithoutId(888));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "did contain elements with that key (2)",
@@ -1320,18 +1486,32 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "testing whether",
                 "but was");
         // values at key 2:
-        assertFailureValue("for key", "2");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("#1", "2/211");
-        assertFailureValueIndexed("diff", 0, "score:11");
-        assertFailureValue("#2", "2/222");
-        assertFailureValueIndexed("diff", 1, "score:22");
+        assertFailureValue(
+                failure,
+                "for key", "2");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 0, "score:11");
+        assertFailureValue(
+                failure,
+                "#2", "2/222");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 1, "score:22");
         // values without matching keys:
-        assertFailureValue("missing (1)", "none/999");
+        assertFailureValue(
+                failure,
+                "missing (1)", "none/999");
     }
 
     @Test
-    public void displayingElementsPairedBy_containsAtLeastElementsIn_notUnique() {
+    void displayingElementsPairedBy_containsAtLeastElementsIn_notUnique() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -1340,13 +1520,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.createWithoutId(999));
         ImmutableList<Record> actual =
                 ImmutableList.of(Record.create(1, 101), Record.create(3, 303), Record.createWithoutId(999));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (2)",
                 "---",
                 "a key function which does not uniquely key the expected elements was provided and has"
@@ -1354,22 +1535,25 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected to contain at least",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (2)", "2/200, 2/201");
+        assertFailureValue(
+                failure,
+                "missing (2)", "2/200, 2/201");
     }
 
     @Test
-    public void displayingElementsPairedBy_containsAtLeastElementsIn_handlesFormatDiffExceptions() {
+    void displayingElementsPairedBy_containsAtLeastElementsIn_handlesFormatDiffExceptions() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual =
                 asList(Record.create(1, 101), Record.create(2, 211), Record.create(3, 303), null);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "did contain elements with that key (1)",
@@ -1385,61 +1569,82 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "but was",
                 "additionally, one or more exceptions were thrown while formatting diffs",
                 "first exception");
-        assertFailureValueIndexed("for key", 0, "2");
-        assertFailureValueIndexed("missing", 0, "2/200");
-        assertFailureValue("#1", "2/211");
-        assertFailureValue("diff", "score:11");
-        assertFailureValueIndexed("for key", 1, "0");
-        assertFailureValueIndexed("missing", 1, "0/999");
-        assertFailureValueIndexed("did contain elements with that key (1)", 1, "[null]");
-        assertThatFailure()
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "2");
+        assertFailureValueIndexed(
+                failure,
+                "missing", 0, "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/211");
+        assertFailureValue(
+                failure,
+                "diff", "score:11");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "0");
+        assertFailureValueIndexed(
+                failure,
+                "missing", 1, "0/999");
+        assertFailureValueIndexed(
+                failure,
+                "did contain elements with that key (1)", 1, "[null]");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("formatDiff(null, 0/999) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsAtLeastElementsIn_failsMultipleMissingCandidates() {
+    void containsAtLeastElementsIn_failsMultipleMissingCandidates() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+64", "fi", "fo", "0x40", "0x40", "fum");
         // Actual list has candidate matches for 64 only, and is missing 128, 256, and the other 128.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (3)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (3)", "128 [2 copies], 256");
+        assertFailureValue(
+                failure,
+                "missing (3)", "128 [2 copies], 256");
     }
 
     @Test
-    public void containsAtLeastElementsIn_failsOrderedMissingOneCandidate() {
+    void containsAtLeastElementsIn_failsOrderedMissingOneCandidate() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 512);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "fi", "fo", "+128", "+256", "fum");
         // Actual list has in-order candidate matches for 64, 128, and 256, but is missing 512.
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (1)", "512");
+        assertFailureValue(
+                failure,
+                "missing (1)", "512");
     }
 
     @Test
-    public void containsAtLeastElementsIn_failsMissingElementInOneToOne() {
+    void containsAtLeastElementsIn_failsMissingElementInOneToOne() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and a subset of the actual"
                         + " elements, each actual element matches as least one expected element, and vice"
                         + " versa, but there was no 1:1 mapping",
@@ -1449,30 +1654,35 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected to contain at least",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "128");
+        assertFailureValue(
+                failure,
+                "missing (1)", "128");
     }
 
     @Test
-    public void containsAtLeastElementsIn_inOrder_failsOutOfOrder() {
+    void containsAtLeastElementsIn_inOrder_failsOutOfOrder() {
         ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected)
-                .inOrder();
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected)
+                        .inOrder());
         assertFailureKeys(
+                failure,
                 "required elements were all found, but order was wrong",
                 "expected order for required elements",
                 "testing whether",
                 "but was");
-        assertFailureValue("expected order for required elements", "[64, 128, 256, 128]");
+        assertFailureValue(
+                failure,
+                "expected order for required elements", "[64, 128, 256, 128]");
     }
 
     @Test
-    public void containsAtLeastElementsIn_null() {
+    void containsAtLeastElementsIn_null() {
         List<Integer> expected = Arrays.asList(128, null);
         List<String> actual = Arrays.asList(null, "fee", "0x80");
         assertThat(actual)
@@ -1481,27 +1691,27 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeastElementsIn_array() {
+    void containsAtLeastElementsIn_array() {
         Integer[] expected = new Integer[]{64, 128, 256, 128};
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
-        assertThat(actual)
+        assertThat(ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum"))
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeastElementsIn(expected);
 
-        actual = ImmutableList.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeastElementsIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(ImmutableList.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum"))
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeastElementsIn(expected));
         assertFailureKeys(
+                failure,
                 "missing (1)", "---", "expected to contain at least", "testing whether", "but was");
-        assertFailureValue("missing (1)", "256");
+        assertFailureValue(
+                failure,
+                "missing (1)", "256");
     }
 
     @Test
-    public void containsAtLeast() {
+    void containsAtLeast() {
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
@@ -1511,7 +1721,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeast_inOrder_success() {
+    void containsAtLeast_inOrder_success() {
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
@@ -1521,7 +1731,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeast_successOutOfOrder() {
+    void containsAtLeast_successOutOfOrder() {
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
         assertThat(actual)
@@ -1530,15 +1740,16 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAtLeast_failsMissingElementInOneToOne() {
+    void containsAtLeast_failsMissingElementInOneToOne() {
         ImmutableList<String> actual =
                 ImmutableList.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAtLeast(64, 128, 256, 128);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAtLeast(64, 128, 256, 128));
         assertFailureKeys(
+                failure,
                 "in an assertion requiring a 1:1 mapping between the expected and a subset of the actual"
                         + " elements, each actual element matches as least one expected element, and vice"
                         + " versa, but there was no 1:1 mapping",
@@ -1548,11 +1759,13 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "expected to contain at least",
                 "testing whether",
                 "but was");
-        assertFailureValue("missing (1)", "128");
+        assertFailureValue(
+                failure,
+                "missing (1)", "128");
     }
 
     @Test
-    public void containsAtLeast_nullValueInArray() {
+    void containsAtLeast_nullValueInArray() {
         List<String> actual = Arrays.asList(null, "fee", "0x80");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1560,7 +1773,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAnyOf_success() {
+    void containsAnyOf_success() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1568,22 +1781,30 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAnyOf_failure() {
+    void containsAnyOf_failure() {
         ImmutableList<String> actual =
                 ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAnyOf(255, 256, 257);
-        assertFailureKeys("expected to contain any of", "testing whether", "but was");
-        assertFailureValue("expected to contain any of", "[255, 256, 257]");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but was", "[+128, +64, This is not the string you're looking for, 0x40]");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAnyOf(255, 256, 257));
+        assertFailureKeys(
+                failure,
+                "expected to contain any of", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "expected to contain any of", "[255, 256, 257]");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but was", "[+128, +64, This is not the string you're looking for, 0x40]");
     }
 
     @Test
-    public void containsAnyOf_null() {
+    void containsAnyOf_null() {
         List<String> actual = asList("+128", "+64", null, "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
@@ -1591,51 +1812,53 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAnyOf_handlesExceptions() {
+    void containsAnyOf_handlesExceptions() {
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsAnyOf("DEF", "FED");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsAnyOf("DEF", "FED"));
         // We fail with the more helpful failure message about missing the expected values, not the NPE.
         assertFailureKeys(
+                failure,
                 "expected to contain any of",
                 "testing whether",
                 "but was",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, DEF) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsAnyOf_handlesExceptions_alwaysFails() {
+    void containsAnyOf_handlesExceptions_alwaysFails() {
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsAnyOf("GHI", "XYZ");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsAnyOf("GHI", "XYZ"));
         // The actual list does contain the required match. However, no reasonable implementation would
         // find that mapping without hitting the null along the way, and that throws NPE, so we are
         // contractually required to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected to contain any of",
                 "testing whether",
                 "found match (but failing because of exception)",
                 "full contents");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, GHI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsAnyIn_success() {
+    void containsAnyIn_success() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
         ImmutableList<Integer> expected = ImmutableList.of(255, 256, 257);
         assertThat(actual)
@@ -1644,23 +1867,31 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAnyIn_failure() {
+    void containsAnyIn_failure() {
         ImmutableList<String> actual =
                 ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
         ImmutableList<Integer> expected = ImmutableList.of(255, 256, 257);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAnyIn(expected);
-        assertFailureKeys("expected to contain any of", "testing whether", "but was");
-        assertFailureValue("expected to contain any of", "[255, 256, 257]");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but was", "[+128, +64, This is not the string you're looking for, 0x40]");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAnyIn(expected));
+        assertFailureKeys(
+                failure,
+                "expected to contain any of", "testing whether", "but was");
+        assertFailureValue(
+                failure,
+                "expected to contain any of", "[255, 256, 257]");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but was", "[+128, +64, This is not the string you're looking for, 0x40]");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsAnyIn_withKeyMatches() {
+    void displayingDiffsPairedBy_containsAnyIn_withKeyMatches() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -1674,13 +1905,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.create(2, 222),
                         Record.create(4, 404),
                         Record.createWithoutId(888));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsAnyIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsAnyIn(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain any of",
                 "testing whether",
                 "but was",
@@ -1699,32 +1931,53 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "diff",
                 "---");
         // at key 2:
-        assertFailureValueIndexed("for key", 0, "2");
-        assertFailureValueIndexed("expected any of", 0, "2/200");
-        assertFailureValueIndexed("#1", 0, "2/211");
-        assertFailureValueIndexed("diff", 0, "score:11");
-        assertFailureValue("#2", "2/222");
-        assertFailureValueIndexed("diff", 1, "score:22");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 0, "2");
+        assertFailureValueIndexed(
+                failure,
+                "expected any of", 0, "2/200");
+        assertFailureValueIndexed(
+                failure,
+                "#1", 0, "2/211");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 0, "score:11");
+        assertFailureValue(
+                failure,
+                "#2", "2/222");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 1, "score:22");
         // at key 3:
-        assertFailureValueIndexed("for key", 1, "3");
-        assertFailureValueIndexed("expected any of", 1, "3/300");
-        assertFailureValueIndexed("#1", 1, "3/311");
-        assertFailureValueIndexed("diff", 2, "score:11");
+        assertFailureValueIndexed(
+                failure,
+                "for key", 1, "3");
+        assertFailureValueIndexed(
+                failure,
+                "expected any of", 1, "3/300");
+        assertFailureValueIndexed(
+                failure,
+                "#1", 1, "3/311");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 2, "score:11");
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsAnyIn_withoutKeyMatches() {
+    void displayingDiffsPairedBy_containsAnyIn_withoutKeyMatches() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
         ImmutableList<Record> actual =
                 ImmutableList.of(Record.create(3, 300), Record.create(4, 411), Record.createWithoutId(888));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsAnyIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsAnyIn(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain any of",
                 "testing whether",
                 "but was",
@@ -1732,7 +1985,7 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsAnyIn_notUnique() {
+    void displayingDiffsPairedBy_containsAnyIn_notUnique() {
         ImmutableList<Record> expected =
                 ImmutableList.of(
                         Record.create(1, 100),
@@ -1741,13 +1994,14 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                         Record.createWithoutId(999));
         ImmutableList<Record> actual =
                 ImmutableList.of(Record.create(3, 300), Record.create(2, 211), Record.createWithoutId(888));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsAnyIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsAnyIn(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain any of",
                 "testing whether",
                 "but was",
@@ -1756,17 +2010,18 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void displayingDiffsPairedBy_containsAnyIn_handlesFormatDiffExceptions() {
+    void displayingDiffsPairedBy_containsAnyIn_handlesFormatDiffExceptions() {
         ImmutableList<Record> expected =
                 ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual = asList(Record.create(3, 311), Record.create(4, 404), null);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
-                .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
-                .containsAnyIn(expected);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(RECORDS_EQUAL_WITH_SCORE_TOLERANCE_10)
+                        .displayingDiffsPairedBy(NULL_SAFE_RECORD_ID)
+                        .containsAnyIn(expected));
         assertFailureKeys(
+                failure,
                 "expected to contain any of",
                 "testing whether",
                 "but was",
@@ -1776,13 +2031,13 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "---",
                 "additionally, one or more exceptions were thrown while formatting diffs",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("formatDiff(null, 0/999) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsAnyIn_null() {
+    void containsAnyIn_null() {
         List<String> actual = asList("+128", "+64", null, "0x40");
         List<Integer> expected = asList(255, null, 257);
         assertThat(actual)
@@ -1791,24 +2046,24 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsAnyIn_array() {
+    void containsAnyIn_array() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        Integer[] expected = new Integer[]{255, 256, 257};
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAnyIn(expected);
+                .containsAnyIn(new Integer[]{255, 256, 257});
 
-        expected = new Integer[]{511, 512, 513};
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsAnyIn(expected);
-        assertFailureKeys("expected to contain any of", "testing whether", "but was");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsAnyIn(new Integer[]{511, 512, 513}));
+        assertFailureKeys(
+                failure,
+                "expected to contain any of", "testing whether", "but was");
     }
 
     @Test
-    public void containsNoneOf_success() {
+    void containsNoneOf_success() {
         ImmutableList<String> actual =
                 ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
         assertThat(actual)
@@ -1817,36 +2072,48 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsNoneOf_failure() {
+    void containsNoneOf_failure() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneOf(255, 256, 257);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneOf(255, 256, 257));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValue("expected not to contain any of", "[255, 256, 257]");
-        assertFailureValue("testing whether", "actual element parses to expected element");
-        assertFailureValue("but contained", "[+256]");
-        assertFailureValue("corresponding to", "256");
-        assertFailureValue("full contents", "[+128, +64, +256, 0x40]");
+        assertFailureValue(
+                failure,
+                "expected not to contain any of", "[255, 256, 257]");
+        assertFailureValue(
+                failure,
+                "testing whether", "actual element parses to expected element");
+        assertFailureValue(
+                failure,
+                "but contained", "[+256]");
+        assertFailureValue(
+                failure,
+                "corresponding to", "256");
+        assertFailureValue(
+                failure,
+                "full contents", "[+128, +64, +256, 0x40]");
     }
 
     @Test
-    public void containsNoneOf_multipleFailures() {
+    void containsNoneOf_multipleFailures() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneOf(64, 128);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneOf(64, 128));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
@@ -1856,42 +2123,56 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValueIndexed("but contained", 0, "[+64, 0x40]");
-        assertFailureValueIndexed("corresponding to", 0, "64");
-        assertFailureValueIndexed("but contained", 1, "[+128]");
-        assertFailureValueIndexed("corresponding to", 1, "128");
+        assertFailureValueIndexed(
+                failure,
+                "but contained", 0, "[+64, 0x40]");
+        assertFailureValueIndexed(
+                failure,
+                "corresponding to", 0, "64");
+        assertFailureValueIndexed(
+                failure,
+                "but contained", 1, "[+128]");
+        assertFailureValueIndexed(
+                failure,
+                "corresponding to", 1, "128");
     }
 
     @Test
-    public void containsNoneOf_null() {
+    void containsNoneOf_null() {
         List<String> actual = asList("+128", "+64", null, "0x40");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneOf(255, null, 257);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneOf(255, null, 257));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValue("but contained", "[null]");
-        assertFailureValue("corresponding to", "null");
+        assertFailureValue(
+                failure,
+                "but contained", "[null]");
+        assertFailureValue(
+                failure,
+                "corresponding to", "null");
     }
 
     @Test
-    public void containsNoneOf_handlesExceptions() {
+    void containsNoneOf_handlesExceptions() {
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsNoneOf("GHI", "XYZ");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsNoneOf("GHI", "XYZ"));
         // We fail with the more helpful failure message about the unexpected value, not the NPE.
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
@@ -1900,37 +2181,40 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "full contents",
                 "additionally, one or more exceptions were thrown while comparing elements",
                 "first exception");
-        assertThatFailure()
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, GHI) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsNoneOf_handlesExceptions_alwaysFails() {
+    void containsNoneOf_handlesExceptions_alwaysFails() {
         List<String> actual = asList("abc", null, "ghi");
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
-                .containsNoneOf("DEF", "XYZ");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(CASE_INSENSITIVE_EQUALITY)
+                        .containsNoneOf("DEF", "XYZ"));
         // The actual list does not contain the forbidden matcesh. However, we cannot establish that
         // without hitting the null along the way, and that throws NPE, so we are contractually required
         // to fail.
         assertFailureKeys(
+                failure,
                 "one or more exceptions were thrown while comparing elements",
                 "first exception",
                 "expected not to contain any of",
                 "testing whether",
                 "found no matches (but failing because of exception)",
                 "full contents");
-        assertFailureValue("expected not to contain any of", "[DEF, XYZ]");
-        assertThatFailure()
+        assertFailureValue(
+                failure,
+                "expected not to contain any of", "[DEF, XYZ]");
+        assertThatFailure(failure)
                 .factValue("first exception")
                 .startsWith("compare(null, DEF) threw java.lang.NullPointerException");
     }
 
     @Test
-    public void containsNoneIn_success() {
+    void containsNoneIn_success() {
         ImmutableList<String> actual =
                 ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
         ImmutableList<Integer> excluded = ImmutableList.of(255, 256, 257);
@@ -1940,73 +2224,86 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void containsNoneIn_failure() {
+    void containsNoneIn_failure() {
         ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
         ImmutableList<Integer> excluded = ImmutableList.of(255, 256, 257);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneIn(excluded);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneIn(excluded));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValue("but contained", "[+256]");
-        assertFailureValue("corresponding to", "256");
+        assertFailureValue(
+                failure,
+                "but contained", "[+256]");
+        assertFailureValue(
+                failure,
+                "corresponding to", "256");
     }
 
     @Test
-    public void containsNoneIn_null() {
+    void containsNoneIn_null() {
         List<String> actual = asList("+128", "+64", null, "0x40");
         List<Integer> excluded = asList(255, null, 257);
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneIn(excluded);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneIn(excluded));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValue("but contained", "[null]");
-        assertFailureValue("corresponding to", "null");
+        assertFailureValue(
+                failure,
+                "but contained", "[null]");
+        assertFailureValue(
+                failure,
+                "corresponding to", "null");
     }
 
     @Test
-    public void containsNoneIn_array() {
+    void containsNoneIn_array() {
         ImmutableList<String> actual =
                 ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
-        Integer[] excluded = new Integer[]{255, 256, 257};
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneIn(excluded);
+                .containsNoneIn(new Integer[]{255, 256, 257});
 
-        excluded = new Integer[]{127, 128, 129};
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
-                .containsNoneIn(excluded);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
+                        .containsNoneIn(new Integer[]{127, 128, 129}));
         assertFailureKeys(
+                failure,
                 "expected not to contain any of",
                 "testing whether",
                 "but contained",
                 "corresponding to",
                 "---",
                 "full contents");
-        assertFailureValue("but contained", "[+128]");
-        assertFailureValue("corresponding to", "128");
+        assertFailureValue(
+                failure,
+                "but contained", "[+128]");
+        assertFailureValue(
+                failure,
+                "corresponding to", "128");
     }
 
     @Test
-    public void formattingDiffsUsing_success() {
+    void formattingDiffsUsing_success() {
         ImmutableList<Record> actual =
                 ImmutableList.of(Record.create(3, 300), Record.create(2, 200), Record.create(1, 100));
         assertThat(actual)
@@ -2016,20 +2313,21 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void formattingDiffsUsing_failure() {
+    void formattingDiffsUsing_failure() {
         ImmutableList<Record> actual =
                 ImmutableList.of(
                         Record.create(3, 300),
                         Record.create(2, 201),
                         Record.create(1, 100),
                         Record.create(2, 199));
-        expectFailure
-                .whenTesting()
-                .that(actual)
-                .formattingDiffsUsing(RECORD_DIFF_FORMATTER)
-                .displayingDiffsPairedBy(RECORD_ID)
-                .containsExactly(Record.create(1, 100), Record.create(2, 200), Record.create(3, 300));
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .formattingDiffsUsing(RECORD_DIFF_FORMATTER)
+                        .displayingDiffsPairedBy(RECORD_ID)
+                        .containsExactly(Record.create(1, 100), Record.create(2, 200), Record.create(3, 300)));
         assertFailureKeys(
+                failure,
                 "for key",
                 "missing",
                 "unexpected (2)",
@@ -2040,11 +2338,21 @@ public class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
                 "---",
                 "expected",
                 "but was");
-        assertFailureValue("missing", "2/200");
-        assertFailureValue("#1", "2/201");
-        assertFailureValueIndexed("diff", 0, "score:1");
-        assertFailureValue("#2", "2/199");
-        assertFailureValueIndexed("diff", 1, "score:-1");
+        assertFailureValue(
+                failure,
+                "missing", "2/200");
+        assertFailureValue(
+                failure,
+                "#1", "2/201");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 0, "score:1");
+        assertFailureValue(
+                failure,
+                "#2", "2/199");
+        assertFailureValueIndexed(
+                failure,
+                "diff", 1, "score:-1");
     }
 
     private static final class CountsToStringCalls {
