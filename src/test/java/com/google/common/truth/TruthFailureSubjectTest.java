@@ -23,8 +23,8 @@ import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.TruthFailureSubject.HOW_TO_TEST_KEYS_WITHOUT_VALUES;
 import static com.google.common.truth.TruthFailureSubject.truthFailures;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /** Tests for {@link TruthFailureSubject}. */
 class TruthFailureSubjectTest extends BaseSubjectTestCase {
@@ -250,14 +250,6 @@ class TruthFailureSubjectTest extends BaseSubjectTestCase {
 
     private TruthFailureSubject assertThat(Fact... facts) {
         return ExpectFailure.assertThat(failure(facts));
-    }
-
-    private TruthFailureSubject expectFailureWhenTestingThat(Fact... facts) {
-        return expectFailureWhenTestingThat(failure(facts));
-    }
-
-    private TruthFailureSubject expectFailureWhenTestingThat(AssertionError failure) {
-        return (TruthFailureSubject) expectFailure.whenTesting().about(truthFailures()).that(failure);
     }
 
     private AssertionErrorWithFacts failure(Fact... facts) {

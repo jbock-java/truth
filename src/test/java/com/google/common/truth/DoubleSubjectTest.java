@@ -15,24 +15,21 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
 import com.google.common.truth.ExpectFailure.SimpleSubjectBuilderCallback;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Platform.doubleToString;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for Double Subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class DoubleSubjectTest extends BaseSubjectTestCase {
+class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static final double NEARLY_MAX = 1.7976931348623155E308;
     private static final double NEGATIVE_NEARLY_MAX = -1.7976931348623155E308;
@@ -42,12 +39,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     private static final double OVER_GOLDEN = 1.2300000000000002;
 
     private static final Subject.Factory<DoubleSubject, Double> DOUBLE_SUBJECT_FACTORY =
-            new Subject.Factory<DoubleSubject, Double>() {
-                @Override
-                public DoubleSubject createSubject(FailureMetadata metadata, Double that) {
-                    return new DoubleSubject(metadata, that);
-                }
-            };
+            DoubleSubject::new;
 
     private static AssertionError expectFailure(
             SimpleSubjectBuilderCallback<DoubleSubject, Double> callback) {
@@ -55,8 +47,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    @GwtIncompatible("Math.nextAfter")
-    public void testDoubleConstants_matchNextAfter() {
+    void testDoubleConstants_matchNextAfter() {
         assertThat(Math.nextAfter(Double.MIN_VALUE, 1.0)).isEqualTo(OVER_MIN);
         assertThat(Math.nextAfter(1.23, Double.POSITIVE_INFINITY)).isEqualTo(OVER_GOLDEN);
         assertThat(Math.nextAfter(Double.MAX_VALUE, 0.0)).isEqualTo(NEARLY_MAX);
@@ -65,22 +56,26 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void testJ2clCornerCaseZero() {
+    void testJ2clCornerCaseZero() {
         // GWT considers -0.0 to be equal to 0.0. But we've added a special workaround inside Truth.
         assertThatIsEqualToFails(-0.0, 0.0);
     }
 
     @Test
-    @GwtIncompatible("GWT behavior difference")
-    public void testJ2clCornerCaseDoubleVsFloat() {
+    void testJ2clCornerCaseDoubleVsFloat() {
         // Under GWT, 1.23f.toString() is different than 1.23d.toString(), so the message omits types.
         // TODO(b/35377736): Consider making Truth add the types anyway.
-        expectFailureWhenTestingThat(1.23).isEqualTo(1.23f);
-        assertFailureKeys("expected", "an instance of", "but was", "an instance of");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(1.23)
+                        .isEqualTo(1.23f));
+        assertFailureKeys(
+                failure,
+                "expected", "an instance of", "but was", "an instance of");
     }
 
     @Test
-    public void isWithinOf() {
+    void isWithinOf() {
         assertThat(2.0).isWithin(0.0).of(2.0);
         assertThat(2.0).isWithin(0.00001).of(2.0);
         assertThat(2.0).isWithin(1000.0).of(2.0);
@@ -96,12 +91,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     private static void assertThatIsWithinFails(
             final double actual, final double tolerance, final double expected) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(actual).isWithin(tolerance).of(expected);
-                    }
-                };
+                expect -> expect.that(actual).isWithin(tolerance).of(expected);
         AssertionError failure = expectFailure(callback);
         assertThat(failure)
                 .factKeys()
@@ -113,7 +103,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isNotWithinOf() {
+    void isNotWithinOf() {
         assertThatIsNotWithinFails(2.0, 0.0, 2.0);
         assertThatIsNotWithinFails(2.0, 0.00001, 2.0);
         assertThatIsNotWithinFails(2.0, 1000.0, 2.0);
@@ -129,19 +119,14 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     private static void assertThatIsNotWithinFails(
             final double actual, final double tolerance, final double expected) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(actual).isNotWithin(tolerance).of(expected);
-                    }
-                };
+                expect -> expect.that(actual).isNotWithin(tolerance).of(expected);
         AssertionError failure = expectFailure(callback);
         assertThat(failure).factValue("expected not to be").isEqualTo(doubleToString(expected));
         assertThat(failure).factValue("within tolerance").isEqualTo(doubleToString(tolerance));
     }
 
     @Test
-    public void negativeTolerances() {
+    void negativeTolerances() {
         isWithinNegativeToleranceThrowsIAE(5.0, -0.5, 4.9);
         isWithinNegativeToleranceThrowsIAE(5.0, -0.5, 4.0);
 
@@ -201,7 +186,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void nanTolerances() {
+    void nanTolerances() {
         try {
             assertThat(1.0).isWithin(Double.NaN).of(1.0);
             fail("Expected IllegalArgumentException to be thrown but wasn't");
@@ -217,7 +202,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void infiniteTolerances() {
+    void infiniteTolerances() {
         try {
             assertThat(1.0).isWithin(Double.POSITIVE_INFINITY).of(1.0);
             fail("Expected IllegalArgumentException to be thrown but wasn't");
@@ -233,7 +218,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isWithinOfZero() {
+    void isWithinOfZero() {
         assertThat(+0.0).isWithin(0.00001).of(+0.0);
         assertThat(+0.0).isWithin(0.00001).of(-0.0);
         assertThat(-0.0).isWithin(0.00001).of(+0.0);
@@ -246,7 +231,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isNotWithinOfZero() {
+    void isNotWithinOfZero() {
         assertThat(+0.0).isNotWithin(0.00001).of(+1.0);
         assertThat(+0.0).isNotWithin(0.00001).of(-1.0);
         assertThat(-0.0).isNotWithin(0.00001).of(+1.0);
@@ -266,7 +251,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isWithinZeroTolerance() {
+    void isWithinZeroTolerance() {
         double max = Double.MAX_VALUE;
         assertThat(max).isWithin(0.0).of(max);
         assertThat(NEARLY_MAX).isWithin(0.0).of(NEARLY_MAX);
@@ -293,7 +278,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isNotWithinZeroTolerance() {
+    void isNotWithinZeroTolerance() {
         double max = Double.MAX_VALUE;
         assertThatIsNotWithinFails(max, 0.0, max);
         assertThatIsNotWithinFails(NEARLY_MAX, 0.0, NEARLY_MAX);
@@ -308,7 +293,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isWithinNonFinite() {
+    void isWithinNonFinite() {
         assertThatIsWithinFails(Double.NaN, 0.00001, Double.NaN);
         assertThatIsWithinFails(Double.NaN, 0.00001, Double.POSITIVE_INFINITY);
         assertThatIsWithinFails(Double.NaN, 0.00001, Double.NEGATIVE_INFINITY);
@@ -333,7 +318,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isNotWithinNonFinite() {
+    void isNotWithinNonFinite() {
         assertThatIsNotWithinFails(Double.NaN, 0.00001, Double.NaN);
         assertThatIsNotWithinFails(Double.NaN, 0.00001, Double.POSITIVE_INFINITY);
         assertThatIsNotWithinFails(Double.NaN, 0.00001, Double.NEGATIVE_INFINITY);
@@ -359,7 +344,7 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isEqualTo() {
+    void isEqualTo() {
         assertThat(1.23).isEqualTo(1.23);
         assertThatIsEqualToFails(GOLDEN, OVER_GOLDEN);
         assertThat(Double.POSITIVE_INFINITY).isEqualTo(Double.POSITIVE_INFINITY);
@@ -370,17 +355,12 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsEqualToFails(final double actual, final double expected) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(actual).isEqualTo(expected);
-                    }
-                };
+                expect -> expect.that(actual).isEqualTo(expected);
         expectFailure(callback);
     }
 
     @Test
-    public void isNotEqualTo() {
+    void isNotEqualTo() {
         assertThatIsNotEqualToFails(1.23);
         assertThat(GOLDEN).isNotEqualTo(OVER_GOLDEN);
         assertThatIsNotEqualToFails(Double.POSITIVE_INFINITY);
@@ -393,17 +373,12 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsNotEqualToFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isNotEqualTo(value);
-                    }
-                };
+                expect -> expect.that(value).isNotEqualTo(value);
         expectFailure(callback);
     }
 
     @Test
-    public void isZero() {
+    void isZero() {
         assertThat(0.0).isZero();
         assertThat(-0.0).isZero();
         assertThatIsZeroFails(Double.MIN_VALUE);
@@ -415,18 +390,13 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsZeroFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isZero();
-                    }
-                };
+                expect -> expect.that(value).isZero();
         AssertionError failure = expectFailure(callback);
         assertThat(failure).factKeys().containsExactly("expected zero", "but was").inOrder();
     }
 
     @Test
-    public void isNonZero() {
+    void isNonZero() {
         assertThatIsNonZeroFails(0.0, "expected not to be zero");
         assertThatIsNonZeroFails(-0.0, "expected not to be zero");
         assertThat(Double.MIN_VALUE).isNonZero();
@@ -438,18 +408,13 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsNonZeroFails(final Double value, String factKey) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isNonZero();
-                    }
-                };
+                expect -> expect.that(value).isNonZero();
         AssertionError failure = expectFailure(callback);
         assertThat(failure).factKeys().containsExactly(factKey, "but was").inOrder();
     }
 
     @Test
-    public void isPositiveInfinity() {
+    void isPositiveInfinity() {
         assertThat(Double.POSITIVE_INFINITY).isPositiveInfinity();
         assertThatIsPositiveInfinityFails(1.23);
         assertThatIsPositiveInfinityFails(Double.NEGATIVE_INFINITY);
@@ -459,17 +424,12 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsPositiveInfinityFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isPositiveInfinity();
-                    }
-                };
+                expect -> expect.that(value).isPositiveInfinity();
         expectFailure(callback);
     }
 
     @Test
-    public void isNegativeInfinity() {
+    void isNegativeInfinity() {
         assertThat(Double.NEGATIVE_INFINITY).isNegativeInfinity();
         assertThatIsNegativeInfinityFails(1.23);
         assertThatIsNegativeInfinityFails(Double.POSITIVE_INFINITY);
@@ -479,17 +439,12 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsNegativeInfinityFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isNegativeInfinity();
-                    }
-                };
+                expect -> expect.that(value).isNegativeInfinity();
         expectFailure(callback);
     }
 
     @Test
-    public void isNaN() {
+    void isNaN() {
         assertThat(Double.NaN).isNaN();
         assertThatIsNaNFails(1.23);
         assertThatIsNaNFails(Double.POSITIVE_INFINITY);
@@ -499,17 +454,12 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsNaNFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isNaN();
-                    }
-                };
+                expect -> expect.that(value).isNaN();
         expectFailure(callback);
     }
 
     @Test
-    public void isFinite() {
+    void isFinite() {
         assertThat(1.23).isFinite();
         assertThat(Double.MAX_VALUE).isFinite();
         assertThat(-1.0 * Double.MIN_VALUE).isFinite();
@@ -521,18 +471,13 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsFiniteFails(final Double value) {
         ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                new ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double>() {
-                    @Override
-                    public void invokeAssertion(SimpleSubjectBuilder<DoubleSubject, Double> expect) {
-                        expect.that(value).isFinite();
-                    }
-                };
+                expect -> expect.that(value).isFinite();
         AssertionError failure = expectFailure(callback);
         assertThat(failure).factKeys().containsExactly("expected to be finite", "but was").inOrder();
     }
 
     @Test
-    public void isNotNaN() {
+    void isNotNaN() {
         assertThat(1.23).isNotNaN();
         assertThat(Double.MAX_VALUE).isNotNaN();
         assertThat(-1.0 * Double.MIN_VALUE).isNotNaN();
@@ -541,53 +486,75 @@ public class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isNotNaNIsNaN() {
-        expectFailureWhenTestingThat(Double.NaN).isNotNaN();
+    void isNotNaNIsNaN() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(Double.NaN)
+                        .isNotNaN());
     }
 
     @Test
-    public void isNotNaNIsNull() {
-        expectFailureWhenTestingThat(null).isNotNaN();
-        assertFailureKeys("expected a double other than NaN", "but was");
+    void isNotNaNIsNull() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat((Double) null)
+                        .isNotNaN());
+        assertFailureKeys(
+                failure,
+                "expected a double other than NaN", "but was");
     }
 
     @Test
-    public void isGreaterThan_int_strictly() {
-        expectFailureWhenTestingThat(2.0).isGreaterThan(3);
+    void isGreaterThan_int_strictly() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isGreaterThan(3));
     }
 
     @Test
-    public void isGreaterThan_int() {
-        expectFailureWhenTestingThat(2.0).isGreaterThan(2);
+    void isGreaterThan_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isGreaterThan(2));
         assertThat(2.0).isGreaterThan(1);
     }
 
     @Test
-    public void isLessThan_int_strictly() {
-        expectFailureWhenTestingThat(2.0).isLessThan(1);
+    void isLessThan_int_strictly() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isLessThan(1));
     }
 
     @Test
-    public void isLessThan_int() {
-        expectFailureWhenTestingThat(2.0).isLessThan(2);
+    void isLessThan_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isLessThan(2));
         assertThat(2.0).isLessThan(3);
     }
 
     @Test
-    public void isAtLeast_int() {
-        expectFailureWhenTestingThat(2.0).isAtLeast(3);
+    void isAtLeast_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isAtLeast(3));
         assertThat(2.0).isAtLeast(2);
         assertThat(2.0).isAtLeast(1);
     }
 
     @Test
-    public void isAtMost_int() {
-        expectFailureWhenTestingThat(2.0).isAtMost(1);
+    void isAtMost_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2.0)
+                        .isAtMost(1));
         assertThat(2.0).isAtMost(2);
         assertThat(2.0).isAtMost(3);
-    }
-
-    private DoubleSubject expectFailureWhenTestingThat(Double actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
