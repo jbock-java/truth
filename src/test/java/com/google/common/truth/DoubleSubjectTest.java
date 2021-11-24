@@ -15,11 +15,11 @@
  */
 package com.google.common.truth;
 
-import com.google.common.truth.ExpectFailure.SimpleSubjectBuilderCallback;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Platform.doubleToString;
+import static com.google.common.truth.Truth.assertAbout;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -40,11 +40,6 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static final Subject.Factory<DoubleSubject, Double> DOUBLE_SUBJECT_FACTORY =
             DoubleSubject::new;
-
-    private static AssertionError expectFailure(
-            SimpleSubjectBuilderCallback<DoubleSubject, Double> callback) {
-        return ExpectFailure.expectFailureAbout(DOUBLE_SUBJECT_FACTORY, callback);
-    }
 
     @Test
     void testDoubleConstants_matchNextAfter() {
@@ -90,9 +85,12 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsWithinFails(
             final double actual, final double tolerance, final double expected) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(actual).isWithin(tolerance).of(expected);
-        AssertionError failure = expectFailure(callback);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(actual)
+                        .isWithin(tolerance)
+                        .of(expected));
         assertThat(failure)
                 .factKeys()
                 .containsExactly("expected", "but was", "outside tolerance")
@@ -118,9 +116,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
 
     private static void assertThatIsNotWithinFails(
             final double actual, final double tolerance, final double expected) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(actual).isNotWithin(tolerance).of(expected);
-        AssertionError failure = expectFailure(callback);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(actual)
+                        .isNotWithin(tolerance).of(expected));
         assertThat(failure).factValue("expected not to be").isEqualTo(doubleToString(expected));
         assertThat(failure).factValue("within tolerance").isEqualTo(doubleToString(tolerance));
     }
@@ -354,9 +354,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsEqualToFails(final double actual, final double expected) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(actual).isEqualTo(expected);
-        expectFailure(callback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(actual)
+                        .isEqualTo(expected));
     }
 
     @Test
@@ -372,9 +374,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsNotEqualToFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isNotEqualTo(value);
-        expectFailure(callback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isNotEqualTo(value));
     }
 
     @Test
@@ -389,9 +393,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsZeroFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isZero();
-        AssertionError failure = expectFailure(callback);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isZero());
         assertThat(failure).factKeys().containsExactly("expected zero", "but was").inOrder();
     }
 
@@ -407,9 +413,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsNonZeroFails(final Double value, String factKey) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isNonZero();
-        AssertionError failure = expectFailure(callback);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isNonZero());
         assertThat(failure).factKeys().containsExactly(factKey, "but was").inOrder();
     }
 
@@ -423,9 +431,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsPositiveInfinityFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isPositiveInfinity();
-        expectFailure(callback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isPositiveInfinity());
     }
 
     @Test
@@ -438,9 +448,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsNegativeInfinityFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isNegativeInfinity();
-        expectFailure(callback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isNegativeInfinity());
     }
 
     @Test
@@ -453,9 +465,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsNaNFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isNaN();
-        expectFailure(callback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isNaN());
     }
 
     @Test
@@ -470,9 +484,11 @@ class DoubleSubjectTest extends BaseSubjectTestCase {
     }
 
     private static void assertThatIsFiniteFails(final Double value) {
-        ExpectFailure.SimpleSubjectBuilderCallback<DoubleSubject, Double> callback =
-                expect -> expect.that(value).isFinite();
-        AssertionError failure = expectFailure(callback);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertAbout(DOUBLE_SUBJECT_FACTORY)
+                        .that(value)
+                        .isFinite());
         assertThat(failure).factKeys().containsExactly("expected to be finite", "but was").inOrder();
     }
 
