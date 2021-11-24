@@ -15,43 +15,47 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for introspective Subject behaviour.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class ClassSubjectTest extends BaseSubjectTestCase {
+class ClassSubjectTest extends BaseSubjectTestCase {
     @Test
-    public void testIsAssignableTo_same() {
+    void testIsAssignableTo_same() {
         assertThat(String.class).isAssignableTo(String.class);
     }
 
     @Test
-    public void testIsAssignableTo_parent() {
+    void testIsAssignableTo_parent() {
         assertThat(String.class).isAssignableTo(Object.class);
         assertThat(NullPointerException.class).isAssignableTo(Exception.class);
     }
 
     @Test
-    public void testIsAssignableTo_reversed() {
-        expectFailureWhenTestingThat(Object.class).isAssignableTo(String.class);
-        assertFailureValue("expected to be assignable to", "java.lang.String");
+    void testIsAssignableTo_reversed() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(Object.class)
+                        .isAssignableTo(String.class));
+        assertFailureValue(
+                failure,
+                "expected to be assignable to", "java.lang.String");
     }
 
     @Test
-    public void testIsAssignableTo_differentTypes() {
-        expectFailureWhenTestingThat(String.class).isAssignableTo(Exception.class);
-        assertFailureValue("expected to be assignable to", "java.lang.Exception");
-    }
-
-    private ClassSubject expectFailureWhenTestingThat(Class<?> actual) {
-        return expectFailure.whenTesting().that(actual);
+    void testIsAssignableTo_differentTypes() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(String.class)
+                        .isAssignableTo(Exception.class));
+        assertFailureValue(
+                failure,
+                "expected to be assignable to", "java.lang.Exception");
     }
 }
