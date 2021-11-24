@@ -23,9 +23,11 @@ import java.util.stream.IntStream;
 import static com.google.common.truth.FailureAssertions.assertFailureKeys;
 import static com.google.common.truth.FailureAssertions.assertFailureValue;
 import static com.google.common.truth.IntStreamSubject.intStreams;
+import static com.google.common.truth.Truth.assertAbout;
 import static com.google.common.truth.Truth8.assertThat;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for Java 8 {@link IntStream} Subjects.
@@ -44,7 +46,11 @@ final class IntStreamSubjectTest {
     void testIsEqualToList() {
         IntStream stream = IntStream.of(42);
         List<Integer> list = asList(42);
-        AssertionError unused = expectFailure(whenTesting -> whenTesting.that(stream).isEqualTo(list));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(stream)
+                        .isEqualTo(list));
     }
 
     @Test
@@ -76,8 +82,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testIsEmpty_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).isEmpty());
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .isEmpty());
     }
 
     @Test
@@ -87,8 +96,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testIsNotEmpty_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of()).isNotEmpty());
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of())
+                        .isNotEmpty());
     }
 
     @Test
@@ -98,8 +110,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testHasSize_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).hasSize(2));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .hasSize(2));
     }
 
     @Test
@@ -109,8 +124,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsNoDuplicates_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42, 42)).containsNoDuplicates());
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42, 42))
+                        .containsNoDuplicates());
     }
 
     @Test
@@ -120,8 +138,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContains_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).contains(100));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .contains(100));
     }
 
     @Test
@@ -131,8 +152,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsAnyOf_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).containsAnyOf(43, 44));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .containsAnyOf(43, 44));
     }
 
     @Test
@@ -142,9 +166,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsAnyIn_fails() {
-        AssertionError unused =
-                expectFailure(
-                        whenTesting -> whenTesting.that(IntStream.of(42)).containsAnyIn(asList(43, 44)));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .containsAnyIn(asList(43, 44)));
     }
 
     @Test
@@ -154,8 +180,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testDoesNotContain_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).doesNotContain(42));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .doesNotContain(42));
     }
 
     @Test
@@ -165,8 +194,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsNoneOf_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(42)).containsNoneOf(42, 43));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .containsNoneOf(42, 43));
     }
 
     @Test
@@ -176,9 +208,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsNoneIn_fails() {
-        AssertionError unused =
-                expectFailure(
-                        whenTesting -> whenTesting.that(IntStream.of(42)).containsNoneIn(asList(42, 43)));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42))
+                        .containsNoneIn(asList(42, 43)));
     }
 
     @Test
@@ -188,9 +222,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsAtLeast_fails() {
-        AssertionError unused =
-                expectFailure(
-                        whenTesting -> whenTesting.that(IntStream.of(42, 43)).containsAtLeast(42, 43, 44));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42, 43))
+                        .containsAtLeast(42, 43, 44));
     }
 
     @Test
@@ -220,12 +256,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testContainsAtLeastElementsIn_fails() {
-        AssertionError unused =
-                expectFailure(
-                        whenTesting ->
-                                whenTesting
-                                        .that(IntStream.of(42, 43))
-                                        .containsAtLeastElementsIn(asList(42, 43, 44)));
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(42, 43))
+                        .containsAtLeastElementsIn(asList(42, 43, 44)));
     }
 
     @Test
@@ -327,8 +362,11 @@ final class IntStreamSubjectTest {
 
     @Test
     void testIsInOrder_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(1, 3, 2, 4)).isInOrder());
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(1, 3, 2, 4))
+                        .isInOrder());
     }
 
     @Test
@@ -340,12 +378,10 @@ final class IntStreamSubjectTest {
 
     @Test
     void testIsInStrictOrder_fails() {
-        AssertionError unused =
-                expectFailure(whenTesting -> whenTesting.that(IntStream.of(1, 2, 2, 4)).isInStrictOrder());
-    }
-
-    private static AssertionError expectFailure(
-            ExpectFailure.SimpleSubjectBuilderCallback<IntStreamSubject, IntStream> assertionCallback) {
-        return ExpectFailure.expectFailureAbout(intStreams(), assertionCallback);
+        assertThrows(
+                AssertionError.class,
+                () -> assertAbout(intStreams())
+                        .that(IntStream.of(1, 2, 2, 4))
+                        .isInStrictOrder());
     }
 }
