@@ -16,9 +16,7 @@
 package com.google.common.truth;
 
 import com.google.common.collect.Iterables;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
@@ -31,24 +29,23 @@ import static org.junit.Assert.fail;
  *
  * @author Pete Gillin
  */
-@RunWith(JUnit4.class)
-public final class CorrespondenceExceptionStoreTest extends BaseSubjectTestCase {
+public final class CorrespondenceExceptionStoreTest {
 
     @Test
-    public void hasCompareException_empty() {
+    void hasCompareException_empty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         assertThat(exceptions.hasCompareException()).isFalse();
     }
 
     @Test
-    public void hasCompareException_hasCompareException() {
+    void hasCompareException_hasCompareException() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         addCompareException(exceptions);
         assertThat(exceptions.hasCompareException()).isTrue();
     }
 
     @Test
-    public void describeAsMainCause_empty() {
+    void describeAsMainCause_empty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         try {
             exceptions.describeAsMainCause();
@@ -58,7 +55,7 @@ public final class CorrespondenceExceptionStoreTest extends BaseSubjectTestCase 
     }
 
     @Test
-    public void describeAsMainCause_notEmpty() {
+    void describeAsMainCause_notEmpty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         addCompareException(exceptions);
         assertExpectedFacts(
@@ -67,13 +64,13 @@ public final class CorrespondenceExceptionStoreTest extends BaseSubjectTestCase 
     }
 
     @Test
-    public void describeAsAdditionalInfo_empty() {
+    void describeAsAdditionalInfo_empty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         assertThat(exceptions.describeAsAdditionalInfo()).isEmpty();
     }
 
     @Test
-    public void describeAsAdditionalInfo_notEmpty() {
+    void describeAsAdditionalInfo_notEmpty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         addCompareException(exceptions);
         assertExpectedFacts(
