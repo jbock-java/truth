@@ -15,11 +15,10 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for Long Subjects.
@@ -28,108 +27,144 @@ import static com.google.common.truth.Truth.assertThat;
  * @author Christian Gruber
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class LongSubjectTest extends BaseSubjectTestCase {
+class LongSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void simpleEquality() {
+    void simpleEquality() {
         assertThat(4L).isEqualTo(4L);
     }
 
     @Test
-    public void simpleInequality() {
+    void simpleInequality() {
         assertThat(4L).isNotEqualTo(5L);
     }
 
     @Test
-    public void equalityWithInts() {
-        assertThat(0L).isEqualTo(0);
-        expectFailureWhenTestingThat(0L).isNotEqualTo(0);
+    void equalityWithInts() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(0L)
+                        .isNotEqualTo(0));
     }
 
     @Test
-    public void equalityFail() {
-        expectFailureWhenTestingThat(4L).isEqualTo(5L);
+    void equalityFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(4L)
+                        .isEqualTo(5L));
     }
 
     @Test
-    public void inequalityFail() {
-        expectFailureWhenTestingThat(4L).isNotEqualTo(4L);
+    void inequalityFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(4L)
+                        .isNotEqualTo(4L));
     }
 
     @Test
-    public void equalityOfNulls() {
+    void equalityOfNulls() {
         assertThat((Long) null).isEqualTo(null);
     }
 
     @Test
-    public void equalityOfNullsFail_nullActual() {
-        expectFailureWhenTestingThat(null).isEqualTo(5L);
+    void equalityOfNullsFail_nullActual() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat((Long) null)
+                        .isEqualTo(5L));
     }
 
     @Test
-    public void equalityOfNullsFail_nullExpected() {
-        expectFailureWhenTestingThat(5L).isEqualTo(null);
+    void equalityOfNullsFail_nullExpected() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(5L)
+                        .isEqualTo(null));
     }
 
     @Test
-    public void inequalityOfNulls() {
+    void inequalityOfNulls() {
         assertThat(4L).isNotEqualTo(null);
         assertThat((Integer) null).isNotEqualTo(4L);
     }
 
     @Test
-    public void inequalityOfNullsFail() {
-        expectFailureWhenTestingThat(null).isNotEqualTo(null);
+    void inequalityOfNullsFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat((Long) null)
+                        .isNotEqualTo(null));
     }
 
     @Test
-    public void testNumericTypeWithSameValue_shouldBeEqual_long_long() {
-        expectFailureWhenTestingThat(42L).isNotEqualTo(42L);
+    void testNumericTypeWithSameValue_shouldBeEqual_long_long() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(42L)
+                        .isNotEqualTo(42L));
     }
 
     @Test
-    public void testNumericTypeWithSameValue_shouldBeEqual_long_int() {
-        expectFailureWhenTestingThat(42L).isNotEqualTo(42);
+    void testNumericTypeWithSameValue_shouldBeEqual_long_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(42L)
+                        .isNotEqualTo(42));
     }
 
     @Test
-    public void isGreaterThan_int_strictly() {
-        expectFailureWhenTestingThat(2L).isGreaterThan(3);
+    void isGreaterThan_int_strictly() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isGreaterThan(3));
     }
 
     @Test
-    public void isGreaterThan_int() {
-        expectFailureWhenTestingThat(2L).isGreaterThan(2);
+    void isGreaterThan_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isGreaterThan(2));
         assertThat(2L).isGreaterThan(1);
     }
 
     @Test
-    public void isLessThan_int_strictly() {
-        expectFailureWhenTestingThat(2L).isLessThan(1);
+    void isLessThan_int_strictly() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isLessThan(1));
     }
 
     @Test
-    public void isLessThan_int() {
-        expectFailureWhenTestingThat(2L).isLessThan(2);
+    void isLessThan_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isLessThan(2));
         assertThat(2L).isLessThan(3);
     }
 
     @Test
-    public void isAtLeast_int() {
-        expectFailureWhenTestingThat(2L).isAtLeast(3);
+    void isAtLeast_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isAtLeast(3));
         assertThat(2L).isAtLeast(2);
         assertThat(2L).isAtLeast(1);
     }
 
     @Test
-    public void isAtMost_int() {
-        expectFailureWhenTestingThat(2L).isAtMost(1);
+    void isAtMost_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(2L)
+                        .isAtMost(1));
         assertThat(2L).isAtMost(2);
         assertThat(2L).isAtMost(3);
-    }
-
-    private LongSubject expectFailureWhenTestingThat(Long actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
