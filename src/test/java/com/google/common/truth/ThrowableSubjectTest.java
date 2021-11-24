@@ -15,56 +15,68 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link Throwable} subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class ThrowableSubjectTest extends BaseSubjectTestCase {
+class ThrowableSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void hasMessageThat() {
+    void hasMessageThat() {
         NullPointerException npe = new NullPointerException("message");
         assertThat(npe).hasMessageThat().isEqualTo("message");
     }
 
     @Test
-    public void hasMessageThat_null() {
+    void hasMessageThat_null() {
         assertThat(new NullPointerException()).hasMessageThat().isNull();
         assertThat(new NullPointerException(null)).hasMessageThat().isNull();
     }
 
     @Test
-    public void hasMessageThat_failure() {
+    void hasMessageThat_failure() {
         NullPointerException actual = new NullPointerException("message");
-        expectFailureWhenTestingThat(actual).hasMessageThat().isEqualTo("foobar");
-        assertFailureValue("value of", "throwable.getMessage()");
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .hasMessageThat()
+                        .isEqualTo("foobar"));
+        assertFailureValue(
+                failure,
+                "value of", "throwable.getMessage()");
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     @Test
-    public void hasMessageThat_MessageHasNullMessage_failure() {
-        expectFailureWhenTestingThat(new NullPointerException("message")).hasMessageThat().isNull();
+    void hasMessageThat_MessageHasNullMessage_failure() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(new NullPointerException("message"))
+                        .hasMessageThat()
+                        .isNull());
     }
 
     @Test
-    public void hasMessageThat_NullMessageHasMessage_failure() {
+    void hasMessageThat_NullMessageHasMessage_failure() {
         NullPointerException npe = new NullPointerException(null);
-        expectFailureWhenTestingThat(npe).hasMessageThat().isEqualTo("message");
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(npe)
+                        .hasMessageThat()
+                        .isEqualTo("message"));
     }
 
     @Test
-    public void hasCauseThat_message() {
+    void hasCauseThat_message() {
         assertThat(new Exception("foobar", new IOException("barfoo")))
                 .hasCauseThat()
                 .hasMessageThat()
@@ -72,70 +84,91 @@ public class ThrowableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void hasCauseThat_instanceOf() {
+    void hasCauseThat_instanceOf() {
         assertThat(new Exception("foobar", new IOException("barfoo")))
                 .hasCauseThat()
                 .isInstanceOf(IOException.class);
     }
 
     @Test
-    public void hasCauseThat_null() {
+    void hasCauseThat_null() {
         assertThat(new Exception("foobar")).hasCauseThat().isNull();
     }
 
     @Test
-    public void hasCauseThat_message_failure() {
+    void hasCauseThat_message_failure() {
         Exception actual = new Exception("foobar", new IOException("barfoo"));
-        expectFailureWhenTestingThat(actual).hasCauseThat().hasMessageThat().isEqualTo("message");
-        assertFailureValue("value of", "throwable.getCause().getMessage()");
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .hasCauseThat()
+                        .hasMessageThat()
+                        .isEqualTo("message"));
+        assertFailureValue(
+                failure,
+                "value of", "throwable.getCause().getMessage()");
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     @Test
-    public void hasCauseThat_instanceOf_failure() {
+    void hasCauseThat_instanceOf_failure() {
         Exception actual = new Exception("foobar", new IOException("barfoo"));
-        expectFailureWhenTestingThat(actual).hasCauseThat().isInstanceOf(RuntimeException.class);
-        assertFailureValue("value of", "throwable.getCause()");
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .hasCauseThat()
+                        .isInstanceOf(RuntimeException.class));
+        assertFailureValue(
+                failure,
+                "value of", "throwable.getCause()");
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     @Test
-    public void hasCauseThat_tooDeep_failure() {
+    void hasCauseThat_tooDeep_failure() {
         Exception actual = new Exception("foobar");
-        expectFailureWhenTestingThat(actual).hasCauseThat().hasCauseThat().isNull();
-        assertThat(expectFailure.getFailure().getMessage())
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .hasCauseThat()
+                        .hasCauseThat()
+                        .isNull());
+        assertThat(failure.getMessage())
                 .isEqualTo(
                         "Causal chain is not deep enough - add a .isNotNull() check?\n"
                                 + "value of: throwable.getCause().getCause()");
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     @Test
-    public void hasCauseThat_deepNull_failure() {
+    void hasCauseThat_deepNull_failure() {
         Exception actual =
                 new Exception("foobar", new RuntimeException("barfoo", new IOException("buzz")));
-        expectFailureWhenTestingThat(actual)
-                .hasCauseThat()
-                .hasCauseThat()
-                .hasMessageThat()
-                .isEqualTo("message");
-        assertFailureValue("value of", "throwable.getCause().getCause().getMessage()");
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .hasCauseThat()
+                        .hasCauseThat()
+                        .hasMessageThat()
+                        .isEqualTo("message"));
+        assertFailureValue(
+                failure,
+                "value of", "throwable.getCause().getCause().getMessage()");
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     @Test
-    public void inheritedMethodChainsSubject() {
+    void inheritedMethodChainsSubject() {
         NullPointerException expected = new NullPointerException("expected");
         NullPointerException actual = new NullPointerException("actual");
-        expectFailureWhenTestingThat(actual).isEqualTo(expected);
-        assertErrorHasActualAsCause(actual, expectFailure.getFailure());
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(actual)
+                        .isEqualTo(expected));
+        assertErrorHasActualAsCause(actual, failure);
     }
 
     private static void assertErrorHasActualAsCause(Throwable actual, AssertionError failure) {
         assertWithMessage("AssertionError's cause").that(failure.getCause()).isEqualTo(actual);
-    }
-
-    private ThrowableSubject expectFailureWhenTestingThat(Throwable actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
