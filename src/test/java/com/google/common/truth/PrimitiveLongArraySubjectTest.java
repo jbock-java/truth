@@ -15,86 +15,106 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link com.google.common.truth.PrimitiveLongArraySubject}.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class PrimitiveLongArraySubjectTest extends BaseSubjectTestCase {
+class PrimitiveLongArraySubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void isEqualTo() {
+    void isEqualTo() {
         assertThat(array(2L, 5)).isEqualTo(array(2L, 5));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isEqualTo_Same() {
+    void isEqualTo_Same() {
         long[] same = array(2L, 5);
         assertThat(same).isEqualTo(same);
     }
 
     @Test
-    public void asList() {
+    void asList() {
         assertThat(array(5, 2, 9)).asList().containsAtLeast(2L, 9L);
     }
 
     @Test
-    public void isEqualTo_Fail_UnequalOrdering() {
-        expectFailureWhenTestingThat(array(2, 3)).isEqualTo(array(3, 2));
-        assertFailureKeys("expected", "but was", "differs at index");
-        assertFailureValue("expected", "[3, 2]");
-        assertFailureValue("but was", "[2, 3]");
-        assertFailureValue("differs at index", "[0]");
+    void isEqualTo_Fail_UnequalOrdering() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3))
+                        .isEqualTo(array(3, 2)));
+        assertFailureKeys(
+                failure,
+                "expected", "but was", "differs at index");
+        assertFailureValue(
+                failure,
+                "expected", "[3, 2]");
+        assertFailureValue(
+                failure,
+                "but was", "[2, 3]");
+        assertFailureValue(
+                failure,
+                "differs at index", "[0]");
     }
 
     @Test
-    public void isEqualTo_Fail_NotAnArray() {
-        expectFailureWhenTestingThat(array(2, 3, 4)).isEqualTo(new int[]{});
-        assertFailureKeys("expected", "but was", "wrong type", "expected", "but was");
-        assertFailureValueIndexed("expected", 1, "int[]");
-        assertFailureValueIndexed("but was", 1, "long[]");
+    void isEqualTo_Fail_NotAnArray() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3, 4))
+                        .isEqualTo(new int[]{}));
+        assertFailureKeys(
+                failure,
+                "expected", "but was", "wrong type", "expected", "but was");
+        assertFailureValueIndexed(
+                failure,
+                "expected", 1, "int[]");
+        assertFailureValueIndexed(
+                failure,
+                "but was", 1, "long[]");
     }
 
     @Test
-    public void isNotEqualTo_SameLengths() {
+    void isNotEqualTo_SameLengths() {
         assertThat(array(2, 3)).isNotEqualTo(array(3, 2));
     }
 
     @Test
-    public void isNotEqualTo_DifferentLengths() {
+    void isNotEqualTo_DifferentLengths() {
         assertThat(array(2, 3)).isNotEqualTo(array(2, 3, 1));
     }
 
     @Test
-    public void isNotEqualTo_DifferentTypes() {
+    void isNotEqualTo_DifferentTypes() {
         assertThat(array(2, 3)).isNotEqualTo(new Object());
     }
 
     @Test
-    public void isNotEqualTo_FailEquals() {
-        expectFailureWhenTestingThat(array(2, 3)).isNotEqualTo(array(2, 3));
+    void isNotEqualTo_FailEquals() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3))
+                        .isNotEqualTo(array(2, 3)));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isNotEqualTo_FailSame() {
+    void isNotEqualTo_FailSame() {
         long[] same = array(2, 3);
-        expectFailureWhenTestingThat(same).isNotEqualTo(same);
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(same)
+                        .isNotEqualTo(same));
     }
 
     private static long[] array(long... ts) {
         return ts;
-    }
-
-    private PrimitiveLongArraySubject expectFailureWhenTestingThat(long[] actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
