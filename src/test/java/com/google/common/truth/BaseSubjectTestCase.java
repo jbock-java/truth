@@ -25,29 +25,11 @@ abstract class BaseSubjectTestCase extends PlatformBaseSubjectTestCase {
         assertThat(failure).factKeys().containsExactlyElementsIn(keys).inOrder();
     }
 
-    /**
-     * @deprecated use {@link #assertFailureKeys(AssertionError, String...)}
-     * instead
-     */
-    @Deprecated(forRemoval = true)
-    final void assertFailureKeys(String... keys) {
-        throw new UnsupportedOperationException();
-    }
-
     final void assertFailureValue(
             AssertionError failure,
             String key,
             String value) {
         assertThat(failure).factValue(key).isEqualTo(value);
-    }
-
-    /**
-     * @deprecated use {@link #assertFailureValue(AssertionError, String, String)}
-     * instead
-     */
-    @Deprecated(forRemoval = true)
-    final void assertFailureValue(String key, String value) {
-        throw new UnsupportedOperationException();
     }
 
     final void assertFailureValueIndexed(
@@ -60,13 +42,5 @@ abstract class BaseSubjectTestCase extends PlatformBaseSubjectTestCase {
 
     final TruthFailureSubject assertThatFailure(AssertionError failure) {
         return assertThat(failure);
-    }
-
-    /**
-     * @deprecated use {@link #assertThatFailure(AssertionError)} instead
-     */
-    @Deprecated(forRemoval = true)
-    final TruthFailureSubject assertThatFailure() {
-        throw new UnsupportedOperationException();
     }
 }

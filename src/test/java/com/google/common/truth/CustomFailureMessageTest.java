@@ -15,33 +15,38 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static com.google.common.truth.Truth.assert_;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests (and effectively sample code) for custom error message for checks.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class CustomFailureMessageTest extends BaseSubjectTestCase {
+class CustomFailureMessageTest extends BaseSubjectTestCase {
 
     @Test
-    public void assertWithMessageThat() {
-        expectFailure.whenTesting().withMessage("This is a custom message").that(false).isTrue();
-        assertThat(expectFailure.getFailure())
+    void assertWithMessageThat() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> StandardSubjectBuilder.forCustomFailureStrategy(f -> {
+                            throw f;
+                        })
+                        .withMessage("This is a custom message")
+                        .that(false)
+                        .isTrue());
+        assertThat(failure)
                 .hasMessageThat()
                 .startsWith("This is a custom message\n");
     }
 
     @Test
-    public void countPlaceholders() {
+    void countPlaceholders() {
         assertThat(LazyMessage.countPlaceholders("")).isEqualTo(0);
         assertThat(LazyMessage.countPlaceholders("%s")).isEqualTo(1);
         assertThat(LazyMessage.countPlaceholders("%s%s")).isEqualTo(2);
@@ -57,19 +62,22 @@ public class CustomFailureMessageTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void assertWithMessageThat_withPlaceholders() {
-        expectFailure
-                .whenTesting()
-                .withMessage("This is a %s %s", "custom", "message")
-                .that(false)
-                .isTrue();
-        assertThat(expectFailure.getFailure())
+    void assertWithMessageThat_withPlaceholders() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> StandardSubjectBuilder.forCustomFailureStrategy(f -> {
+                            throw f;
+                        })
+                        .withMessage("This is a %s %s", "custom", "message")
+                        .that(false)
+                        .isTrue());
+        assertThat(failure)
                 .hasMessageThat()
                 .startsWith("This is a custom message\n");
     }
 
     @Test
-    public void extraPlaceholderThrowsIae() {
+    void extraPlaceholderThrowsIae() {
         try {
             assert_().withMessage("This is a %s %s", "custom").that(true).isTrue();
             fail("Should have thrown");
@@ -78,7 +86,7 @@ public class CustomFailureMessageTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void missingPlaceholderThrowsIae() {
+    void missingPlaceholderThrowsIae() {
         try {
             assert_().withMessage("This is a %s", "custom", "message").that(true).isTrue();
             fail("Should have thrown");
@@ -87,7 +95,7 @@ public class CustomFailureMessageTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void noPlaceholdersWithArgsThrowsIae() {
+    void noPlaceholdersWithArgsThrowsIae() {
         try {
             assert_().withMessage("This is a custom message", "bad arg").that(true).isTrue();
             fail("Should have thrown");
@@ -96,7 +104,7 @@ public class CustomFailureMessageTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void placeholdersArentEagerlyEvaluated() {
+    void placeholdersArentEagerlyEvaluated() {
         Object toStringThrows =
                 new Object() {
                     @Override
