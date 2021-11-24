@@ -17,26 +17,24 @@ package com.google.common.truth;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for Comparable Subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class ComparableSubjectTest extends BaseSubjectTestCase {
+class ComparableSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void testNulls() {
+    void testNulls() {
         try {
             assertThat(6).isEquivalentAccordingToCompareTo(null);
             fail();
@@ -65,35 +63,45 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isInRange() {
+    void isInRange() {
         Range<Integer> oneToFive = Range.closed(1, 5);
         assertThat(4).isIn(oneToFive);
 
-        expectFailureWhenTestingThat(6).isIn(oneToFive);
-        assertThat(expectFailure.getFailure())
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(6)
+                        .isIn(oneToFive));
+        assertThat(failure)
                 .factValue("expected to be in range")
                 .isEqualTo(oneToFive.toString());
     }
 
     @Test
-    public void isNotInRange() {
+    void isNotInRange() {
         Range<Integer> oneToFive = Range.closed(1, 5);
         assertThat(6).isNotIn(oneToFive);
 
-        expectFailureWhenTestingThat(4).isNotIn(oneToFive);
-        assertThat(expectFailure.getFailure())
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isNotIn(oneToFive));
+        assertThat(failure)
                 .factValue("expected not to be in range")
                 .isEqualTo(oneToFive.toString());
     }
 
     @Test
-    public void isEquivalentAccordingToCompareTo() {
+    void isEquivalentAccordingToCompareTo() {
         assertThat(new StringComparedByLength("abc"))
                 .isEquivalentAccordingToCompareTo(new StringComparedByLength("xyz"));
 
-        expectFailureWhenTestingThat(new StringComparedByLength("abc"))
-                .isEquivalentAccordingToCompareTo(new StringComparedByLength("abcd"));
-        assertFailureValue("expected value that sorts equal to", "abcd");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(new StringComparedByLength("abc"))
+                        .isEquivalentAccordingToCompareTo(new StringComparedByLength("abcd")));
+        assertFailureValue(
+                failure,
+                "expected value that sorts equal to", "abcd");
     }
 
     private static final class StringComparedByLength implements Comparable<StringComparedByLength> {
@@ -115,55 +123,85 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isGreaterThan_failsEqual() {
+    void isGreaterThan_failsEqual() {
         assertThat(5).isGreaterThan(4);
 
-        expectFailureWhenTestingThat(4).isGreaterThan(4);
-        assertFailureValue("expected to be greater than", "4");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isGreaterThan(4));
+        assertFailureValue(
+                failure,
+                "expected to be greater than", "4");
     }
 
     @Test
-    public void isGreaterThan_failsSmaller() {
-        expectFailureWhenTestingThat(3).isGreaterThan(4);
-        assertFailureValue("expected to be greater than", "4");
+    void isGreaterThan_failsSmaller() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(3)
+                        .isGreaterThan(4));
+        assertFailureValue(
+                failure,
+                "expected to be greater than", "4");
     }
 
     @Test
-    public void isLessThan_failsEqual() {
+    void isLessThan_failsEqual() {
         assertThat(4).isLessThan(5);
 
-        expectFailureWhenTestingThat(4).isLessThan(4);
-        assertFailureValue("expected to be less than", "4");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isLessThan(4));
+        assertFailureValue(
+                failure,
+                "expected to be less than", "4");
     }
 
     @Test
-    public void isLessThan_failsGreater() {
-        expectFailureWhenTestingThat(4).isLessThan(3);
-        assertFailureValue("expected to be less than", "3");
+    void isLessThan_failsGreater() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isLessThan(3));
+        assertFailureValue(
+                failure,
+                "expected to be less than", "3");
     }
 
     @Test
-    public void isAtMost() {
+    void isAtMost() {
         assertThat(5).isAtMost(5);
         assertThat(5).isAtMost(6);
 
-        expectFailureWhenTestingThat(4).isAtMost(3);
-        assertFailureValue("expected to be at most", "3");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isAtMost(3));
+        assertFailureValue(
+                failure,
+                "expected to be at most", "3");
     }
 
     @Test
-    public void isAtLeast() {
+    void isAtLeast() {
         assertThat(4).isAtLeast(3);
         assertThat(4).isAtLeast(4);
 
-        expectFailureWhenTestingThat(4).isAtLeast(5);
-        assertFailureValue("expected to be at least", "5");
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isAtLeast(5));
+        assertFailureValue(
+                failure,
+                "expected to be at least", "5");
     }
 
     // Brief tests with other comparable types (no negative test cases)
 
     @Test
-    public void longs() {
+    void longs() {
         assertThat(5L).isGreaterThan(4L);
         assertThat(4L).isLessThan(5L);
 
@@ -178,7 +216,7 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void strings() {
+    void strings() {
         assertThat("kak").isGreaterThan("gak");
         assertThat("gak").isLessThan("kak");
 
@@ -193,13 +231,13 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void comparableType() {
+    void comparableType() {
         assertThat(new ComparableType(4)).isGreaterThan(new ComparableType(3));
         assertThat(new ComparableType(3)).isLessThan(new ComparableType(4));
     }
 
     @Test
-    public void namedComparableType() {
+    void namedComparableType() {
         assertWithMessage("comparable").that(new ComparableType(2)).isLessThan(new ComparableType(3));
     }
 
@@ -217,7 +255,7 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void rawComparableType() {
+    void rawComparableType() {
         assertThat(new RawComparableType(3)).isLessThan(new RawComparableType(4));
     }
 
@@ -238,10 +276,5 @@ public class ComparableSubjectTest extends BaseSubjectTestCase {
         public String toString() {
             return Integer.toString(wrapped);
         }
-    }
-
-    private <T extends Comparable<? super T>> ComparableSubject<T> expectFailureWhenTestingThat(
-            T actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
