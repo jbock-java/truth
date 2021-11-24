@@ -15,91 +15,113 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link com.google.common.truth.PrimitiveByteArraySubject}.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class PrimitiveByteArraySubjectTest extends BaseSubjectTestCase {
+class PrimitiveByteArraySubjectTest extends BaseSubjectTestCase {
     private static final byte BYTE_0 = (byte) 0;
     private static final byte BYTE_1 = (byte) 1;
     private static final byte BYTE_2 = (byte) 2;
 
     @Test
-    public void isEqualTo() {
+    void isEqualTo() {
         assertThat(array(BYTE_0, BYTE_1)).isEqualTo(array(BYTE_0, BYTE_1));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isEqualTo_Same() {
+    void isEqualTo_Same() {
         byte[] same = array(BYTE_0, BYTE_1);
         assertThat(same).isEqualTo(same);
     }
 
     @Test
-    public void asList() {
+    void asList() {
         assertThat(array(BYTE_0, BYTE_1, BYTE_2)).asList().containsAtLeast(BYTE_0, BYTE_2);
     }
 
     @Test
-    public void isEqualTo_Fail_UnequalOrdering() {
-        expectFailureWhenTestingThat(array(BYTE_0, (byte) 123)).isEqualTo(array((byte) 123, BYTE_0));
-        assertFailureKeys("expected", "but was", "expected", "but was");
-        assertFailureValueIndexed("expected", 0, "7B00");
-        assertFailureValueIndexed("but was", 0, "007B");
-        assertFailureValueIndexed("expected", 1, "[123, 0]");
-        assertFailureValueIndexed("but was", 1, "[0, 123]");
-        assertThat(expectFailure.getFailure()).isInstanceOf(ComparisonFailureWithFacts.class);
+    void isEqualTo_Fail_UnequalOrdering() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(BYTE_0, (byte) 123))
+                        .isEqualTo(array((byte) 123, BYTE_0)));
+        assertFailureKeys(
+                failure,
+                "expected", "but was", "expected", "but was");
+        assertFailureValueIndexed(
+                failure,
+                "expected", 0, "7B00");
+        assertFailureValueIndexed(
+                failure,
+                "but was", 0, "007B");
+        assertFailureValueIndexed(
+                failure,
+                "expected", 1, "[123, 0]");
+        assertFailureValueIndexed(
+                failure,
+                "but was", 1, "[0, 123]");
+        assertThat(failure).isInstanceOf(ComparisonFailureWithFacts.class);
     }
 
     @Test
-    public void isEqualTo_Fail_NotAnArray() {
-        expectFailureWhenTestingThat(array(BYTE_0, BYTE_1)).isEqualTo(new int[]{});
-        assertFailureKeys("expected", "but was", "wrong type", "expected", "but was");
-        assertFailureValueIndexed("expected", 1, "int[]");
-        assertFailureValueIndexed("but was", 1, "byte[]");
+    void isEqualTo_Fail_NotAnArray() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(BYTE_0, BYTE_1))
+                        .isEqualTo(new int[]{}));
+        assertFailureKeys(
+                failure,
+                "expected", "but was", "wrong type", "expected", "but was");
+        assertFailureValueIndexed(
+                failure,
+                "expected", 1, "int[]");
+        assertFailureValueIndexed(
+                failure,
+                "but was", 1, "byte[]");
     }
 
     @Test
-    public void isNotEqualTo_SameLengths() {
+    void isNotEqualTo_SameLengths() {
         assertThat(array(BYTE_0, BYTE_1)).isNotEqualTo(array(BYTE_1, BYTE_0));
     }
 
     @Test
-    public void isNotEqualTo_DifferentLengths() {
+    void isNotEqualTo_DifferentLengths() {
         assertThat(array(BYTE_0, BYTE_1)).isNotEqualTo(array(BYTE_1, BYTE_0, BYTE_2));
     }
 
     @Test
-    public void isNotEqualTo_DifferentTypes() {
+    void isNotEqualTo_DifferentTypes() {
         assertThat(array(BYTE_0, BYTE_1)).isNotEqualTo(new Object());
     }
 
     @Test
-    public void isNotEqualTo_FailEquals() {
-        expectFailureWhenTestingThat(array(BYTE_0, BYTE_1)).isNotEqualTo(array(BYTE_0, BYTE_1));
+    void isNotEqualTo_FailEquals() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(BYTE_0, BYTE_1))
+                        .isNotEqualTo(array(BYTE_0, BYTE_1)));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isNotEqualTo_FailSame() {
+    void isNotEqualTo_FailSame() {
         byte[] same = array(BYTE_0, BYTE_1);
-        expectFailureWhenTestingThat(same).isNotEqualTo(same);
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(same)
+                        .isNotEqualTo(same));
     }
 
     private static byte[] array(byte... ts) {
         return ts;
-    }
-
-    private PrimitiveByteArraySubject expectFailureWhenTestingThat(byte[] actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
