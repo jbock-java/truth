@@ -16,11 +16,10 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableSet;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for Integer Subjects.
@@ -29,63 +28,80 @@ import static com.google.common.truth.Truth.assertThat;
  * @author Christian Gruber
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class IntegerSubjectTest extends BaseSubjectTestCase {
+class IntegerSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void simpleEquality() {
+    void simpleEquality() {
         assertThat(4).isEqualTo(4);
     }
 
     @Test
-    public void simpleInequality() {
+    void simpleInequality() {
         assertThat(4).isNotEqualTo(5);
     }
 
     @Test
-    public void equalityWithLongs() {
+    void equalityWithLongs() {
         assertThat(0).isEqualTo(0L);
-        expectFailureWhenTestingThat(0).isNotEqualTo(0L);
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(0)
+                        .isNotEqualTo(0L));
     }
 
     @Test
-    public void equalityFail() {
-        expectFailureWhenTestingThat(4).isEqualTo(5);
+    void equalityFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isEqualTo(5));
     }
 
     @Test
-    public void inequalityFail() {
-        expectFailureWhenTestingThat(4).isNotEqualTo(4);
+    void inequalityFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(4)
+                        .isNotEqualTo(4));
     }
 
     @Test
-    public void equalityOfNulls() {
+    void equalityOfNulls() {
         assertThat((Integer) null).isEqualTo(null);
     }
 
     @Test
-    public void equalityOfNullsFail_nullActual() {
-        expectFailureWhenTestingThat(null).isEqualTo(5);
+    void equalityOfNullsFail_nullActual() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat((Integer) null)
+                        .isEqualTo(5));
     }
 
     @Test
-    public void equalityOfNullsFail_nullExpected() {
-        expectFailureWhenTestingThat(5).isEqualTo(null);
+    void equalityOfNullsFail_nullExpected() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(5)
+                        .isEqualTo(null));
     }
 
     @Test
-    public void inequalityOfNulls() {
+    void inequalityOfNulls() {
         assertThat(4).isNotEqualTo(null);
         assertThat((Integer) null).isNotEqualTo(4);
     }
 
     @Test
-    public void inequalityOfNullsFail() {
-        expectFailureWhenTestingThat(null).isNotEqualTo(null);
+    void inequalityOfNullsFail() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat((Integer) null)
+                        .isNotEqualTo(null));
     }
 
     @Test
-    public void overflowOnPrimitives() {
+    void overflowOnPrimitives() {
         assertThat(Long.MIN_VALUE).isNotEqualTo(Integer.MIN_VALUE);
         assertThat(Long.MAX_VALUE).isNotEqualTo(Integer.MAX_VALUE);
 
@@ -97,31 +113,43 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void overflowOnPrimitives_shouldBeEqualAfterCast_min() {
-        expectFailureWhenTestingThat(Integer.MIN_VALUE).isNotEqualTo((long) Integer.MIN_VALUE);
+    void overflowOnPrimitives_shouldBeEqualAfterCast_min() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(Integer.MIN_VALUE)
+                        .isNotEqualTo((long) Integer.MIN_VALUE));
     }
 
     @Test
-    public void overflowOnPrimitives_shouldBeEqualAfterCast_max() {
-        expectFailureWhenTestingThat(Integer.MAX_VALUE).isNotEqualTo((long) Integer.MAX_VALUE);
+    void overflowOnPrimitives_shouldBeEqualAfterCast_max() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(Integer.MAX_VALUE)
+                        .isNotEqualTo((long) Integer.MAX_VALUE));
     }
 
     @Test
-    public void overflowBetweenIntegerAndLong_shouldBeDifferent_min() {
-        expectFailureWhenTestingThat(Integer.MIN_VALUE).isEqualTo(Long.MIN_VALUE);
+    void overflowBetweenIntegerAndLong_shouldBeDifferent_min() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(Integer.MIN_VALUE)
+                        .isEqualTo(Long.MIN_VALUE));
     }
 
     @Test
-    public void overflowBetweenIntegerAndLong_shouldBeDifferent_max() {
-        expectFailureWhenTestingThat(Integer.MAX_VALUE).isEqualTo(Long.MAX_VALUE);
+    void overflowBetweenIntegerAndLong_shouldBeDifferent_max() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(Integer.MAX_VALUE)
+                        .isEqualTo(Long.MAX_VALUE));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void testPrimitivesVsBoxedPrimitivesVsObject_int() {
+    void testPrimitivesVsBoxedPrimitivesVsObject_int() {
         int int42 = 42;
-        Integer integer42 = new Integer(42);
-        Object object42 = (Object) 42;
+        Integer integer42 = 42;
+        Object object42 = 42;
 
         assertThat(int42).isEqualTo(int42);
         assertThat(integer42).isEqualTo(int42);
@@ -138,10 +166,10 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void testPrimitivesVsBoxedPrimitivesVsObject_long() {
+    void testPrimitivesVsBoxedPrimitivesVsObject_long() {
         long longPrim42 = 42;
-        Long long42 = new Long(42);
-        Object object42 = (Object) 42L;
+        Long long42 = 42L;
+        Object object42 = 42L;
 
         assertThat(longPrim42).isEqualTo(longPrim42);
         assertThat(long42).isEqualTo(longPrim42);
@@ -157,60 +185,75 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void testAllCombinations_pass() {
+    void testAllCombinations_pass() {
         assertThat(42).isEqualTo(42L);
-        assertThat(42).isEqualTo(new Long(42L));
-        assertThat(new Integer(42)).isEqualTo(42L);
-        assertThat(new Integer(42)).isEqualTo(new Long(42L));
+        assertThat(42).isEqualTo(42L);
+        assertThat(42).isEqualTo(42L);
+        assertThat(42).isEqualTo(42L);
         assertThat(42L).isEqualTo(42);
-        assertThat(42L).isEqualTo(new Integer(42));
-        assertThat(new Long(42L)).isEqualTo(42);
-        assertThat(new Long(42L)).isEqualTo(new Integer(42));
+        assertThat(42L).isEqualTo(42);
+        assertThat(42L).isEqualTo(42);
+        assertThat(42L).isEqualTo(42);
 
         assertThat(42).isEqualTo(42);
-        assertThat(42).isEqualTo(new Integer(42));
-        assertThat(new Integer(42)).isEqualTo(42);
-        assertThat(new Integer(42)).isEqualTo(new Integer(42));
+        assertThat(42).isEqualTo(42);
+        assertThat(42).isEqualTo(42);
+        assertThat(42).isEqualTo(42);
         assertThat(42L).isEqualTo(42L);
-        assertThat(42L).isEqualTo(new Long(42L));
-        assertThat(new Long(42L)).isEqualTo(42L);
-        assertThat(new Long(42L)).isEqualTo(new Long(42L));
+        assertThat(42L).isEqualTo(42L);
+        assertThat(42L).isEqualTo(42L);
+        assertThat(42L).isEqualTo(42L);
     }
 
     @Test
-    public void testNumericTypeWithSameValue_shouldBeEqual_int_long() {
-        expectFailureWhenTestingThat(42).isNotEqualTo(42L);
+    void testNumericTypeWithSameValue_shouldBeEqual_int_long() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(42)
+                        .isNotEqualTo(42L));
     }
 
     @Test
-    public void testNumericTypeWithSameValue_shouldBeEqual_int_int() {
-        expectFailureWhenTestingThat(42).isNotEqualTo(42);
+    void testNumericTypeWithSameValue_shouldBeEqual_int_int() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(42)
+                        .isNotEqualTo(42));
     }
 
     @Test
-    public void testNumericPrimitiveTypes_isNotEqual_shouldFail_intToChar() {
-        expectFailureWhenTestingThat(42).isNotEqualTo((char) 42);
+    void testNumericPrimitiveTypes_isNotEqual_shouldFail_intToChar() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(42)
+                        .isNotEqualTo((char) 42));
         // 42 in ASCII is '*'
-        assertFailureValue("expected not to be", "*");
-        assertFailureValue("but was; string representation of actual value", "42");
+        assertFailureValue(
+                failure,
+                "expected not to be", "*");
+        assertFailureValue(
+                failure,
+                "but was; string representation of actual value", "42");
     }
 
     @Test
-    public void testNumericPrimitiveTypes_isNotEqual_shouldFail_charToInt() {
+    void testNumericPrimitiveTypes_isNotEqual_shouldFail_charToInt() {
         // Uses Object overload rather than Integer.
-        expectFailure.whenTesting().that((char) 42).isNotEqualTo(42);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat((char) 42)
+                        .isNotEqualTo(42));
         // 42 in ASCII is '*'
-        assertFailureValue("expected not to be", "42");
-        assertFailureValue("but was; string representation of actual value", "*");
+        assertFailureValue(
+                failure,
+                "expected not to be", "42");
+        assertFailureValue(
+                failure,
+                "but was; string representation of actual value", "*");
     }
 
     private static final Subject.Factory<Subject, Object> DEFAULT_SUBJECT_FACTORY =
-            new Subject.Factory<Subject, Object>() {
-                @Override
-                public Subject createSubject(FailureMetadata metadata, Object that) {
-                    return new Subject(metadata, that);
-                }
-            };
+            (metadata, that) -> new Subject(metadata, that);
 
     private static void expectFailure(
             ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object> callback) {
@@ -218,7 +261,7 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void testNumericPrimitiveTypes() {
+    void testNumericPrimitiveTypes() {
         byte byte42 = (byte) 42;
         short short42 = (short) 42;
         char char42 = (char) 42;
@@ -237,19 +280,9 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
         for (final Object actual : fortyTwosNoChar) {
             for (final Object expected : fortyTwosNoChar) {
                 ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object> actualFirst =
-                        new ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object>() {
-                            @Override
-                            public void invokeAssertion(SimpleSubjectBuilder<Subject, Object> expect) {
-                                expect.that(actual).isNotEqualTo(expected);
-                            }
-                        };
+                        expect -> expect.that(actual).isNotEqualTo(expected);
                 ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object> expectedFirst =
-                        new ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object>() {
-                            @Override
-                            public void invokeAssertion(SimpleSubjectBuilder<Subject, Object> expect) {
-                                expect.that(expected).isNotEqualTo(actual);
-                            }
-                        };
+                        expect -> expect.that(expected).isNotEqualTo(actual);
                 expectFailure(actualFirst);
                 expectFailure(expectedFirst);
             }
@@ -270,9 +303,5 @@ public class IntegerSubjectTest extends BaseSubjectTestCase {
                 assertThat(second).isNotEqualTo(first);
             }
         }
-    }
-
-    private IntegerSubject expectFailureWhenTestingThat(Integer actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
