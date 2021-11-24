@@ -15,80 +15,88 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link com.google.common.truth.PrimitiveBooleanArraySubject}.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class PrimitiveBooleanArraySubjectTest extends BaseSubjectTestCase {
+class PrimitiveBooleanArraySubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void isEqualTo() {
+    void isEqualTo() {
         assertThat(array(true, false, true)).isEqualTo(array(true, false, true));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isEqualTo_Same() {
+    void isEqualTo_Same() {
         boolean[] same = array(true, false, true);
         assertThat(same).isEqualTo(same);
     }
 
     @Test
-    public void asList() {
+    void asList() {
         assertThat(array(true, true, false)).asList().containsAtLeast(true, false);
     }
 
     @Test
-    public void isEqualTo_Fail_UnequalOrdering() {
-        expectFailureWhenTestingThat(array(true, false, true)).isEqualTo(array(false, true, true));
-        assertFailureValue("differs at index", "[0]");
+    void isEqualTo_Fail_UnequalOrdering() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(true, false, true))
+                        .isEqualTo(array(false, true, true)));
+        assertFailureValue(
+                failure,
+                "differs at index", "[0]");
     }
 
     @Test
-    public void isEqualTo_Fail_NotAnArray() {
-        expectFailureWhenTestingThat(array(true, false, true)).isEqualTo(new Object());
+    void isEqualTo_Fail_NotAnArray() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(true, false, true))
+                        .isEqualTo(new Object()));
     }
 
     @Test
-    public void isNotEqualTo_SameLengths() {
+    void isNotEqualTo_SameLengths() {
         assertThat(array(true, false)).isNotEqualTo(array(true, true));
     }
 
     @Test
-    public void isNotEqualTo_DifferentLengths() {
+    void isNotEqualTo_DifferentLengths() {
         assertThat(array(true, false)).isNotEqualTo(array(true, false, true));
     }
 
     @Test
-    public void isNotEqualTo_DifferentTypes() {
+    void isNotEqualTo_DifferentTypes() {
         assertThat(array(true, false)).isNotEqualTo(new Object());
     }
 
     @Test
-    public void isNotEqualTo_FailEquals() {
-        expectFailureWhenTestingThat(array(true, false)).isNotEqualTo(array(true, false));
+    void isNotEqualTo_FailEquals() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(true, false))
+                        .isNotEqualTo(array(true, false)));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isNotEqualTo_FailSame() {
+    void isNotEqualTo_FailSame() {
         boolean[] same = array(true, false);
-        expectFailureWhenTestingThat(same).isNotEqualTo(same);
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(same)
+                        .isNotEqualTo(same));
     }
 
     private static boolean[] array(boolean... ts) {
         return ts;
-    }
-
-    private PrimitiveBooleanArraySubject expectFailureWhenTestingThat(boolean[] actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
