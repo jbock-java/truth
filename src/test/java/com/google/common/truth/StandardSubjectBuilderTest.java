@@ -17,16 +17,20 @@
 package com.google.common.truth;
 
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /** Tests for {@link StandardSubjectBuilder}. */
-@RunWith(JUnit4.class)
-public final class StandardSubjectBuilderTest extends BaseSubjectTestCase {
+final class StandardSubjectBuilderTest extends BaseSubjectTestCase {
     @Test
-    public void failNoMessage() {
-        expectFailure.whenTesting().fail();
-        assertThatFailure().hasMessageThat().isEmpty();
+    void failNoMessage() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> StandardSubjectBuilder.forCustomFailureStrategy(f -> {
+                            throw f;
+                        })
+                        .fail());
+        assertThatFailure(failure).hasMessageThat().isEmpty();
     }
 }

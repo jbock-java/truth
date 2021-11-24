@@ -58,15 +58,6 @@ abstract class BaseSubjectTestCase extends PlatformBaseSubjectTestCase {
         assertThatFailure(failure).factValue(key, index).isEqualTo(value);
     }
 
-    /**
-     * @deprecated use {@link #assertFailureValueIndexed(AssertionError, String, int, String)}
-     * instead
-     */
-    @Deprecated(forRemoval = true)
-    final void assertFailureValueIndexed(String key, int index, String value) {
-        throw new UnsupportedOperationException();
-    }
-
     final TruthFailureSubject assertThatFailure(AssertionError failure) {
         return assertThat(failure);
     }
