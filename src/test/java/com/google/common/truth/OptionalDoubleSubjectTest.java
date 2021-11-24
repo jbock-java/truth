@@ -15,9 +15,7 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.OptionalDouble;
 
@@ -30,34 +28,33 @@ import static com.google.common.truth.Truth8.assertThat;
  *
  * @author Ben Douglass
  */
-@RunWith(JUnit4.class)
-public class OptionalDoubleSubjectTest {
+class OptionalDoubleSubjectTest {
 
     @Test
-    public void failOnNullSubject() {
+    void failOnNullSubject() {
         AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isEmpty());
         assertThat(expected).factKeys().containsExactly("expected empty optional", "but was").inOrder();
     }
 
     @Test
-    public void isPresent() {
+    void isPresent() {
         assertThat(OptionalDouble.of(1337.0)).isPresent();
     }
 
     @Test
-    public void isPresentFailing() {
+    void isPresentFailing() {
         AssertionError expected =
                 expectFailure(whenTesting -> whenTesting.that(OptionalDouble.empty()).isPresent());
         assertThat(expected).factKeys().containsExactly("expected to be present");
     }
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         assertThat(OptionalDouble.empty()).isEmpty();
     }
 
     @Test
-    public void isEmptyFailing() {
+    void isEmptyFailing() {
         AssertionError expected =
                 expectFailure(whenTesting -> whenTesting.that(OptionalDouble.of(1337.0)).isEmpty());
         assertThat(expected).factKeys().contains("expected to be empty");
@@ -65,18 +62,18 @@ public class OptionalDoubleSubjectTest {
     }
 
     @Test
-    public void isEmptyFailingNull() {
+    void isEmptyFailingNull() {
         AssertionError expected = expectFailure(whenTesting -> whenTesting.that(null).isEmpty());
         assertThat(expected).factKeys().containsExactly("expected empty optional", "but was").inOrder();
     }
 
     @Test
-    public void hasValue() {
+    void hasValue() {
         assertThat(OptionalDouble.of(1337.0)).hasValue(1337.0);
     }
 
     @Test
-    public void hasValue_FailingWithEmpty() {
+    void hasValue_FailingWithEmpty() {
         AssertionError expected =
                 expectFailure(whenTesting -> whenTesting.that(OptionalDouble.empty()).hasValue(1337.0));
         assertThat(expected)
@@ -87,7 +84,7 @@ public class OptionalDoubleSubjectTest {
     }
 
     @Test
-    public void hasValue_FailingWithWrongValue() {
+    void hasValue_FailingWithWrongValue() {
         AssertionError expected =
                 expectFailure(whenTesting -> whenTesting.that(OptionalDouble.of(1337.0)).hasValue(42.0));
         assertThat(expected).factValue("value of").isEqualTo("optionalDouble.getAsDouble()");

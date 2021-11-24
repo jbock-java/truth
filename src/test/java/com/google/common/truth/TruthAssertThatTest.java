@@ -22,9 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.reflect.TypeToken;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -37,18 +35,12 @@ import static java.util.Arrays.asList;
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class TruthAssertThatTest {
+class TruthAssertThatTest {
     private static final Function<Method, TypeToken<?>> METHOD_TO_RETURN_TYPE_TOKEN =
-            new Function<Method, TypeToken<?>>() {
-                @Override
-                public TypeToken<?> apply(Method input) {
-                    return TypeToken.of(Iterables.getOnlyElement(asList(input.getParameterTypes())));
-                }
-            };
+            input -> TypeToken.of(Iterables.getOnlyElement(asList(input.getParameterTypes())));
 
     @Test
-    public void staticAssertThatMethodsMatchStandardSubjectBuilderInstanceMethods() {
+    void staticAssertThatMethodsMatchStandardSubjectBuilderInstanceMethods() {
         ImmutableSet<TypeToken<?>> verbTypes =
                 FluentIterable.from(asList(StandardSubjectBuilder.class.getMethods()))
                         .filter(

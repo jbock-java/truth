@@ -29,8 +29,8 @@ import static com.google.common.truth.TestCorrespondences.CASE_INSENSITIVE_EQUAL
 import static com.google.common.truth.TestCorrespondences.CASE_INSENSITIVE_EQUALITY_HALF_NULL_SAFE;
 import static com.google.common.truth.TestCorrespondences.STRING_PARSES_TO_INTEGER_CORRESPONDENCE;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for Multimap Subjects.

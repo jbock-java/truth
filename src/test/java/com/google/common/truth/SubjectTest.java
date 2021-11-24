@@ -28,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Truth.assertAbout;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for generic Subject behavior.

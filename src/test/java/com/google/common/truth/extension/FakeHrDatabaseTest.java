@@ -16,14 +16,11 @@
 package com.google.common.truth.extension;
 
 import com.google.common.truth.extension.Employee.Location;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.extension.EmployeeSubject.assertThat;
 
-@RunWith(JUnit4.class)
 public final class FakeHrDatabaseTest {
 
     // Note: not real employee IDs :-)
@@ -40,7 +37,7 @@ public final class FakeHrDatabaseTest {
     // EmployeeSubject-specific methods.
 
     @Test
-    public void relocatePresent() {
+    void relocatePresent() {
         FakeHrDatabase db = new FakeHrDatabase();
         db.put(KURT);
         db.relocate(KURT.id(), Location.MTV);
@@ -53,14 +50,14 @@ public final class FakeHrDatabaseTest {
     // methods inherited from Subject.
 
     @Test
-    public void getPresent() {
+    void getPresent() {
         FakeHrDatabase db = new FakeHrDatabase();
         db.put(KURT);
         assertThat(db.get(KURT.id())).isEqualTo(KURT);
     }
 
     @Test
-    public void getAbsent() {
+    void getAbsent() {
         FakeHrDatabase db = new FakeHrDatabase();
         db.put(KURT);
         assertThat(db.get(SUNDAR.id())).isNull();
@@ -69,7 +66,7 @@ public final class FakeHrDatabaseTest {
     // These assertions use Truth.assertThat() overloads
 
     @Test
-    public void getByLocation() {
+    void getByLocation() {
         FakeHrDatabase db = new FakeHrDatabase();
         db.put(KURT);
         assertThat(db.getByLocation(Location.NYC)).containsExactly(KURT);

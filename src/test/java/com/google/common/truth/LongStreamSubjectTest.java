@@ -26,7 +26,7 @@ import static com.google.common.truth.FailureAssertions.assertFailureValue;
 import static com.google.common.truth.LongStreamSubject.longStreams;
 import static com.google.common.truth.Truth8.assertThat;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for Java 8 {@link LongStream} Subjects.

@@ -16,9 +16,7 @@
 
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.MathUtil.equalWithinTolerance;
 import static com.google.common.truth.MathUtil.notEqualWithinTolerance;
@@ -29,10 +27,9 @@ import static com.google.common.truth.Truth.assertThat;
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class MathUtilTest {
+class MathUtilTest {
     @Test
-    public void floatEquals() {
+    void floatEquals() {
         assertThat(equalWithinTolerance(1.3f, 1.3f, 0.00000000000001f)).isTrue();
         assertThat(equalWithinTolerance(1.3f, 1.3f, 0.0f)).isTrue();
         assertThat(equalWithinTolerance(0.0f, 1.0f + 2.0f - 3.0f, 0.00000000000000000000000000000001f))
@@ -49,7 +46,7 @@ public class MathUtilTest {
     }
 
     @Test
-    public void doubleEquals() {
+    void doubleEquals() {
         assertThat(equalWithinTolerance(1.3d, 1.3d, 0.00000000000001d)).isTrue();
         assertThat(equalWithinTolerance(1.3d, 1.3d, 0.0d)).isTrue();
         assertThat(equalWithinTolerance(0.0d, 1.0d + 2.0d - 3.0d, 0.00000000000000000000000000000001d))
@@ -66,7 +63,7 @@ public class MathUtilTest {
     }
 
     @Test
-    public void floatNotEquals() {
+    void floatNotEquals() {
         assertThat(notEqualWithinTolerance(1.3f, 1.3f, 0.00000000000001f)).isFalse();
         assertThat(notEqualWithinTolerance(1.3f, 1.3f, 0.0f)).isFalse();
         assertThat(
@@ -84,7 +81,7 @@ public class MathUtilTest {
     }
 
     @Test
-    public void doubleNotEquals() {
+    void doubleNotEquals() {
         assertThat(notEqualWithinTolerance(1.3d, 1.3d, 0.00000000000001d)).isFalse();
         assertThat(notEqualWithinTolerance(1.3d, 1.3d, 0.0d)).isFalse();
         assertThat(
@@ -102,7 +99,7 @@ public class MathUtilTest {
     }
 
     @Test
-    public void equalsDifferentTypes() {
+    void equalsDifferentTypes() {
         assertThat(equalWithinTolerance(1.3d, 1.3f, 0.00000000000001d)).isFalse();
         assertThat(equalWithinTolerance(1.3f, 1.3d, 0.00000000000001f)).isFalse();
     }

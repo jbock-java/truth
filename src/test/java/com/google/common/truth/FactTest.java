@@ -17,9 +17,7 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.makeMessage;
@@ -27,26 +25,25 @@ import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Truth.assertThat;
 
 /** Tests for {@link Fact}. */
-@RunWith(JUnit4.class)
-public class FactTest {
+class FactTest {
     @Test
-    public void string() {
+    void string() {
         assertThat(fact("foo", "bar").toString()).isEqualTo("foo: bar");
     }
 
     @Test
-    public void stringWithoutValue() {
+    void stringWithoutValue() {
         assertThat(simpleFact("foo").toString()).isEqualTo("foo");
     }
 
     @Test
-    public void oneFacts() {
+    void oneFacts() {
         assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar"))))
                 .isEqualTo("foo: bar");
     }
 
     @Test
-    public void twoFacts() {
+    void twoFacts() {
         assertThat(
                 makeMessage(
                         ImmutableList.<String>of(),
@@ -55,13 +52,13 @@ public class FactTest {
     }
 
     @Test
-    public void oneFactWithoutValue() {
+    void oneFactWithoutValue() {
         assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(simpleFact("foo"))))
                 .isEqualTo("foo");
     }
 
     @Test
-    public void twoFactsOneWithoutValue() {
+    void twoFactsOneWithoutValue() {
         assertThat(
                 makeMessage(
                         ImmutableList.<String>of(),
@@ -70,13 +67,13 @@ public class FactTest {
     }
 
     @Test
-    public void newline() {
+    void newline() {
         assertThat(makeMessage(ImmutableList.<String>of(), ImmutableList.of(fact("foo", "bar\nbaz"))))
                 .isEqualTo("foo:\n    bar\n    baz");
     }
 
     @Test
-    public void newlineWithoutValue() {
+    void newlineWithoutValue() {
         assertThat(
                 makeMessage(
                         ImmutableList.<String>of(),
@@ -85,7 +82,7 @@ public class FactTest {
     }
 
     @Test
-    public void withMessage() {
+    void withMessage() {
         assertThat(makeMessage(ImmutableList.<String>of("hello"), ImmutableList.of(fact("foo", "bar"))))
                 .isEqualTo("hello\nfoo: bar");
     }

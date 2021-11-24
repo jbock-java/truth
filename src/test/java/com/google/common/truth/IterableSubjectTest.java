@@ -29,8 +29,8 @@ import java.util.TreeSet;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link IterableSubject} APIs, excluding those that use {@link Correspondence} (which

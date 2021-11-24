@@ -17,17 +17,14 @@ package com.google.common.truth.extension;
 
 import com.google.common.truth.ExpectFailure.SimpleSubjectBuilderCallback;
 import com.google.common.truth.extension.Employee.Location;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.ExpectFailure.expectFailureAbout;
 import static com.google.common.truth.extension.EmployeeSubject.assertThat;
 import static com.google.common.truth.extension.EmployeeSubject.employees;
 
-@RunWith(JUnit4.class)
-public final class EmployeeSubjectTest {
+final class EmployeeSubjectTest {
 
     // Note: not real employee IDs :-)
 
@@ -35,19 +32,19 @@ public final class EmployeeSubjectTest {
             Employee.create("kak", 37802, "Kurt Alfred Kluever", Location.NYC, false);
 
     @Test
-    public void id() {
+    void id() {
         assertThat(KURT).hasId(37802);
         expectFailure(whenTesting -> whenTesting.that(KURT).hasId(12345));
     }
 
     @Test
-    public void name() {
+    void name() {
         assertThat(KURT).hasName("Kurt Alfred Kluever");
         expectFailure(whenTesting -> whenTesting.that(KURT).hasName("Sundar Pichai"));
     }
 
     @Test
-    public void username() {
+    void username() {
         assertThat(KURT).hasUsername("kak");
         // Here's an example of asserting on the failure message.
         // Note that it uses the assertThat method from ExpectFailure.

@@ -24,9 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
 import java.util.BitSet;
@@ -36,68 +34,55 @@ import java.util.Random;
 
 import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
 import static com.google.common.truth.Truth.assertWithMessage;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link GraphMatching}.
  *
  * @author Pete Gillin
  */
-@RunWith(JUnit4.class)
 public final class GraphMatchingTest {
 
     @Test
-    public void maximumCardinalityBipartiteMatching_empty() {
+    void maximumCardinalityBipartiteMatching_empty() {
         TestInstance.empty().testAgainstKnownSize(0);
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_exhaustive3x4() {
+    void maximumCardinalityBipartiteMatching_exhaustive3x4() {
         for (int edgeCombination = 1; edgeCombination < (1L << (3 * 4)); edgeCombination++) {
             TestInstance.fromBits(3, 4, intBits(edgeCombination)).testAgainstBruteForce();
         }
     }
 
     @Test
-    @GwtIncompatible("slow")
-    public void maximumCardinalityBipartiteMatching_exhaustive4x4() {
-        if (Platform.isAndroid()) {
-            return; // slow
-        }
+    void maximumCardinalityBipartiteMatching_exhaustive4x4() {
         for (int edgeCombination = 1; edgeCombination < (1L << (4 * 4)); edgeCombination++) {
             TestInstance.fromBits(4, 4, intBits(edgeCombination)).testAgainstBruteForce();
         }
     }
 
     @Test
-    @GwtIncompatible("slow")
-    public void maximumCardinalityBipartiteMatching_exhaustive3x5() {
-        if (Platform.isAndroid()) {
-            return; // slow
-        }
+    void maximumCardinalityBipartiteMatching_exhaustive3x5() {
         for (int edgeCombination = 1; edgeCombination < (1L << (3 * 5)); edgeCombination++) {
             TestInstance.fromBits(3, 5, intBits(edgeCombination)).testAgainstBruteForce();
         }
     }
 
     @Test
-    @GwtIncompatible("slow")
-    public void maximumCardinalityBipartiteMatching_exhaustive5x3() {
-        if (Platform.isAndroid()) {
-            return; // slow
-        }
+    void maximumCardinalityBipartiteMatching_exhaustive5x3() {
         for (int edgeCombination = 1; edgeCombination < (1L << (5 * 3)); edgeCombination++) {
             TestInstance.fromBits(5, 3, intBits(edgeCombination)).testAgainstBruteForce();
         }
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_fullyConnected8x8() {
+    void maximumCardinalityBipartiteMatching_fullyConnected8x8() {
         TestInstance.fullyConnected(8, 8).testAgainstKnownSize(8);
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_random8x8() {
+    void maximumCardinalityBipartiteMatching_random8x8() {
         Random rng = new Random(0x5ca1ab1e);
         for (int i = 0; i < 100; i++) {
             // Set each bit with probability 0.25, giving an average of 2 of the possible 8 edges per
@@ -108,7 +93,7 @@ public final class GraphMatchingTest {
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_randomSparse8x8() {
+    void maximumCardinalityBipartiteMatching_randomSparse8x8() {
         Random rng = new Random(0x0ddba11);
         for (int i = 0; i < 100; i++) {
             // Set each bit with probability 0.125, giving an average of 1 of the possible 8 edges per
@@ -118,11 +103,7 @@ public final class GraphMatchingTest {
     }
 
     @Test
-    @GwtIncompatible("slow")
-    public void maximumCardinalityBipartiteMatching_randomDense8x8() {
-        if (Platform.isAndroid()) {
-            return; // slow
-        }
+    void maximumCardinalityBipartiteMatching_randomDense8x8() {
         Random rng = new Random(0x5add1e5);
         for (int i = 0; i < 100; i++) {
             // Set each bit with probability 0.5, giving an average of 4 of the possible 8 edges per
@@ -133,7 +114,7 @@ public final class GraphMatchingTest {
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_failsWithNullLhs() {
+    void maximumCardinalityBipartiteMatching_failsWithNullLhs() {
         ListMultimap<String, String> edges = LinkedListMultimap.create();
         edges.put(null, "R1");
         try {
@@ -144,7 +125,7 @@ public final class GraphMatchingTest {
     }
 
     @Test
-    public void maximumCardinalityBipartiteMatching_failsWithNullRhs() {
+    void maximumCardinalityBipartiteMatching_failsWithNullRhs() {
         ListMultimap<String, String> edges = LinkedListMultimap.create();
         edges.put("L1", null);
         try {

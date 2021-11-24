@@ -15,18 +15,15 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth8.assertThat;
 
-@RunWith(JUnit4.class)
-public class PathSubjectTest {
+class PathSubjectTest {
     @Test
-    public void basicEquality() {
+    void basicEquality() {
         assertThat(Paths.get("foo")).isEqualTo(Paths.get("foo"));
     }
 }

@@ -15,9 +15,7 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -27,31 +25,30 @@ import static com.google.common.truth.FailureAssertions.assertFailureValue;
 import static com.google.common.truth.StreamSubject.streams;
 import static com.google.common.truth.Truth8.assertThat;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for Java 8 {@link Stream} Subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public final class StreamSubjectTest {
+final class StreamSubjectTest {
 
     @Test
-    public void testIsEqualTo() throws Exception {
+    void testIsEqualTo() {
         Stream<String> stream = Stream.of("hello");
         assertThat(stream).isEqualTo(stream);
     }
 
     @Test
-    public void testIsEqualToList() throws Exception {
+    void testIsEqualToList() {
         Stream<String> stream = Stream.of("hello");
         List<String> list = asList("hello");
         AssertionError unused = expectFailure(whenTesting -> whenTesting.that(stream).isEqualTo(list));
     }
 
     @Test
-    public void testNullStream_fails() throws Exception {
+    void testNullStream_fails() {
         Stream<String> nullStream = null;
         try {
             assertThat(nullStream).isEmpty();
@@ -61,92 +58,92 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testNullStreamIsNull() throws Exception {
+    void testNullStreamIsNull() {
         Stream<String> nullStream = null;
         assertThat(nullStream).isNull();
     }
 
     @Test
-    public void testIsSameInstanceAs() throws Exception {
+    void testIsSameInstanceAs() {
         Stream<String> stream = Stream.of("hello");
         assertThat(stream).isSameInstanceAs(stream);
     }
 
     @Test
-    public void testIsEmpty() throws Exception {
+    void testIsEmpty() {
         assertThat(Stream.of()).isEmpty();
     }
 
     @Test
-    public void testIsEmpty_fails() throws Exception {
+    void testIsEmpty_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of("hello")).isEmpty());
     }
 
     @Test
-    public void testIsNotEmpty() throws Exception {
+    void testIsNotEmpty() {
         assertThat(Stream.of("hello")).isNotEmpty();
     }
 
     @Test
-    public void testIsNotEmpty_fails() throws Exception {
+    void testIsNotEmpty_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of()).isNotEmpty());
     }
 
     @Test
-    public void testHasSize() throws Exception {
+    void testHasSize() {
         assertThat(Stream.of("hello")).hasSize(1);
     }
 
     @Test
-    public void testHasSize_fails() throws Exception {
+    void testHasSize_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of("hello")).hasSize(2));
     }
 
     @Test
-    public void testContainsNoDuplicates() throws Exception {
+    void testContainsNoDuplicates() {
         assertThat(Stream.of("hello")).containsNoDuplicates();
     }
 
     @Test
-    public void testContainsNoDuplicates_fails() throws Exception {
+    void testContainsNoDuplicates_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting -> whenTesting.that(Stream.of("hello", "hello")).containsNoDuplicates());
     }
 
     @Test
-    public void testContains() throws Exception {
+    void testContains() {
         assertThat(Stream.of("hello")).contains("hello");
     }
 
     @Test
-    public void testContains_fails() throws Exception {
+    void testContains_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of("hello")).contains("goodbye"));
     }
 
     @Test
-    public void testContainsAnyOf() throws Exception {
+    void testContainsAnyOf() {
         assertThat(Stream.of("hello")).containsAnyOf("hello", "hell");
     }
 
     @Test
-    public void testContainsAnyOf_fails() throws Exception {
+    void testContainsAnyOf_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting -> whenTesting.that(Stream.of("hello")).containsAnyOf("goodbye", "good"));
     }
 
     @Test
-    public void testContainsAnyIn() throws Exception {
+    void testContainsAnyIn() {
         assertThat(Stream.of("hello")).containsAnyIn(asList("hello", "hell"));
     }
 
     @Test
-    public void testContainsAnyIn_fails() throws Exception {
+    void testContainsAnyIn_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting ->
@@ -154,35 +151,35 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testDoesNotContain() throws Exception {
+    void testDoesNotContain() {
         assertThat(Stream.of("hello")).doesNotContain("goodbye");
     }
 
     @Test
-    public void testDoesNotContain_fails() throws Exception {
+    void testDoesNotContain_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of("hello")).doesNotContain("hello"));
     }
 
     @Test
-    public void testContainsNoneOf() throws Exception {
+    void testContainsNoneOf() {
         assertThat(Stream.of("hello")).containsNoneOf("goodbye", "good");
     }
 
     @Test
-    public void testContainsNoneOf_fails() throws Exception {
+    void testContainsNoneOf_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting -> whenTesting.that(Stream.of("hello")).containsNoneOf("hello", "hell"));
     }
 
     @Test
-    public void testContainsNoneIn() throws Exception {
+    void testContainsNoneIn() {
         assertThat(Stream.of("hello")).containsNoneIn(asList("goodbye", "good"));
     }
 
     @Test
-    public void testContainsNoneIn_fails() throws Exception {
+    void testContainsNoneIn_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting ->
@@ -190,12 +187,12 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsAtLeast() throws Exception {
+    void testContainsAtLeast() {
         assertThat(Stream.of("hell", "hello")).containsAtLeast("hell", "hello");
     }
 
     @Test
-    public void testContainsAtLeast_fails() throws Exception {
+    void testContainsAtLeast_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting ->
@@ -205,12 +202,12 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsAtLeast_inOrder() throws Exception {
+    void testContainsAtLeast_inOrder() {
         assertThat(Stream.of("hell", "hello")).containsAtLeast("hell", "hello").inOrder();
     }
 
     @Test
-    public void testContainsAtLeast_inOrder_fails() throws Exception {
+    void testContainsAtLeast_inOrder_fails() {
         try {
             assertThat(Stream.of("hell", "hello")).containsAtLeast("hello", "hell").inOrder();
             fail();
@@ -225,12 +222,12 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsAtLeastElementsIn() throws Exception {
+    void testContainsAtLeastElementsIn() {
         assertThat(Stream.of("hell", "hello")).containsAtLeastElementsIn(asList("hell", "hello"));
     }
 
     @Test
-    public void testContainsAtLeastElementsIn_fails() throws Exception {
+    void testContainsAtLeastElementsIn_fails() {
         AssertionError unused =
                 expectFailure(
                         whenTesting ->
@@ -240,14 +237,14 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsAtLeastElementsIn_inOrder() throws Exception {
+    void testContainsAtLeastElementsIn_inOrder() {
         assertThat(Stream.of("hell", "hello"))
                 .containsAtLeastElementsIn(asList("hell", "hello"))
                 .inOrder();
     }
 
     @Test
-    public void testContainsAtLeastElementsIn_inOrder_fails() throws Exception {
+    void testContainsAtLeastElementsIn_inOrder_fails() {
         try {
             assertThat(Stream.of("hell", "hello"))
                     .containsAtLeastElementsIn(asList("hello", "hell"))
@@ -264,13 +261,13 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsExactly() throws Exception {
+    void testContainsExactly() {
         assertThat(Stream.of("hell", "hello")).containsExactly("hell", "hello");
         assertThat(Stream.of("hell", "hello")).containsExactly("hello", "hell");
     }
 
     @Test
-    public void testContainsExactly_fails() throws Exception {
+    void testContainsExactly_fails() {
         try {
             assertThat(Stream.of("hell", "hello")).containsExactly("hell");
             fail();
@@ -281,12 +278,12 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsExactly_inOrder() throws Exception {
+    void testContainsExactly_inOrder() {
         assertThat(Stream.of("hell", "hello")).containsExactly("hell", "hello").inOrder();
     }
 
     @Test
-    public void testContainsExactly_inOrder_fails() throws Exception {
+    void testContainsExactly_inOrder_fails() {
         try {
             assertThat(Stream.of("hell", "hello")).containsExactly("hello", "hell").inOrder();
             fail();
@@ -297,13 +294,13 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsExactlyElementsIn() throws Exception {
+    void testContainsExactlyElementsIn() {
         assertThat(Stream.of("hell", "hello")).containsExactlyElementsIn(asList("hell", "hello"));
         assertThat(Stream.of("hell", "hello")).containsExactlyElementsIn(asList("hello", "hell"));
     }
 
     @Test
-    public void testContainsExactlyElementsIn_fails() throws Exception {
+    void testContainsExactlyElementsIn_fails() {
         try {
             assertThat(Stream.of("hell", "hello")).containsExactlyElementsIn(asList("hell"));
             fail();
@@ -314,14 +311,14 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testContainsExactlyElementsIn_inOrder() throws Exception {
+    void testContainsExactlyElementsIn_inOrder() {
         assertThat(Stream.of("hell", "hello"))
                 .containsExactlyElementsIn(asList("hell", "hello"))
                 .inOrder();
     }
 
     @Test
-    public void testContainsExactlyElementsIn_inOrder_fails() throws Exception {
+    void testContainsExactlyElementsIn_inOrder_fails() {
         try {
             assertThat(Stream.of("hell", "hello"))
                     .containsExactlyElementsIn(asList("hello", "hell"))
@@ -334,27 +331,27 @@ public final class StreamSubjectTest {
     }
 
     @Test
-    public void testIsInOrder() {
+    void testIsInOrder() {
         assertThat(Stream.of()).isInOrder();
         assertThat(Stream.of(1)).isInOrder();
         assertThat(Stream.of(1, 1, 2, 3, 3, 3, 4)).isInOrder();
     }
 
     @Test
-    public void testIsInOrder_fails() {
+    void testIsInOrder_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of(1, 3, 2, 4)).isInOrder());
     }
 
     @Test
-    public void testIsInStrictOrder() {
+    void testIsInStrictOrder() {
         assertThat(Stream.of()).isInStrictOrder();
         assertThat(Stream.of(1)).isInStrictOrder();
         assertThat(Stream.of(1, 2, 3, 4)).isInStrictOrder();
     }
 
     @Test
-    public void testIsInStrictOrder_fails() {
+    void testIsInStrictOrder_fails() {
         AssertionError unused =
                 expectFailure(whenTesting -> whenTesting.that(Stream.of(1, 2, 2, 4)).isInStrictOrder());
     }

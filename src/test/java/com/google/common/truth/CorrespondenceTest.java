@@ -24,8 +24,8 @@ import static com.google.common.truth.Correspondence.tolerance;
 import static com.google.common.truth.TestCorrespondences.INT_DIFF_FORMATTER;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link Correspondence}.

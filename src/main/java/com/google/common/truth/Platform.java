@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -50,23 +49,6 @@ final class Platform {
         return Pattern.compile(regex).matcher(actual).find();
     }
 
-    /**
-     * Returns an array containing all of the exceptions that were suppressed to deliver the given
-     * exception. If suppressed exceptions are not supported (pre-Java 1.7), an empty array will be
-     * returned.
-     */
-    static Throwable[] getSuppressed(Throwable throwable) {
-        try {
-            Method getSuppressed = throwable.getClass().getMethod("getSuppressed");
-            return (Throwable[]) getSuppressed.invoke(throwable);
-        } catch (NoSuchMethodException e) {
-            return new Throwable[0];
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Tries to infer a name for the root actual value from the bytecode. The "root" actual value is
@@ -182,11 +164,6 @@ final class Platform {
     /** Returns a human readable string representation of the throwable's stack trace. */
     static String getStackTraceAsString(Throwable throwable) {
         return Throwables.getStackTraceAsString(throwable);
-    }
-
-    /** Tests if current platform is Android. */
-    static boolean isAndroid() {
-        return System.getProperty("java.runtime.name").contains("Android");
     }
 
     static AssertionError makeComparisonFailure(
