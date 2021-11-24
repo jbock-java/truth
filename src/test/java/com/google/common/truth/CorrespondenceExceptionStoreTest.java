@@ -19,7 +19,7 @@ import com.google.common.collect.Iterables;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link Correspondence.ExceptionStore}.
@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
  *
  * @author Pete Gillin
  */
-public final class CorrespondenceExceptionStoreTest {
+final class CorrespondenceExceptionStoreTest {
 
     @Test
     void hasCompareException_empty() {
