@@ -15,6 +15,7 @@
  */
 package com.google.common.truth;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.truth.Truth.SimpleAssertionError;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -69,7 +70,6 @@ public final class ExpectFailure {
                 }
             };
 
-    private boolean inRuleContext = false;
     private boolean failureExpected = false;
     private AssertionError failure = null;
 
@@ -77,7 +77,8 @@ public final class ExpectFailure {
      * Creates a new instance for use as a {@code @Rule}. See the class documentation for details, and
      * consider using {@linkplain #expectFailure the lambda version} instead.
      */
-    public ExpectFailure() {
+    @VisibleForTesting
+    ExpectFailure() {
     }
 
     /**
@@ -88,7 +89,6 @@ public final class ExpectFailure {
      * method. The static {@link #expectFailure} method, by contrast, does not have this limitation.
      */
     public StandardSubjectBuilder whenTesting() {
-        checkState(inRuleContext, "ExpectFailure must be used as a JUnit @Rule");
         if (failure != null) {
             throw SimpleAssertionError.create("ExpectFailure already captured a failure", failure);
         }
@@ -107,12 +107,6 @@ public final class ExpectFailure {
      * as a JUnit rule, like truth subject tests where for GWT compatible reasons.
      */
     void enterRuleContext() {
-        this.inRuleContext = true;
-    }
-
-    /** Leaves rule context and verify if a failure has been caught if it's expected. */
-    void leaveRuleContext() {
-        this.inRuleContext = false;
     }
 
     /**
@@ -158,7 +152,6 @@ public final class ExpectFailure {
      */
     public static AssertionError expectFailure(StandardSubjectBuilderCallback assertionCallback) {
         ExpectFailure expectFailure = new ExpectFailure();
-        expectFailure.enterRuleContext(); // safe since this instance doesn't leave this method
         assertionCallback.invokeAssertion(expectFailure.whenTesting());
         return expectFailure.getFailure();
     }

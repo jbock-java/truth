@@ -15,51 +15,49 @@
  */
 package com.google.common.truth;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Truth.assertThat;
 
 /** Tests for {@link ExpectFailure} */
-@RunWith(JUnit4.class)
-public class ExpectFailureTest {
+class ExpectFailureTest {
     private final ExpectFailure expectFailure = new ExpectFailure();
 
-    @Before
-    public void setupExpectFailure() {
+    @BeforeEach
+    void setupExpectFailure() {
         expectFailure.enterRuleContext();
     }
 
     @Test
-    public void expectFail() {
+    void expectFail() {
         expectFailure.whenTesting().withMessage("abc").fail();
         assertThat(expectFailure.getFailure()).hasMessageThat().isEqualTo("abc");
     }
 
     @Test
-    public void expectFail_withCause() {
+    void expectFail_withCause() {
         expectFailure.whenTesting().that(new NullPointerException()).isNull();
         assertThat(expectFailure.getFailure()).hasMessageThat().contains("NullPointerException");
         assertThat(expectFailure.getFailure()).hasCauseThat().isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    public void expectFail_about() {
+    void expectFail_about() {
         expectFailure.whenTesting().about(strings()).that("foo").isEqualTo("bar");
         assertThat(expectFailure.getFailure()).hasMessageThat().contains("foo");
     }
 
     @Test
-    public void expectFail_passesIfUnused() {
+    void expectFail_passesIfUnused() {
         assertThat(4).isEqualTo(4);
     }
 
     @Test
-    public void expectFail_failsOnSuccess() {
+    void expectFail_failsOnSuccess() {
         expectFailure.whenTesting().that(4).isEqualTo(4);
         try {
             @SuppressWarnings("unused")
@@ -71,7 +69,7 @@ public class ExpectFailureTest {
     }
 
     @Test
-    public void expectFail_failsOnMultipleFailures() {
+    void expectFail_failsOnMultipleFailures() {
         try {
             expectFailure.whenTesting().about(BadSubject.badSubject()).that(5).isEqualTo(4);
             throw new Error("Expected to fail");
@@ -83,7 +81,7 @@ public class ExpectFailureTest {
     }
 
     @Test
-    public void expectFail_failsOnMultiplewhenTestings() {
+    void expectFail_failsOnMultiplewhenTestings() {
         try {
             expectFailure.whenTesting().that(4).isEqualTo(4);
             StandardSubjectBuilder unused = expectFailure.whenTesting();
@@ -97,7 +95,7 @@ public class ExpectFailureTest {
     }
 
     @Test
-    public void expectFail_failsOnMultiplewhenTestings_thatFail() {
+    void expectFail_failsOnMultiplewhenTestings_thatFail() {
         expectFailure.whenTesting().that(5).isEqualTo(4);
         try {
             StandardSubjectBuilder unused = expectFailure.whenTesting();
@@ -108,7 +106,7 @@ public class ExpectFailureTest {
     }
 
     @Test
-    public void expectFail_failsAfterTest() {
+    void expectFail_failsAfterTest() {
         try {
             expectFailure.whenTesting().that(4).isEqualTo(4);
             expectFailure.ensureFailureCaught();
@@ -120,24 +118,8 @@ public class ExpectFailureTest {
         }
     }
 
-    @Test
-    public void expectFail_whenTestingWithoutInContext_shouldFail() {
-        ExpectFailure expectFailure = new ExpectFailure();
-        try {
-            expectFailure.whenTesting().that(4).isEqualTo(4);
-            throw new Error("Expected to fail");
-        } catch (IllegalStateException expected) {
-            assertThat(expected).hasMessageThat().contains("ExpectFailure must be used as a JUnit @Rule");
-        }
-    }
-
     private static Subject.Factory<StringSubject, String> strings() {
-        return new Subject.Factory<StringSubject, String>() {
-            @Override
-            public StringSubject createSubject(FailureMetadata fm, String that) {
-                return new StringSubject(fm, that);
-            }
-        };
+        return StringSubject::new;
     }
 
     private static class BadSubject extends Subject {
@@ -159,12 +141,7 @@ public class ExpectFailureTest {
         }
 
         private static Subject.Factory<BadSubject, Integer> badSubject() {
-            return new Subject.Factory<BadSubject, Integer>() {
-                @Override
-                public BadSubject createSubject(FailureMetadata fm, Integer that) {
-                    return new BadSubject(fm, that);
-                }
-            };
+            return BadSubject::new;
         }
     }
 }

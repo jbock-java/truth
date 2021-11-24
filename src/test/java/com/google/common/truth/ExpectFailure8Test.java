@@ -15,21 +15,18 @@
  */
 package com.google.common.truth;
 
-import com.google.common.truth.ExpectFailure.SimpleSubjectBuilderCallback;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.ExpectFailure.expectFailure;
 import static com.google.common.truth.ExpectFailure.expectFailureAbout;
 
 /** Tests of {@link ExpectFailure}'s Java 8 support. */
-@RunWith(JUnit4.class)
-public final class ExpectFailure8Test {
+final class ExpectFailure8Test {
 
     @Test
-    public void testExpectFailure() throws Exception {
+    void testExpectFailure() {
         AssertionError failure1 = expectFailure(whenTesting -> whenTesting.that(4).isEqualTo(5));
         assertThat(failure1).factValue("expected").isEqualTo("5");
 
@@ -39,12 +36,10 @@ public final class ExpectFailure8Test {
     }
 
     @Test
-    public void testExpectFailureAbout() {
-        AssertionError unused =
-                expectFailureAbout(
-                        STRINGS,
-                        (SimpleSubjectBuilderCallback<StringSubject, String>)
-                                whenTesting -> whenTesting.that("foo").contains("bar"));
+    void testExpectFailureAbout() {
+        expectFailureAbout(
+                STRINGS,
+                whenTesting -> whenTesting.that("foo").contains("bar"));
     }
 
     private static final Subject.Factory<StringSubject, String> STRINGS = StringSubject::new;
