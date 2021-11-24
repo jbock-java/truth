@@ -16,24 +16,21 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Multiset;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for Multiset Subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@RunWith(JUnit4.class)
-public class MultisetSubjectTest extends BaseSubjectTestCase {
+class MultisetSubjectTest extends BaseSubjectTestCase {
 
     @Test
-    public void hasCount() {
+    void hasCount() {
         ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
         assertThat(multiset).hasCount("kurt", 2);
         assertThat(multiset).hasCount("kluever", 1);
@@ -43,13 +40,14 @@ public class MultisetSubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void hasCountFail() {
+    void hasCountFail() {
         ImmutableMultiset<String> multiset = ImmutableMultiset.of("kurt", "kurt", "kluever");
-        expectFailureWhenTestingThat(multiset).hasCount("kurt", 3);
-        assertFailureValue("value of", "multiset.count(kurt)");
-    }
-
-    private MultisetSubject expectFailureWhenTestingThat(Multiset<?> actual) {
-        return expectFailure.whenTesting().that(actual);
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(multiset)
+                        .hasCount("kurt", 3));
+        assertFailureValue(
+                failure,
+                "value of", "multiset.count(kurt)");
     }
 }
