@@ -15,53 +15,56 @@
  */
 package com.google.common.truth;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link com.google.common.truth.PrimitiveIntArraySubject}.
  *
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class PrimitiveIntArraySubjectTest extends BaseSubjectTestCase {
+class PrimitiveIntArraySubjectTest extends BaseSubjectTestCase {
     private static final int[] EMPTY = new int[0];
 
     @Test
-    public void isEqualTo() {
+    void isEqualTo() {
         assertThat(array(2, 5)).isEqualTo(array(2, 5));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isEqualTo_Same() {
+    void isEqualTo_Same() {
         int[] same = array(2, 5);
         assertThat(same).isEqualTo(same);
     }
 
     @Test
-    public void asList() {
+    void asList() {
         assertThat(array(5, 2, 9)).asList().containsAtLeast(2, 9);
     }
 
     @Test
-    public void hasLength() {
+    void hasLength() {
         assertThat(EMPTY).hasLength(0);
         assertThat(array(2, 5)).hasLength(2);
     }
 
     @Test
-    public void hasLengthFail() {
-        expectFailureWhenTestingThat(array(2, 5)).hasLength(1);
-        assertFailureValue("value of", "array.length");
+    void hasLengthFail() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 5))
+                        .hasLength(1));
+        assertFailureValue(
+                failure,
+                "value of", "array.length");
     }
 
     @Test
-    public void hasLengthNegative() {
+    void hasLengthNegative() {
         try {
             assertThat(array(2, 5)).hasLength(-1);
             fail("Should have failed.");
@@ -70,73 +73,99 @@ public class PrimitiveIntArraySubjectTest extends BaseSubjectTestCase {
     }
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         assertThat(EMPTY).isEmpty();
     }
 
     @Test
-    public void isEmptyFail() {
-        expectFailureWhenTestingThat(array(2, 5)).isEmpty();
-        assertFailureKeys("expected to be empty", "but was");
+    void isEmptyFail() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 5))
+                        .isEmpty());
+        assertFailureKeys(
+                failure,
+                "expected to be empty", "but was");
     }
 
     @Test
-    public void isNotEmpty() {
+    void isNotEmpty() {
         assertThat(array(2, 5)).isNotEmpty();
     }
 
     @Test
-    public void isNotEmptyFail() {
-        expectFailureWhenTestingThat(EMPTY).isNotEmpty();
-        assertFailureKeys("expected not to be empty");
+    void isNotEmptyFail() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(EMPTY)
+                        .isNotEmpty());
+        assertFailureKeys(
+                failure,
+                "expected not to be empty");
     }
 
     @Test
-    public void isEqualTo_Fail_UnequalOrdering() {
-        expectFailureWhenTestingThat(array(2, 3)).isEqualTo(array(3, 2));
-        assertFailureKeys("expected", "but was", "differs at index");
-        assertFailureValue("expected", "[3, 2]");
-        assertFailureValue("but was", "[2, 3]");
-        assertFailureValue("differs at index", "[0]");
+    void isEqualTo_Fail_UnequalOrdering() {
+        AssertionError failure = assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3))
+                        .isEqualTo(array(3, 2)));
+        assertFailureKeys(
+                failure,
+                "expected", "but was", "differs at index");
+        assertFailureValue(
+                failure,
+                "expected", "[3, 2]");
+        assertFailureValue(
+                failure,
+                "but was", "[2, 3]");
+        assertFailureValue(
+                failure,
+                "differs at index", "[0]");
     }
 
     @Test
-    public void isEqualTo_Fail_NotAnArray() {
-        expectFailureWhenTestingThat(array(2, 3, 4)).isEqualTo(new Object());
+    void isEqualTo_Fail_NotAnArray() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3, 4))
+                        .isEqualTo(new Object()));
     }
 
     @Test
-    public void isNotEqualTo_SameLengths() {
+    void isNotEqualTo_SameLengths() {
         assertThat(array(2, 3)).isNotEqualTo(array(3, 2));
     }
 
     @Test
-    public void isNotEqualTo_DifferentLengths() {
+    void isNotEqualTo_DifferentLengths() {
         assertThat(array(2, 3)).isNotEqualTo(array(2, 3, 1));
     }
 
     @Test
-    public void isNotEqualTo_DifferentTypes() {
+    void isNotEqualTo_DifferentTypes() {
         assertThat(array(2, 3)).isNotEqualTo(new Object());
     }
 
     @Test
-    public void isNotEqualTo_FailEquals() {
-        expectFailureWhenTestingThat(array(2, 3)).isNotEqualTo(array(2, 3));
+    void isNotEqualTo_FailEquals() {
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(array(2, 3))
+                        .isNotEqualTo(array(2, 3)));
     }
 
     @SuppressWarnings("TruthSelfEquals")
     @Test
-    public void isNotEqualTo_FailSame() {
+    void isNotEqualTo_FailSame() {
         int[] same = array(2, 3);
-        expectFailureWhenTestingThat(same).isNotEqualTo(same);
+        assertThrows(
+                AssertionError.class,
+                () -> assertThat(same)
+                        .isNotEqualTo(same));
     }
 
     private static int[] array(int... ts) {
         return ts;
-    }
-
-    private PrimitiveIntArraySubject expectFailureWhenTestingThat(int[] actual) {
-        return expectFailure.whenTesting().that(actual);
     }
 }
