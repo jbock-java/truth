@@ -1723,8 +1723,4 @@ class IterableSubjectTest extends BaseSubjectTestCase {
             return super.toString();
         }
     }
-
-    private IterableSubject expectFailureWhenTestingThat(Iterable<?> actual) {
-        return expectFailure.whenTesting().that(actual);
-    }
 }
