@@ -19,18 +19,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Booleans;
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Chars;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-import com.google.common.primitives.Shorts;
 import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
@@ -433,21 +427,21 @@ public class Subject {
                     if (input != null && input.getClass().isArray()) {
                         Iterable<?> iterable;
                         if (input.getClass() == boolean[].class) {
-                            iterable = Booleans.asList((boolean[]) input);
+                            iterable = Util.booleansAsList((boolean[]) input);
                         } else if (input.getClass() == int[].class) {
-                            iterable = Ints.asList((int[]) input);
+                            iterable = Util.intsAsList((int[]) input);
                         } else if (input.getClass() == long[].class) {
-                            iterable = Longs.asList((long[]) input);
+                            iterable = Util.longsAsList((long[]) input);
                         } else if (input.getClass() == short[].class) {
-                            iterable = Shorts.asList((short[]) input);
+                            iterable = Util.shortsAsList((short[]) input);
                         } else if (input.getClass() == byte[].class) {
-                            iterable = Bytes.asList((byte[]) input);
+                            iterable = Util.bytesAsList((byte[]) input);
                         } else if (input.getClass() == double[].class) {
                             iterable = doubleArrayAsString((double[]) input);
                         } else if (input.getClass() == float[].class) {
                             iterable = floatArrayAsString((float[]) input);
                         } else if (input.getClass() == char[].class) {
-                            iterable = Chars.asList((char[]) input);
+                            iterable = Util.charsAsList((char[]) input);
                         } else {
                             iterable = Arrays.asList((Object[]) input);
                         }
@@ -1062,7 +1056,10 @@ public class Subject {
      * to be empty"))}.
      */
     protected final void failWithoutActual(Fact first, Fact... rest) {
-        doFail(ImmutableList.copyOf(Lists.asList(first, rest)));
+        ArrayList<Fact> facts = new ArrayList<>(1 + rest.length);
+        facts.add(first);
+        Collections.addAll(facts, rest);
+        doFail(ImmutableList.copyOf(facts));
     }
 
     // TODO(cpovirk): Consider making this protected if there's a need for it.
@@ -1175,11 +1172,11 @@ public class Subject {
         return String.class.getSuperclass() == null;
     }
 
-    private void doFail(ImmutableList<Fact> facts) {
+    private void doFail(List<Fact> facts) {
         metadata.fail(prependNameIfAny(facts));
     }
 
-    private ImmutableList<Fact> prependNameIfAny(ImmutableList<Fact> facts) {
+    private ImmutableList<Fact> prependNameIfAny(List<Fact> facts) {
         return concat(nameAsFacts(), facts);
     }
 

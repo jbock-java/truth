@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Shorts;
-
 /**
  * A Subject for {@code short[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveShortArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Shorts.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.shortsAsList(actual));
     }
 }
