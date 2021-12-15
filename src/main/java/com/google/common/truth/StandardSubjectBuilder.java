@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * In a fluent assertion chain, an object with which you can do any of the following:
@@ -140,6 +141,10 @@ public class StandardSubjectBuilder {
 
     public final PrimitiveDoubleArraySubject that(double[] actual) {
         return new PrimitiveDoubleArraySubject(metadata(), actual, "array");
+    }
+
+    public final OptionalSubject that(Optional<?> actual) {
+        return OptionalSubject.optionals().createSubject(metadata(), actual);
     }
 
     public final MapSubject that(Map<?, ?> actual) {
