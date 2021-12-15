@@ -16,6 +16,7 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Fact.makeMessage;
@@ -26,13 +27,13 @@ import static com.google.common.truth.Fact.makeMessage;
  */
 @SuppressWarnings("OverrideThrowableToString") // We intentionally hide the class name.
 final class AssertionErrorWithFacts extends AssertionError implements ErrorWithFacts {
-    private final ImmutableList<Fact> facts;
+    private final List<Fact> facts;
 
     /** Separate cause field, in case initCause() fails. */
     private final Throwable cause;
 
     AssertionErrorWithFacts(
-            ImmutableList<String> messages, ImmutableList<Fact> facts, Throwable cause) {
+            List<String> messages, List<Fact> facts, Throwable cause) {
         super(makeMessage(messages, facts));
         this.facts = checkNotNull(facts);
 
@@ -56,7 +57,7 @@ final class AssertionErrorWithFacts extends AssertionError implements ErrorWithF
     }
 
     @Override
-    public ImmutableList<Fact> facts() {
+    public List<Fact> facts() {
         return facts;
     }
 }

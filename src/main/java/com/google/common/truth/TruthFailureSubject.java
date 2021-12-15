@@ -16,13 +16,14 @@
 
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
-
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Subject for {@link AssertionError} objects thrown by Truth. {@code TruthFailureSubject} contains
@@ -69,18 +70,18 @@ public final class TruthFailureSubject extends ThrowableSubject {
     public IterableSubject factKeys() {
         if (!(actual instanceof ErrorWithFacts)) {
             failWithActual(simpleFact("expected a failure thrown by Truth's new failure API"));
-            return ignoreCheck().that(ImmutableList.of());
+            return ignoreCheck().that(List.of());
         }
         ErrorWithFacts error = (ErrorWithFacts) actual;
         return check("factKeys()").that(getFactKeys(error));
     }
 
-    private static ImmutableList<String> getFactKeys(ErrorWithFacts error) {
-        ImmutableList.Builder<String> facts = ImmutableList.builder();
+    private static List<String> getFactKeys(ErrorWithFacts error) {
+        List<String> facts = new ArrayList<>();
         for (Fact fact : error.facts()) {
             facts.add(fact.key);
         }
-        return facts.build();
+        return facts;
     }
 
     /**
@@ -130,7 +131,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
          * We don't care as much about including the actual AssertionError and its facts in these
          * because the AssertionError will be attached as a cause in nearly all cases.
          */
-        ImmutableList<Fact> factsWithName = factsWithName(error, key);
+        List<Fact> factsWithName = factsWithName(error, key);
         if (factsWithName.isEmpty()) {
             failWithoutActual(
                     fact("expected to contain fact", key), fact("but contained only", getFactKeys(error)));
@@ -172,13 +173,13 @@ public final class TruthFailureSubject extends ThrowableSubject {
         return check.that(value);
     }
 
-    private static ImmutableList<Fact> factsWithName(ErrorWithFacts error, String key) {
-        ImmutableList.Builder<Fact> facts = ImmutableList.builder();
+    private static List<Fact> factsWithName(ErrorWithFacts error, String key) {
+        List<Fact> facts = new ArrayList<>();
         for (Fact fact : error.facts()) {
             if (fact.key.equals(key)) {
                 facts.add(fact);
             }
         }
-        return facts.build();
+        return facts;
     }
 }

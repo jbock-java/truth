@@ -15,15 +15,13 @@
  */
 package com.google.common.truth;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.OptionalSubject.optionals;
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Java 8 {@link Optional} Subject.

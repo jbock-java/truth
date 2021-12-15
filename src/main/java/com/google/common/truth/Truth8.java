@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -72,7 +70,6 @@ public final class Truth8 {
 
     // Not actually a Java 8 feature, but for now this is the best option since core Truth still has
     // to support Java environments without java.nio.file such as Android and J2CL.
-    @GwtIncompatible
     public static PathSubject assertThat(Path target) {
         return assertAbout(PathSubject.paths()).that(target);
     }

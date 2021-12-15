@@ -17,6 +17,8 @@ package com.google.common.truth;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.lenientFormat;
@@ -55,11 +57,11 @@ final class LazyMessage {
         return count;
     }
 
-    static ImmutableList<String> evaluateAll(ImmutableList<LazyMessage> messages) {
-        ImmutableList.Builder<String> result = ImmutableList.builder();
+    static List<String> evaluateAll(List<LazyMessage> messages) {
+        List<String> result = new ArrayList<>();
         for (LazyMessage message : messages) {
             result.add(message.toString());
         }
-        return result.build();
+        return result;
     }
 }

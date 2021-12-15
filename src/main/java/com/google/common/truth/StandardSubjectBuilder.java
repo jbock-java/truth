@@ -15,17 +15,11 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
+import static java.util.Objects.requireNonNull;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * In a fluent assertion chain, an object with which you can do any of the following:
@@ -58,7 +52,7 @@ public class StandardSubjectBuilder {
     private final FailureMetadata metadataDoNotReferenceDirectly;
 
     StandardSubjectBuilder(FailureMetadata metadata) {
-        this.metadataDoNotReferenceDirectly = checkNotNull(metadata);
+        this.metadataDoNotReferenceDirectly = requireNonNull(metadata);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -76,7 +70,6 @@ public class StandardSubjectBuilder {
         return new Subject(metadata(), actual);
     }
 
-    @GwtIncompatible("ClassSubject.java")
     public final ClassSubject that(Class<?> actual) {
         return new ClassSubject(metadata(), actual);
     }
@@ -149,24 +142,8 @@ public class StandardSubjectBuilder {
         return new PrimitiveDoubleArraySubject(metadata(), actual, "array");
     }
 
-    public final GuavaOptionalSubject that(Optional<?> actual) {
-        return new GuavaOptionalSubject(metadata(), actual, "optional");
-    }
-
     public final MapSubject that(Map<?, ?> actual) {
         return new MapSubject(metadata(), actual);
-    }
-
-    public final MultimapSubject that(Multimap<?, ?> actual) {
-        return new MultimapSubject(metadata(), actual, "multimap");
-    }
-
-    public final MultisetSubject that(Multiset<?> actual) {
-        return new MultisetSubject(metadata(), actual);
-    }
-
-    public final TableSubject that(Table<?, ?, ?> actual) {
-        return new TableSubject(metadata(), actual);
     }
 
     /**
@@ -183,9 +160,7 @@ public class StandardSubjectBuilder {
      * this method is called multiple times, the messages will appear in the order that they were
      * specified.
      *
-     * <p><b>Note:</b> the arguments will be substituted into the format template using {@link
-     * com.google.common.base.Strings#lenientFormat Strings.lenientFormat}. Note this only supports
-     * the {@code %s} specifier.
+     * <p><b>Note:</b>Note this only supports the {@code %s} specifier.
      *
      * @throws IllegalArgumentException if the number of placeholders in the format string does not
      *     equal the number of given arguments
@@ -216,18 +191,10 @@ public class StandardSubjectBuilder {
      * {@link Truth#assertWithMessage}).
      */
     public final void fail() {
-        metadata().fail(ImmutableList.<Fact>of());
+        metadata().fail(List.of());
     }
 
     private FailureMetadata metadata() {
-        checkStatePreconditions();
         return metadataDoNotReferenceDirectly;
-    }
-
-    /**
-     * Extension point invoked before every assertion. This allows {@link Expect} to check that it's
-     * been set up properly as a {@code TestRule}.
-     */
-    void checkStatePreconditions() {
     }
 }

@@ -397,7 +397,7 @@ final class SubjectUtils {
         return new ImmutableList.Builder<E>().add(array).add(object).build();
     }
 
-    static <E> ImmutableList<E> append(ImmutableList<? extends E> list, E object) {
+    static <E> ImmutableList<E> append(List<? extends E> list, E object) {
         return new ImmutableList.Builder<E>().addAll(list).add(object).build();
     }
 

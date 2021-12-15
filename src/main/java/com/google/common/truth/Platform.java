@@ -167,8 +167,8 @@ final class Platform {
     }
 
     static AssertionError makeComparisonFailure(
-            ImmutableList<String> messages,
-            ImmutableList<Fact> facts,
+            List<String> messages,
+            List<Fact> facts,
             String expected,
             String actual,
             Throwable cause) {

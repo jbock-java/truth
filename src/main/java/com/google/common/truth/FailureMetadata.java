@@ -17,6 +17,8 @@ package com.google.common.truth;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -28,6 +30,7 @@ import static com.google.common.truth.Platform.inferDescription;
 import static com.google.common.truth.Platform.makeComparisonFailure;
 import static com.google.common.truth.SubjectUtils.append;
 import static com.google.common.truth.SubjectUtils.concat;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An opaque, immutable object containing state from the previous calls in the fluent assertion
@@ -105,15 +108,15 @@ public final class FailureMetadata {
      * multimap").
      */
 
-    private final ImmutableList<LazyMessage> messages;
+    private final List<LazyMessage> messages;
 
-    private final ImmutableList<Step> steps;
+    private final List<Step> steps;
 
     FailureMetadata(
-            FailureStrategy strategy, ImmutableList<LazyMessage> messages, ImmutableList<Step> steps) {
-        this.strategy = checkNotNull(strategy);
-        this.messages = checkNotNull(messages);
-        this.steps = checkNotNull(steps);
+            FailureStrategy strategy, List<LazyMessage> messages, List<Step> steps) {
+        this.strategy = requireNonNull(strategy);
+        this.messages = requireNonNull(messages);
+        this.steps = requireNonNull(steps);
     }
 
     /**
@@ -123,12 +126,12 @@ public final class FailureMetadata {
      * ThrowableSubject#hasMessageThat}.
      */
     FailureMetadata updateForSubject(Subject subject) {
-        ImmutableList<Step> steps = append(this.steps, Step.subjectCreation(subject));
+        List<Step> steps = append(this.steps, Step.subjectCreation(subject));
         return derive(messages, steps);
     }
 
     FailureMetadata updateForCheckCall() {
-        ImmutableList<Step> steps = append(this.steps, Step.checkCall(null, null));
+        List<Step> steps = append(this.steps, Step.checkCall(null, null));
         return derive(messages, steps);
     }
 
@@ -180,7 +183,7 @@ public final class FailureMetadata {
                         rootCause()));
     }
 
-    void fail(ImmutableList<Fact> facts) {
+    void fail(List<Fact> facts) {
         doFail(
                 new AssertionErrorWithFacts(
                         evaluateAll(messages),
@@ -192,7 +195,7 @@ public final class FailureMetadata {
         strategy.fail(failure);
     }
 
-    private FailureMetadata derive(ImmutableList<LazyMessage> messages, ImmutableList<Step> steps) {
+    private FailureMetadata derive(List<LazyMessage> messages, List<Step> steps) {
         return new FailureMetadata(strategy, messages, steps);
     }
 

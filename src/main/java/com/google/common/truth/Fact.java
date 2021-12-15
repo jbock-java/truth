@@ -19,6 +19,7 @@ package com.google.common.truth;
 import com.google.common.collect.ImmutableList;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.padEnd;
@@ -84,7 +85,7 @@ public final class Fact implements Serializable {
      * Formats the given messages and facts into a string for use as the message of a test failure. In
      * particular, this method horizontally aligns the beginning of fact values.
      */
-    static String makeMessage(ImmutableList<String> messages, ImmutableList<Fact> facts) {
+    static String makeMessage(List<String> messages, List<Fact> facts) {
         int longestKeyLength = 0;
         boolean seenNewlineInValue = false;
         for (Fact fact : facts) {

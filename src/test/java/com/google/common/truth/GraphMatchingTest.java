@@ -15,7 +15,11 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
+import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
+import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -24,17 +28,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Random;
-
-import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
-import static com.google.common.truth.Truth.assertWithMessage;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link GraphMatching}.
@@ -193,11 +192,9 @@ public final class GraphMatchingTest {
         void testAgainstBruteForce() {
             ImmutableBiMap<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
-                assertWithMessage(
-                        "The returned bimap <%s> was not a matching of the bipartite graph <%s>",
-                        actual, edges)
-                        .that(edges)
-                        .containsEntry(entry.getKey(), entry.getValue());
+                assertTrue(
+                        edges.containsEntry(entry.getKey(), entry.getValue()),
+                        "The returned bimap <%s> was not a matching of the bipartite graph <%s>");
             }
             ImmutableBiMap<String, String> expected = bruteForceMaximalMatching();
             assertWithMessage(
@@ -215,11 +212,9 @@ public final class GraphMatchingTest {
         void testAgainstKnownSize(int expectedSize) {
             ImmutableBiMap<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
-                assertWithMessage(
-                        "The returned bimap <%s> was not a matching of the bipartite graph <%s>",
-                        actual, edges)
-                        .that(edges)
-                        .containsEntry(entry.getKey(), entry.getValue());
+                assertTrue(
+                        edges.containsEntry(entry.getKey(), entry.getValue()),
+                        "The returned bimap <%s> was not a matching of the bipartite graph <%s>");
             }
             assertWithMessage(
                     "The returned matching for the bipartite graph <%s> had the wrong size", edges)
