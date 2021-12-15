@@ -197,8 +197,8 @@ final class Platform {
         try {
             constructor =
                     asAssertionErrorSubclass.getDeclaredConstructor(
-                            ImmutableList.class,
-                            ImmutableList.class,
+                            List.class,
+                            List.class,
                             String.class,
                             String.class,
                             Throwable.class);

@@ -16,22 +16,22 @@
 
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.truth.Platform.PlatformComparisonFailure;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Fact.makeMessage;
+
+import com.google.common.truth.Platform.PlatformComparisonFailure;
+import java.util.List;
 
 /**
  * An {@link AssertionError} (usually a JUnit {@code ComparisonFailure}, but not under GWT) composed
  * of structured {@link Fact} instances and other string messages.
  */
 final class ComparisonFailureWithFacts extends PlatformComparisonFailure implements ErrorWithFacts {
-    private final ImmutableList<Fact> facts;
+    private final List<Fact> facts;
 
     ComparisonFailureWithFacts(
-            ImmutableList<String> messages,
-            ImmutableList<Fact> facts,
+            List<String> messages,
+            List<Fact> facts,
             String expected,
             String actual,
             Throwable cause) {
@@ -40,7 +40,7 @@ final class ComparisonFailureWithFacts extends PlatformComparisonFailure impleme
     }
 
     @Override
-    public ImmutableList<Fact> facts() {
+    public List<Fact> facts() {
         return facts;
     }
 }
