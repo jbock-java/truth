@@ -15,23 +15,21 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static com.google.common.base.Functions.identity;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.truth.DoubleSubject.checkTolerance;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Platform.getStackTraceAsString;
+import static com.google.common.truth.Preconditions.checkState;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 
 /**
  * Determines whether an instance of type {@code A} corresponds in some way to an instance of type
@@ -140,8 +138,8 @@ public abstract class Correspondence<A, E> {
         private final String description;
 
         private FromBinaryPredicate(BinaryPredicate<A, E> correspondencePredicate, String description) {
-            this.predicate = checkNotNull(correspondencePredicate);
-            this.description = checkNotNull(description);
+            this.predicate = requireNonNull(correspondencePredicate);
+            this.description = requireNonNull(description);
         }
 
         @Override
@@ -260,7 +258,7 @@ public abstract class Correspondence<A, E> {
 
         @Override
         public boolean compare(A actual, E expected) {
-            return Objects.equal(actualTransform.apply(actual), expectedTransform.apply(expected));
+            return Objects.equals(actualTransform.apply(actual), expectedTransform.apply(expected));
         }
 
         @Override
@@ -301,8 +299,8 @@ public abstract class Correspondence<A, E> {
 
         @Override
         public boolean compare(Number actual, Number expected) {
-            double actualDouble = checkNotNull(actual).doubleValue();
-            double expectedDouble = checkNotNull(expected).doubleValue();
+            double actualDouble = requireNonNull(actual).doubleValue();
+            double expectedDouble = requireNonNull(expected).doubleValue();
             return MathUtil.equalWithinTolerance(actualDouble, expectedDouble, tolerance);
         }
 
@@ -328,7 +326,7 @@ public abstract class Correspondence<A, E> {
 
         @Override
         public boolean compare(T actual, T expected) {
-            return Objects.equal(actual, expected);
+            return Objects.equals(actual, expected);
         }
 
         @Override
@@ -411,8 +409,8 @@ public abstract class Correspondence<A, E> {
         private final DiffFormatter<? super A, ? super E> formatter;
 
         FormattingDiffs(Correspondence<A, E> delegate, DiffFormatter<? super A, ? super E> formatter) {
-            this.delegate = checkNotNull(delegate);
-            this.formatter = checkNotNull(formatter);
+            this.delegate = requireNonNull(delegate);
+            this.formatter = requireNonNull(formatter);
         }
 
         @Override
@@ -521,16 +519,14 @@ public abstract class Correspondence<A, E> {
 
     private static class StoredException {
 
-        private static final Joiner ARGUMENT_JOINER = Joiner.on(", ").useForNull("null");
-
         private final Exception exception;
         private final String methodName;
         private final List<Object> methodArguments;
 
         StoredException(Exception exception, String methodName, List<Object> methodArguments) {
-            this.exception = checkNotNull(exception);
-            this.methodName = checkNotNull(methodName);
-            this.methodArguments = checkNotNull(methodArguments);
+            this.exception = requireNonNull(exception);
+            this.methodName = requireNonNull(methodName);
+            this.methodArguments = requireNonNull(methodArguments);
         }
 
         /**
@@ -540,9 +536,12 @@ public abstract class Correspondence<A, E> {
          * exception is distinguishable from the stack trace of the {@code AssertionError}.
          */
         private String describe() {
-            return Strings.lenientFormat(
+            String stringArguments = methodArguments.stream()
+                    .map(x -> Objects.toString(x, "null"))
+                    .collect(Collectors.joining(", "));
+            return String.format(
                     "%s(%s) threw %s\n---",
-                    methodName, ARGUMENT_JOINER.join(methodArguments), getStackTraceAsString(exception));
+                    methodName, stringArguments, getStackTraceAsString(exception));
         }
     }
 
@@ -657,13 +656,13 @@ public abstract class Correspondence<A, E> {
          * was discovered by assuming a false return and continuing (see the javadoc for {@link
          * Correspondence#compare}). C.f. {@link #describeAsAdditionalInfo}.
          */
-        ImmutableList<Fact> describeAsMainCause() {
+        List<Fact> describeAsMainCause() {
             checkState(firstCompareException != null);
             // We won't do pairing or diff formatting unless a more meaningful failure was found, and if a
             // more meaningful failure was found then we shouldn't be using this method:
             checkState(firstPairingException == null);
             checkState(firstFormatDiffException == null);
-            return ImmutableList.of(
+            return List.of(
                     simpleFact("one or more exceptions were thrown while comparing " + argumentLabel),
                     fact("first exception", firstCompareException.describe()));
         }
@@ -676,8 +675,8 @@ public abstract class Correspondence<A, E> {
          * Correspondence#compare}), or when exceptions were thrown by other methods while generating
          * the failure message. C.f. {@link #describeAsMainCause}.
          */
-        ImmutableList<Fact> describeAsAdditionalInfo() {
-            ImmutableList.Builder<Fact> builder = ImmutableList.builder();
+        List<Fact> describeAsAdditionalInfo() {
+            List<Fact> builder = new ArrayList<>();
             if (firstCompareException != null) {
                 builder.add(
                         simpleFact(
@@ -698,7 +697,7 @@ public abstract class Correspondence<A, E> {
                         simpleFact("additionally, one or more exceptions were thrown while formatting diffs"));
                 builder.add(fact("first exception", firstFormatDiffException.describe()));
             }
-            return builder.build();
+            return builder;
         }
 
         private static void truncateStackTrace(Exception exception, Class<?> callingClass) {
@@ -793,12 +792,12 @@ public abstract class Correspondence<A, E> {
      * an iterable. There will be one "testing whether" fact, unless this {@link #isEquality is an
      * equality correspondence}, in which case the list will be empty.
      */
-    final ImmutableList<Fact> describeForIterable() {
+    final List<Fact> describeForIterable() {
         if (!isEquality()) {
-            return ImmutableList.of(
+            return List.of(
                     fact("testing whether", "actual element " + this + " expected element"));
         } else {
-            return ImmutableList.of();
+            return List.of();
         }
     }
 
@@ -807,11 +806,11 @@ public abstract class Correspondence<A, E> {
      * map (or multimap). There will be one "testing whether" fact, unless this {@link #isEquality is
      * an equality correspondence}, in which case the list will be empty.
      */
-    final ImmutableList<Fact> describeForMapValues() {
+    final List<Fact> describeForMapValues() {
         if (!isEquality()) {
-            return ImmutableList.of(fact("testing whether", "actual value " + this + " expected value"));
+            return List.of(fact("testing whether", "actual value " + this + " expected value"));
         } else {
-            return ImmutableList.of();
+            return List.of();
         }
     }
 

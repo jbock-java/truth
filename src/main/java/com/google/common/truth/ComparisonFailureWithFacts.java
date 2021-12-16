@@ -16,11 +16,12 @@
 
 package com.google.common.truth;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.Fact.makeMessage;
-
 import com.google.common.truth.Platform.PlatformComparisonFailure;
+
 import java.util.List;
+
+import static com.google.common.truth.Fact.makeMessage;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link AssertionError} (usually a JUnit {@code ComparisonFailure}, but not under GWT) composed
@@ -35,8 +36,8 @@ final class ComparisonFailureWithFacts extends PlatformComparisonFailure impleme
             String expected,
             String actual,
             Throwable cause) {
-        super(makeMessage(messages, facts), checkNotNull(expected), checkNotNull(actual), cause);
-        this.facts = checkNotNull(facts);
+        super(makeMessage(messages, facts), requireNonNull(expected), requireNonNull(actual), cause);
+        this.facts = requireNonNull(facts);
     }
 
     @Override
