@@ -16,16 +16,11 @@
 
 package com.google.common.truth;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.google.common.base.Strings.commonPrefix;
-import static com.google.common.base.Strings.commonSuffix;
 import static com.google.common.truth.Fact.fact;
-import static com.google.common.truth.SubjectUtils.concat;
-import static java.lang.Character.isHighSurrogate;
-import static java.lang.Character.isLowSurrogate;
-import static java.lang.Math.max;
 
 /**
  * Contains part of the code responsible for creating a JUnit {@code ComparisonFailure} (if
@@ -42,12 +37,14 @@ import static java.lang.Math.max;
  * we can't just recover from that at runtime.
  */
 final class ComparisonFailures {
-    static ImmutableList<Fact> makeComparisonFailureFacts(
-            ImmutableList<Fact> headFacts,
-            ImmutableList<Fact> tailFacts,
+    static List<Fact> makeComparisonFailureFacts(
+            List<Fact> headFacts,
+            List<Fact> tailFacts,
             String expected,
             String actual) {
-        return concat(headFacts, formatExpectedAndActual(expected, actual), tailFacts);
+        return Stream.of(headFacts, formatExpectedAndActual(expected, actual), tailFacts)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -61,9 +58,8 @@ final class ComparisonFailures {
      * the values have a long prefix or suffix in common, abbreviated values with "…" at the beginning
      * or end.
      */
-    @VisibleForTesting
-    static ImmutableList<Fact> formatExpectedAndActual(String expected, String actual) {
-        ImmutableList<Fact> result;
+    static List<Fact> formatExpectedAndActual(String expected, String actual) {
+        List<Fact> result;
 
         // TODO(cpovirk): Call attention to differences in trailing whitespace.
         // TODO(cpovirk): And changes in the *kind* of whitespace characters in the middle of the line.
@@ -73,65 +69,7 @@ final class ComparisonFailures {
             return result;
         }
 
-        result = removeCommonPrefixAndSuffix(expected, actual);
-        if (result != null) {
-            return result;
-        }
-
-        return ImmutableList.of(fact("expected", expected), fact("but was", actual));
-    }
-
-    private static ImmutableList<Fact> removeCommonPrefixAndSuffix(
-            String expected, String actual) {
-        int originalExpectedLength = expected.length();
-
-        // TODO(cpovirk): Use something like BreakIterator where available.
-        /*
-         * TODO(cpovirk): If the abbreviated values contain newlines, maybe expand them to contain a
-         * newline on each end so that we don't start mid-line? That way, horizontally aligned text will
-         * remain horizontally aligned. But of course, for many multi-line strings, we won't enter this
-         * method at all because we'll generate diff-style output instead. So we might not need to worry
-         * too much about newlines here.
-         */
-        // TODO(cpovirk): Avoid splitting in the middle of "\r\n."
-        int prefix = commonPrefix(expected, actual).length();
-        prefix = max(0, prefix - CONTEXT);
-        while (prefix > 0 && validSurrogatePairAt(expected, prefix - 1)) {
-            prefix--;
-        }
-        // No need to hide the prefix unless it's long.
-        if (prefix > 3) {
-            expected = "…" + expected.substring(prefix);
-            actual = "…" + actual.substring(prefix);
-        }
-
-        int suffix = commonSuffix(expected, actual).length();
-        suffix = max(0, suffix - CONTEXT);
-        while (suffix > 0 && validSurrogatePairAt(expected, expected.length() - suffix - 1)) {
-            suffix--;
-        }
-        // No need to hide the suffix unless it's long.
-        if (suffix > 3) {
-            expected = expected.substring(0, expected.length() - suffix) + "…";
-            actual = actual.substring(0, actual.length() - suffix) + "…";
-        }
-
-        if (originalExpectedLength - expected.length() < WORTH_HIDING) {
-            return null;
-        }
-
-        return ImmutableList.of(fact("expected", expected), fact("but was", actual));
-    }
-
-    private static final int CONTEXT = 20;
-    private static final int WORTH_HIDING = 60;
-
-    // From c.g.c.base.Strings.
-    private static boolean validSurrogatePairAt(CharSequence string, int index) {
-        return index >= 0
-                && index <= (string.length() - 2)
-                && isHighSurrogate(string.charAt(index))
-                && isLowSurrogate(string.charAt(index + 1));
+        return List.of(fact("expected", expected), fact("but was", actual));
     }
 
     private ComparisonFailures() {

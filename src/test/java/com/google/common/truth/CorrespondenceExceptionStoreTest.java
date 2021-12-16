@@ -55,27 +55,9 @@ final class CorrespondenceExceptionStoreTest {
     }
 
     @Test
-    void describeAsMainCause_notEmpty() {
-        Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
-        addCompareException(exceptions);
-        assertExpectedFacts(
-                exceptions.describeAsMainCause(),
-                "one or more exceptions were thrown while comparing elements");
-    }
-
-    @Test
     void describeAsAdditionalInfo_empty() {
         Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
         assertThat(exceptions.describeAsAdditionalInfo()).isEmpty();
-    }
-
-    @Test
-    void describeAsAdditionalInfo_notEmpty() {
-        Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
-        addCompareException(exceptions);
-        assertExpectedFacts(
-                exceptions.describeAsAdditionalInfo(),
-                "additionally, one or more exceptions were thrown while comparing elements");
     }
 
     /** Adds a somewhat realistic exception from {@link Correspondence#compare} to the given store. */

@@ -62,33 +62,6 @@ class ComparableSubjectTest extends BaseSubjectTestCase {
         }
     }
 
-    @Test
-    void isInRange() {
-        Range<Integer> oneToFive = Range.closed(1, 5);
-        assertThat(4).isIn(oneToFive);
-
-        AssertionError failure = assertThrows(
-                AssertionError.class,
-                () -> assertThat(6)
-                        .isIn(oneToFive));
-        assertThat(failure)
-                .factValue("expected to be in range")
-                .isEqualTo(oneToFive.toString());
-    }
-
-    @Test
-    void isNotInRange() {
-        Range<Integer> oneToFive = Range.closed(1, 5);
-        assertThat(6).isNotIn(oneToFive);
-
-        AssertionError failure = assertThrows(
-                AssertionError.class,
-                () -> assertThat(4)
-                        .isNotIn(oneToFive));
-        assertThat(failure)
-                .factValue("expected not to be in range")
-                .isEqualTo(oneToFive.toString());
-    }
 
     @Test
     void isEquivalentAccordingToCompareTo() {
@@ -209,10 +182,6 @@ class ComparableSubjectTest extends BaseSubjectTestCase {
         assertThat(4L).isAtMost(5L);
         assertThat(4L).isAtLeast(4L);
         assertThat(4L).isAtLeast(3L);
-
-        Range<Long> range = Range.closed(2L, 4L);
-        assertThat(3L).isIn(range);
-        assertThat(5L).isNotIn(range);
     }
 
     @Test
@@ -224,10 +193,6 @@ class ComparableSubjectTest extends BaseSubjectTestCase {
         assertThat("gak").isAtMost("kak");
         assertThat("kak").isAtLeast("kak");
         assertThat("kak").isAtLeast("gak");
-
-        Range<String> range = Range.closed("a", "c");
-        assertThat("b").isIn(range);
-        assertThat("d").isNotIn(range);
     }
 
     @Test

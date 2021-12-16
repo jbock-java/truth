@@ -20,6 +20,10 @@ compileJava {
     options.compilerArgs << '11'
 }
 
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
 javadoc {
     options.encoding = 'UTF-8'
 }

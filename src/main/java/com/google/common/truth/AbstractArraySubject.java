@@ -17,8 +17,8 @@ package com.google.common.truth;
 
 import java.lang.reflect.Array;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Preconditions.checkArgument;
 
 /**
  * A common supertype for Array subjects, abstracting some common display and error infrastructure.

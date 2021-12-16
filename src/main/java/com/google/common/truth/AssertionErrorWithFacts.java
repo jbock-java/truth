@@ -15,11 +15,10 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Fact.makeMessage;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link AssertionError} composed of structured {@link Fact} instances and other string
@@ -35,7 +34,7 @@ final class AssertionErrorWithFacts extends AssertionError implements ErrorWithF
     AssertionErrorWithFacts(
             List<String> messages, List<Fact> facts, Throwable cause) {
         super(makeMessage(messages, facts));
-        this.facts = checkNotNull(facts);
+        this.facts = requireNonNull(facts);
 
         this.cause = cause;
         try {

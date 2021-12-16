@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Range;
-
 /**
  * Propositions for {@link Comparable} typed subjects.
  *
@@ -33,20 +31,6 @@ public abstract class ComparableSubject<T extends Comparable> extends Subject {
     protected ComparableSubject(FailureMetadata metadata, T actual) {
         super(metadata, actual);
         this.actual = actual;
-    }
-
-    /** Checks that the subject is in {@code range}. */
-    public final void isIn(Range<T> range) {
-        if (!range.contains(actual)) {
-            failWithActual("expected to be in range", range);
-        }
-    }
-
-    /** Checks that the subject is <i>not</i> in {@code range}. */
-    public final void isNotIn(Range<T> range) {
-        if (range.contains(actual)) {
-            failWithActual("expected not to be in range", range);
-        }
     }
 
     /**

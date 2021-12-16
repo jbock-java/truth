@@ -20,6 +20,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static com.google.common.base.Strings.repeat;
 import static com.google.common.truth.ComparisonFailures.formatExpectedAndActual;
 import static com.google.common.truth.Fact.fact;
@@ -40,92 +42,6 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 "bar", "baz",
                 "bar", "baz");
-    }
-
-    @Test
-    void formatLongOverlapStart() {
-        runFormatTest(
-                repeat("b", 100) + "aa",
-                repeat("b", 100) + "oo",
-                "…" + repeat("b", 20) + "aa",
-                "…" + repeat("b", 20) + "oo");
-    }
-
-    @Test
-    void formatLongOverlapEnd() {
-        runFormatTest(
-                "ba" + repeat("r", 100),
-                "fu" + repeat("r", 100),
-                "ba" + repeat("r", 20) + "…",
-                "fu" + repeat("r", 20) + "…");
-    }
-
-    @Test
-    void formatLongOverlapStartAlsoSmallAtEnd() {
-        runFormatTest(
-                repeat("b", 100) + "aa" + repeat("t", 7),
-                repeat("b", 100) + "oo" + repeat("t", 7),
-                "…" + repeat("b", 20) + "aattttttt",
-                "…" + repeat("b", 20) + "oottttttt");
-    }
-
-    @Test
-    void formatLongOverlapEndAlsoSmallAtStart() {
-        runFormatTest(
-                repeat("a", 7) + "ba" + repeat("r", 100),
-                repeat("a", 7) + "fu" + repeat("r", 100),
-                "aaaaaaaba" + repeat("r", 20) + "…",
-                "aaaaaaafu" + repeat("r", 20) + "…");
-    }
-
-    @Test
-    void formatLongOverlapBoth() {
-        runFormatTest(
-                repeat("r", 60) + "a" + repeat("g", 60),
-                repeat("r", 60) + "u" + repeat("g", 60),
-                "…" + repeat("r", 20) + "a" + repeat("g", 20) + "…",
-                "…" + repeat("r", 20) + "u" + repeat("g", 20) + "…");
-    }
-
-    @Test
-    void formatLongOverlapBothDifferentLength() {
-        runFormatTest(
-                repeat("r", 60) + "aaaaa" + repeat("g", 60),
-                repeat("r", 60) + "u" + repeat("g", 60),
-                "…" + repeat("r", 20) + "aaaaa" + repeat("g", 20) + "…",
-                "…" + repeat("r", 20) + "u" + repeat("g", 20) + "…");
-    }
-
-    @Test
-    void prefixAndSuffixWouldOverlapSimple() {
-        runFormatTest(
-                repeat("a", 40) + "lmnopqrstuv" + repeat("a", 40),
-                repeat("a", 40) + "lmnopqrstuvlmnopqrstuv" + repeat("a", 40),
-                "…aaaaaaaaalmnopqrstuvaaaaaaaaa…",
-                "…aaaaaaaaalmnopqrstuvlmnopqrstuvaaaaaaaaa…");
-    }
-
-    @Test
-    void prefixAndSuffixWouldOverlapAllSame() {
-        runFormatTest(repeat("a", 100), repeat("a", 102), "…" + repeat("a", 20), "…" + repeat("a", 22));
-    }
-
-    @Test
-    void formatNoSplitSurrogateStart() {
-        runFormatTest(
-                repeat("b", 100) + "\uD8AB\uDCAB" + repeat("b", 19) + "aa",
-                repeat("b", 100) + "\uD8AB\uDCAB" + repeat("b", 19) + "oo",
-                "…\uD8AB\uDCAB" + repeat("b", 19) + "aa",
-                "…\uD8AB\uDCAB" + repeat("b", 19) + "oo");
-    }
-
-    @Test
-    void formatNoSplitSurrogateEnd() {
-        runFormatTest(
-                "ba" + repeat("r", 19) + "\uD8AB\uDCAB" + repeat("r", 100),
-                "fu" + repeat("r", 19) + "\uD8AB\uDCAB" + repeat("r", 100),
-                "ba" + repeat("r", 19) + "\uD8AB\uDCAB…",
-                "fu" + repeat("r", 19) + "\uD8AB\uDCAB…");
     }
 
     @Test
@@ -282,7 +198,7 @@ class ComparisonFailureWithFactsTest {
 
     private static void runFormatTest(
             String expected, String actual, String expectedExpected, String expectedActual) {
-        ImmutableList<Fact> facts = formatExpectedAndActual(expected, actual);
+        List<Fact> facts = formatExpectedAndActual(expected, actual);
         assertThat(facts).hasSize(2);
         assertThat(facts.get(0).key).isEqualTo("expected");
         assertThat(facts.get(1).key).isEqualTo("but was");
@@ -291,7 +207,7 @@ class ComparisonFailureWithFactsTest {
     }
 
     private static void runFormatTest(String expected, String actual, String expectedDiff) {
-        ImmutableList<Fact> facts = formatExpectedAndActual(expected, actual);
+        List<Fact> facts = formatExpectedAndActual(expected, actual);
         assertThat(facts).hasSize(1);
         assertThat(facts.get(0).key).isEqualTo("diff (-expected +actual)");
         assertThat(facts.get(0).value).isEqualTo(expectedDiff);

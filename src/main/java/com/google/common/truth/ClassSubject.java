@@ -15,14 +15,11 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-
 /**
  * Propositions for {@link Class} subjects.
  *
  * @author Kurt Alfred Kluever
  */
-@GwtIncompatible("reflection")
 public final class ClassSubject extends Subject {
     private final Class<?> actual;
 
