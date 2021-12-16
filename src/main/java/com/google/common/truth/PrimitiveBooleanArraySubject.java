@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Booleans;
-
 /**
  * A Subject for {@code boolean[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveBooleanArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Booleans.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.booleansAsList(actual));
     }
 }

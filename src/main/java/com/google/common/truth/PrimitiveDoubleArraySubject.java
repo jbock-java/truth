@@ -16,13 +16,12 @@
 
 package com.google.common.truth;
 
-import com.google.common.primitives.Doubles;
-
-import java.util.Arrays;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Correspondence.tolerance;
+import static com.google.common.truth.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.primitives.Doubles;
+import java.util.Arrays;
 
 /**
  * A Subject for {@code double[]}.
@@ -129,7 +128,7 @@ public final class PrimitiveDoubleArraySubject extends AbstractArraySubject {
                     "is exactly equal to");
 
     private static double checkedToDouble(Number expected) {
-        checkNotNull(expected);
+        requireNonNull(expected);
         checkArgument(
                 expected instanceof Double
                         || expected instanceof Float
@@ -204,24 +203,24 @@ public final class PrimitiveDoubleArraySubject extends AbstractArraySubject {
         }
 
         /**
-         * As {@link #containsAtLeast(Object, Object, Object...)} but taking a primitive double array.
+         * As {@code #containsAtLeast(Object, Object, Object...)} but taking a primitive double array.
          */
         public Ordered containsAtLeast(double[] expected) {
             return containsAtLeastElementsIn(Doubles.asList(expected));
         }
 
-        /** As {@link #containsAnyOf(Object, Object, Object...)} but taking a primitive double array. */
+        /** As {@code #containsAnyOf(Object, Object, Object...)} but taking a primitive double array. */
         public void containsAnyOf(double[] expected) {
             containsAnyIn(Doubles.asList(expected));
         }
 
-        /** As {@link #containsExactly(Object...)} but taking a primitive double array. */
+        /** As {@code #containsExactly(Object...)} but taking a primitive double array. */
         public Ordered containsExactly(double[] expected) {
             return containsExactlyElementsIn(Doubles.asList(expected));
         }
 
         /**
-         * As {@link #containsNoneOf(Object, Object, Object...)} but taking a primitive double array.
+         * As {@code #containsNoneOf(Object, Object, Object...)} but taking a primitive double array.
          */
         public void containsNoneOf(double[] excluded) {
             containsNoneIn(Doubles.asList(excluded));

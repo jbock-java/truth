@@ -15,15 +15,13 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
+import static com.google.common.truth.Fact.fact;
+import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.Fact.fact;
-import static com.google.common.truth.Fact.simpleFact;
 
 /**
  * Propositions for string subjects.
@@ -76,7 +74,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string does not contain the given sequence. */
     public void contains(CharSequence string) {
-        checkNotNull(string);
+        requireNonNull(string);
         if (actual == null) {
             failWithActual("expected a string that contains", string);
         } else if (!actual.contains(string)) {
@@ -86,7 +84,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string contains the given sequence. */
     public void doesNotContain(CharSequence string) {
-        checkNotNull(string);
+        requireNonNull(string);
         if (actual == null) {
             failWithActual("expected a string that does not contain", string);
         } else if (actual.contains(string)) {
@@ -96,7 +94,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string does not start with the given string. */
     public void startsWith(String string) {
-        checkNotNull(string);
+        requireNonNull(string);
         if (actual == null) {
             failWithActual("expected a string that starts with", string);
         } else if (!actual.startsWith(string)) {
@@ -106,7 +104,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string does not end with the given string. */
     public void endsWith(String string) {
-        checkNotNull(string);
+        requireNonNull(string);
         if (actual == null) {
             failWithActual("expected a string that ends with", string);
         } else if (!actual.endsWith(string)) {
@@ -116,7 +114,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string does not match the given regex. */
     public void matches(String regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that matches", regex);
         } else if (!actual.matches(regex)) {
@@ -132,9 +130,8 @@ public class StringSubject extends ComparableSubject<String> {
     }
 
     /** Fails if the string does not match the given regex. */
-    @GwtIncompatible("java.util.regex.Pattern")
     public void matches(Pattern regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that matches", regex);
         } else if (!regex.matcher(actual).matches()) {
@@ -153,7 +150,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string matches the given regex. */
     public void doesNotMatch(String regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that does not match", regex);
         } else if (actual.matches(regex)) {
@@ -162,9 +159,8 @@ public class StringSubject extends ComparableSubject<String> {
     }
 
     /** Fails if the string matches the given regex. */
-    @GwtIncompatible("java.util.regex.Pattern")
     public void doesNotMatch(Pattern regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that does not match", regex);
         } else if (regex.matcher(actual).matches()) {
@@ -173,9 +169,8 @@ public class StringSubject extends ComparableSubject<String> {
     }
 
     /** Fails if the string does not contain a match on the given regex. */
-    @GwtIncompatible("java.util.regex.Pattern")
     public void containsMatch(Pattern regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that contains a match for", regex);
         } else if (!regex.matcher(actual).find()) {
@@ -185,7 +180,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string does not contain a match on the given regex. */
     public void containsMatch(String regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that contains a match for", regex);
         } else if (!Platform.containsMatch(actual, regex)) {
@@ -194,9 +189,8 @@ public class StringSubject extends ComparableSubject<String> {
     }
 
     /** Fails if the string contains a match on the given regex. */
-    @GwtIncompatible("java.util.regex.Pattern")
     public void doesNotContainMatch(Pattern regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that does not contain a match for", regex);
             return;
@@ -212,7 +206,7 @@ public class StringSubject extends ComparableSubject<String> {
 
     /** Fails if the string contains a match on the given regex. */
     public void doesNotContainMatch(String regex) {
-        checkNotNull(regex);
+        requireNonNull(regex);
         if (actual == null) {
             failWithActual("expected a string that does not contain a match for", regex);
         } else if (Platform.containsMatch(actual, regex)) {
@@ -286,7 +280,7 @@ public class StringSubject extends ComparableSubject<String> {
 
         /** Fails if the string does not contain the given sequence (while ignoring case). */
         public void contains(CharSequence expectedSequence) {
-            checkNotNull(expectedSequence);
+            requireNonNull(expectedSequence);
             String expected = expectedSequence.toString();
             if (actual == null) {
                 failWithoutActual(
@@ -301,7 +295,7 @@ public class StringSubject extends ComparableSubject<String> {
 
         /** Fails if the string contains the given sequence (while ignoring case). */
         public void doesNotContain(CharSequence expectedSequence) {
-            checkNotNull(expectedSequence);
+            requireNonNull(expectedSequence);
             String expected = expectedSequence.toString();
             if (actual == null) {
                 failWithoutActual(

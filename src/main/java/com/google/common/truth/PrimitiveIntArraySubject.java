@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Ints;
-
 /**
  * A Subject for {@code int[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveIntArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Ints.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.intsAsList(actual));
     }
 }

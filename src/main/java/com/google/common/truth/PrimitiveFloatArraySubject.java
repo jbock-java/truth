@@ -16,13 +16,11 @@
 
 package com.google.common.truth;
 
-import com.google.common.primitives.Floats;
+import static com.google.common.truth.Correspondence.tolerance;
+import static com.google.common.truth.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.Correspondence.tolerance;
 
 /**
  * A Subject for {@code float[]}.
@@ -128,7 +126,7 @@ public final class PrimitiveFloatArraySubject extends AbstractArraySubject {
                     "is exactly equal to");
 
     private static float checkedToFloat(Number expected) {
-        checkNotNull(expected);
+        requireNonNull(expected);
         checkArgument(
                 !(expected instanceof Double),
                 "Expected value in assertion using exact float equality was a double, which is not "
@@ -211,32 +209,32 @@ public final class PrimitiveFloatArraySubject extends AbstractArraySubject {
         }
 
         /**
-         * As {@link #containsAtLeast(Object, Object, Object...)} but taking a primitive float array.
+         * As {@code #containsAtLeast(Object, Object, Object...)} but taking a primitive float array.
          */
         public Ordered containsAtLeast(float[] expected) {
-            return containsAtLeastElementsIn(Floats.asList(expected));
+            return containsAtLeastElementsIn(Util.floatsAsList(expected));
         }
 
-        /** As {@link #containsAnyOf(Object, Object, Object...)} but taking a primitive float array. */
+        /** As {@code #containsAnyOf(Object, Object, Object...)} but taking a primitive float array. */
         public void containsAnyOf(float[] expected) {
-            containsAnyIn(Floats.asList(expected));
+            containsAnyIn(Util.floatsAsList(expected));
         }
 
-        /** As {@link #containsExactly(Object...)} but taking a primitive float array. */
+        /** As {@code #containsExactly(Object...)} but taking a primitive float array. */
         public Ordered containsExactly(float[] expected) {
-            return containsExactlyElementsIn(Floats.asList(expected));
+            return containsExactlyElementsIn(Util.floatsAsList(expected));
         }
 
-        /** As {@link #containsNoneOf(Object, Object, Object...)} but taking a primitive float array. */
+        /** As {@code #containsNoneOf(Object, Object, Object...)} but taking a primitive float array. */
         public void containsNoneOf(float[] excluded) {
-            containsNoneIn(Floats.asList(excluded));
+            containsNoneIn(Util.floatsAsList(excluded));
         }
     }
 
     private IterableSubject iterableSubject() {
         return checkNoNeedToDisplayBothValues("asList()")
                 .about(iterablesWithCustomFloatToString())
-                .that(Floats.asList(actual));
+                .that(Util.floatsAsList(actual));
     }
 
     /*

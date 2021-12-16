@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Chars;
-
 /**
  * A Subject for {@code char[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveCharArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Chars.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.charsAsList(actual));
     }
 }

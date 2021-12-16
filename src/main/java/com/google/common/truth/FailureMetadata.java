@@ -166,8 +166,8 @@ public final class FailureMetadata {
     }
 
     void failEqualityCheck(
-            ImmutableList<Fact> headFacts,
-            ImmutableList<Fact> tailFacts,
+            List<Fact> headFacts,
+            List<Fact> tailFacts,
             String expected,
             String actual) {
         doFail(

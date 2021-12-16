@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Longs;
-
 /**
  * A Subject for {@code long[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveLongArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Longs.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.longsAsList(actual));
     }
 }

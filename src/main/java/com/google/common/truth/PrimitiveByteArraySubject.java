@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.Bytes;
-
 /**
  * A Subject for {@code byte[]}.
  *
@@ -32,6 +30,6 @@ public final class PrimitiveByteArraySubject extends AbstractArraySubject {
     }
 
     public IterableSubject asList() {
-        return checkNoNeedToDisplayBothValues("asList()").that(Bytes.asList(actual));
+        return checkNoNeedToDisplayBothValues("asList()").that(Util.bytesAsList(actual));
     }
 }

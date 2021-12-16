@@ -15,7 +15,7 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * In a fluent assertion chain, exposes the most common {@code that} method, which accepts a value
@@ -35,8 +35,8 @@ public final class SimpleSubjectBuilder<SubjectT extends Subject, ActualT> {
 
     SimpleSubjectBuilder(
             FailureMetadata metadata, Subject.Factory<SubjectT, ActualT> subjectFactory) {
-        this.metadata = checkNotNull(metadata);
-        this.subjectFactory = checkNotNull(subjectFactory);
+        this.metadata = requireNonNull(metadata);
+        this.subjectFactory = requireNonNull(subjectFactory);
     }
 
     public SubjectT that(ActualT actual) {

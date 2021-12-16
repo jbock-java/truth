@@ -40,6 +40,15 @@ class Util {
         return result;
     }
 
+    static List<Float> floatsAsList(float... backingArray) {
+        List<Float> result = new ArrayList<>(backingArray.length);
+        for (float i : backingArray) {
+            result.add(i);
+        }
+        return result;
+    }
+
+
     static List<Byte> bytesAsList(byte... backingArray) {
         List<Byte> result = new ArrayList<>(backingArray.length);
         for (byte i : backingArray) {
@@ -63,5 +72,11 @@ class Util {
         int paddingLength = minLength - string.length();
         String padding = String.valueOf(padChar).repeat(paddingLength);
         return string + padding;
+    }
+
+    static <E> List<E> iterableToList(Iterable<E> iterable) {
+        List<E> result = new ArrayList<>();
+        iterable.forEach(result::add);
+        return result;
     }
 }

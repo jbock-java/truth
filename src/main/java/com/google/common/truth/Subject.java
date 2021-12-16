@@ -15,18 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CharMatcher.whitespace;
@@ -43,6 +31,16 @@ import static com.google.common.truth.SubjectUtils.append;
 import static com.google.common.truth.SubjectUtils.concat;
 import static com.google.common.truth.SubjectUtils.sandwich;
 import static java.util.Arrays.asList;
+
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
+import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An object that lets you perform checks on the value under test. For example, {@code Subject}
@@ -466,7 +464,7 @@ public class Subject {
 
         /** Returns a non-equal result with the given description. */
         static ComparisonResult differentWithDescription(Fact... facts) {
-            return new ComparisonResult(ImmutableList.copyOf(facts));
+            return new ComparisonResult(Arrays.asList(facts));
         }
 
         /** Returns an equal result. */
@@ -481,11 +479,11 @@ public class Subject {
 
         private static final ComparisonResult EQUAL = new ComparisonResult(null);
         private static final ComparisonResult DIFFERENT_NO_DESCRIPTION =
-                new ComparisonResult(ImmutableList.<Fact>of());
+                new ComparisonResult(List.of());
 
-        private final ImmutableList<Fact> facts;
+        private final List<Fact> facts;
 
-        private ComparisonResult(ImmutableList<Fact> facts) {
+        private ComparisonResult(List<Fact> facts) {
             this.facts = facts;
         }
 
@@ -493,8 +491,8 @@ public class Subject {
             return facts == null;
         }
 
-        ImmutableList<Fact> factsOrEmpty() {
-            return firstNonNull(facts, ImmutableList.<Fact>of());
+        List<Fact> factsOrEmpty() {
+            return firstNonNull(facts, List.of());
         }
 
         /** Returns an instance with the same "equal"/"not-equal" bit but with no description. */
@@ -732,7 +730,7 @@ public class Subject {
 
     // TODO(cpovirk): Consider making this protected if there's a need for it.
     final void failWithActual(Iterable<Fact> facts) {
-        doFail(append(ImmutableList.copyOf(facts), butWas()));
+        doFail(append(Util.iterableToList(facts), butWas()));
     }
 
     /**
@@ -1059,12 +1057,12 @@ public class Subject {
         ArrayList<Fact> facts = new ArrayList<>(1 + rest.length);
         facts.add(first);
         Collections.addAll(facts, rest);
-        doFail(ImmutableList.copyOf(facts));
+        doFail(facts);
     }
 
     // TODO(cpovirk): Consider making this protected if there's a need for it.
     final void failWithoutActual(Iterable<Fact> facts) {
-        doFail(ImmutableList.copyOf(facts));
+        doFail(Util.iterableToList(facts));
     }
 
     /**
@@ -1176,13 +1174,13 @@ public class Subject {
         metadata.fail(prependNameIfAny(facts));
     }
 
-    private ImmutableList<Fact> prependNameIfAny(List<Fact> facts) {
+    private List<Fact> prependNameIfAny(List<Fact> facts) {
         return concat(nameAsFacts(), facts);
     }
 
-    private ImmutableList<Fact> nameAsFacts() {
+    private List<Fact> nameAsFacts() {
         return customName == null
-                ? ImmutableList.<Fact>of()
-                : ImmutableList.of(fact("name", customName));
+                ? List.of()
+                : List.of(fact("name", customName));
     }
 }
