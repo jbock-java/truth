@@ -15,11 +15,8 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.truth.Truth.SimpleAssertionError;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Truth.assertAbout;
 import static com.google.common.truth.TruthFailureSubject.truthFailures;
 
@@ -62,13 +59,7 @@ import static com.google.common.truth.TruthFailureSubject.truthFailures;
  * {@link FailureStrategy#fail} only once.
  */
 public final class ExpectFailure {
-    private final FailureStrategy strategy =
-            new FailureStrategy() {
-                @Override
-                public void fail(AssertionError failure) {
-                    captureFailure(failure);
-                }
-            };
+    private final FailureStrategy strategy = this::captureFailure;
 
     private boolean failureExpected = false;
     private AssertionError failure = null;
@@ -77,7 +68,6 @@ public final class ExpectFailure {
      * Creates a new instance for use as a {@code @Rule}. See the class documentation for details, and
      * consider using {@linkplain #expectFailure the lambda version} instead.
      */
-    @VisibleForTesting
     ExpectFailure() {
     }
 
@@ -136,7 +126,7 @@ public final class ExpectFailure {
         if (failure != null) {
             // TODO(diamondm) is it worthwhile to add the failures as suppressed exceptions?
             throw new AssertionError(
-                    lenientFormat(
+                    String.format(
                             "ExpectFailure.whenTesting() caught multiple failures:\n\n%s\n\n%s\n",
                             Platform.getStackTraceAsString(failure), Platform.getStackTraceAsString(captured)));
         }
@@ -166,14 +156,8 @@ public final class ExpectFailure {
     public static <S extends Subject, A> AssertionError expectFailureAbout(
             final Subject.Factory<S, A> factory,
             final SimpleSubjectBuilderCallback<S, A> assertionCallback) {
-        // whenTesting -> assertionCallback.invokeAssertion(whenTesting.about(factory))
-        return expectFailure(
-                new StandardSubjectBuilderCallback() {
-                    @Override
-                    public void invokeAssertion(StandardSubjectBuilder whenTesting) {
-                        assertionCallback.invokeAssertion(whenTesting.about(factory));
-                    }
-                });
+        return expectFailure(whenTesting ->
+                assertionCallback.invokeAssertion(whenTesting.about(factory)));
     }
 
     /**

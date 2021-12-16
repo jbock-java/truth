@@ -16,15 +16,15 @@
 
 package com.google.common.truth;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.MathUtil.equalWithinTolerance;
 import static com.google.common.truth.MathUtil.notEqualWithinTolerance;
 import static com.google.common.truth.Platform.doubleToString;
+import static com.google.common.truth.Preconditions.checkArgument;
 import static java.lang.Double.NaN;
 import static java.lang.Double.doubleToLongBits;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Propositions for {@link Double} subjects.
@@ -108,8 +108,9 @@ public final class DoubleSubject extends ComparableSubject<Double> {
             @Override
             public void of(double expected) {
                 Double actual = DoubleSubject.this.actual;
-                checkNotNull(
-                        actual, "actual value cannot be null. tolerance=%s expected=%s", tolerance, expected);
+                requireNonNull(actual, () ->
+                        String.format("actual value cannot be null. tolerance=%s expected=%s",
+                                tolerance, expected));
                 checkTolerance(tolerance);
 
                 if (!equalWithinTolerance(actual, expected, tolerance)) {
@@ -147,8 +148,9 @@ public final class DoubleSubject extends ComparableSubject<Double> {
             @Override
             public void of(double expected) {
                 Double actual = DoubleSubject.this.actual;
-                checkNotNull(
-                        actual, "actual value cannot be null. tolerance=%s expected=%s", tolerance, expected);
+                requireNonNull(actual, () ->
+                        String.format("actual value cannot be null. tolerance=%s expected=%s",
+                                tolerance, expected));
                 checkTolerance(tolerance);
 
                 if (!notEqualWithinTolerance(actual, expected, tolerance)) {

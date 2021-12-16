@@ -16,14 +16,11 @@
 
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
-
-import java.io.Serializable;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.padEnd;
+import static com.google.common.truth.Util.padEnd;
 import static java.lang.Math.max;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A string key-value pair in a failure message, such as "expected: abc" or "but was: xyz."
@@ -35,7 +32,7 @@ import static java.lang.Math.max;
  * <p>If you are writing a custom {@code Subject}, see <a
  * href="https://truth.dev/failure_messages">our tips on writing failure messages</a>.
  */
-public final class Fact implements Serializable {
+public final class Fact {
     /**
      * Creates a fact with the given key and value, which will be printed in a format like "key:
      * value." The value is converted to a string by calling {@code String.valueOf} on it.
@@ -67,7 +64,7 @@ public final class Fact implements Serializable {
     final String value;
 
     private Fact(String key, String value) {
-        this.key = checkNotNull(key);
+        this.key = requireNonNull(key);
         this.value = value;
     }
 

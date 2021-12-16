@@ -16,7 +16,7 @@
 
 package com.google.common.truth;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * In a fluent assertion chain, exposes one or more "custom" {@code that} methods, which accept a
@@ -58,7 +58,7 @@ public abstract class CustomSubjectBuilder {
 
     /** Constructor for use by subclasses. */
     protected CustomSubjectBuilder(FailureMetadata metadata) {
-        this.metadata = checkNotNull(metadata);
+        this.metadata = requireNonNull(metadata);
     }
 
     /**

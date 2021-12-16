@@ -55,4 +55,13 @@ class Util {
         }
         return result;
     }
+
+    static String padEnd(String string, int minLength, char padChar) {
+        if (string.length() >= minLength) {
+            return string;
+        }
+        int paddingLength = minLength - string.length();
+        String padding = String.valueOf(padChar).repeat(paddingLength);
+        return string + padding;
+    }
 }
