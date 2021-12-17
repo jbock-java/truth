@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -24,6 +23,7 @@ import com.google.common.collect.Multimap;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 
 /**
@@ -130,7 +130,7 @@ final class GraphMatching {
          */
         private Optional<Integer> breadthFirstSearch(BiMap<U, V> matching, Map<U, Integer> layers) {
             Queue<U> queue = new ArrayDeque<>();
-            Optional<Integer> freeRhsVertexLayer = Optional.absent();
+            Optional<Integer> freeRhsVertexLayer = Optional.empty();
 
             // Enqueue all free LHS vertices and assign them to layer 1.
             for (U lhs : graph.keySet()) {

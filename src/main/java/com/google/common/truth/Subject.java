@@ -644,8 +644,7 @@ public class Subject {
      * to internal {@code check} calls that supplied "getCause()" and "getMessage()" as arguments.
      *
      * <p>If the method you're delegating to accepts parameters, you can pass {@code check} a format
-     * string. For example, {@link MultimapSubject#valuesForKey} calls {@code
-     * check("valuesForKey(%s)", key)}.
+     * string.
      *
      * <p>If you aren't really delegating to an instance method on the actual value -- maybe you're
      * calling a static method, or you're calling a chain of several methods -- you can supply

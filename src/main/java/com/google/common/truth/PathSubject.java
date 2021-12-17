@@ -15,12 +15,9 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.GwtIncompatible;
-
 import java.nio.file.Path;
 
 /** Assertions for {@link Path} instances. */
-@GwtIncompatible
 public final class PathSubject extends Subject {
     private PathSubject(FailureMetadata failureMetadata, Path actual) {
         super(failureMetadata, actual);

@@ -59,7 +59,7 @@ import static java.util.function.Function.identity;
  * generally not recommended.)
  *
  * <p>Instances of this are typically used via {@link IterableSubject#comparingElementsUsing},
- * {@link MapSubject#comparingValuesUsing}, or {@link MultimapSubject#comparingValuesUsing}.
+ * or {@link MapSubject#comparingValuesUsing}.
  *
  * @author Pete Gillin
  */

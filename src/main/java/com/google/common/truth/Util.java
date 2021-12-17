@@ -48,6 +48,13 @@ class Util {
         return result;
     }
 
+    static List<Double> doublesAsList(double... backingArray) {
+        List<Double> result = new ArrayList<>(backingArray.length);
+        for (double i : backingArray) {
+            result.add(i);
+        }
+        return result;
+    }
 
     static List<Byte> bytesAsList(byte... backingArray) {
         List<Byte> result = new ArrayList<>(backingArray.length);

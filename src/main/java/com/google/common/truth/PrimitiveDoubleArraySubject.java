@@ -16,12 +16,11 @@
 
 package com.google.common.truth;
 
+import java.util.Arrays;
+
 import static com.google.common.truth.Correspondence.tolerance;
 import static com.google.common.truth.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
-
-import com.google.common.primitives.Doubles;
-import java.util.Arrays;
 
 /**
  * A Subject for {@code double[]}.
@@ -118,13 +117,8 @@ public final class PrimitiveDoubleArraySubject extends AbstractArraySubject {
             Correspondence.from(
                     // If we were allowed lambdas, this would be:
                     // (a, e) -> Double.doubleToLongBits(a) == Double.doubleToLongBits(checkedToDouble(e)),
-                    new Correspondence.BinaryPredicate<Double, Number>() {
-                        @Override
-                        public boolean apply(Double actual, Number expected) {
-                            return Double.doubleToLongBits(actual)
-                                    == Double.doubleToLongBits(checkedToDouble(expected));
-                        }
-                    },
+                    (actual, expected) -> Double.doubleToLongBits(actual)
+                            == Double.doubleToLongBits(checkedToDouble(expected)),
                     "is exactly equal to");
 
     private static double checkedToDouble(Number expected) {
@@ -206,31 +200,31 @@ public final class PrimitiveDoubleArraySubject extends AbstractArraySubject {
          * As {@code #containsAtLeast(Object, Object, Object...)} but taking a primitive double array.
          */
         public Ordered containsAtLeast(double[] expected) {
-            return containsAtLeastElementsIn(Doubles.asList(expected));
+            return containsAtLeastElementsIn(Util.doublesAsList(expected));
         }
 
         /** As {@code #containsAnyOf(Object, Object, Object...)} but taking a primitive double array. */
         public void containsAnyOf(double[] expected) {
-            containsAnyIn(Doubles.asList(expected));
+            containsAnyIn(Util.doublesAsList(expected));
         }
 
         /** As {@code #containsExactly(Object...)} but taking a primitive double array. */
         public Ordered containsExactly(double[] expected) {
-            return containsExactlyElementsIn(Doubles.asList(expected));
+            return containsExactlyElementsIn(Util.doublesAsList(expected));
         }
 
         /**
          * As {@code #containsNoneOf(Object, Object, Object...)} but taking a primitive double array.
          */
         public void containsNoneOf(double[] excluded) {
-            containsNoneIn(Doubles.asList(excluded));
+            containsNoneIn(Util.doublesAsList(excluded));
         }
     }
 
     private IterableSubject iterableSubject() {
         return checkNoNeedToDisplayBothValues("asList()")
                 .about(iterablesWithCustomDoubleToString())
-                .that(Doubles.asList(actual));
+                .that(Util.doublesAsList(actual));
     }
 
     /*
@@ -242,12 +236,7 @@ public final class PrimitiveDoubleArraySubject extends AbstractArraySubject {
      * PrimitiveDoubleArraySubject.this.toString(), too, someday?
      */
     private Factory<IterableSubject, Iterable<?>> iterablesWithCustomDoubleToString() {
-        return new Factory<IterableSubject, Iterable<?>>() {
-            @Override
-            public IterableSubject createSubject(FailureMetadata metadata, Iterable<?> actual) {
-                return new IterableSubjectWithInheritedToString(metadata, actual);
-            }
-        };
+        return IterableSubjectWithInheritedToString::new;
     }
 
     private final class IterableSubjectWithInheritedToString extends IterableSubject {

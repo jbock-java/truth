@@ -66,16 +66,6 @@ final class SubjectUtils {
         return items;
     }
 
-    static <T> int countOf(T t, Iterable<T> items) {
-        int count = 0;
-        for (T item : items) {
-            if (t == null ? (item == null) : t.equals(item)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     static String countDuplicates(Iterable<?> items) {
         /*
          * TODO(cpovirk): Remove brackets after migrating all callers to the new message format. But
@@ -143,12 +133,7 @@ final class SubjectUtils {
     private static final class NonHashingMultiset<E> {
         // This ought to be static, but the generics are easier when I can refer to <E>.
         private final Function<Multiset.Entry<Wrapper<E>>, Multiset.Entry<?>> unwrapKey =
-                new Function<Multiset.Entry<Wrapper<E>>, Multiset.Entry<?>>() {
-                    @Override
-                    public Multiset.Entry<?> apply(Multiset.Entry<Wrapper<E>> input) {
-                        return immutableEntry(input.getElement().get(), input.getCount());
-                    }
-                };
+                input -> immutableEntry(input.getElement().get(), input.getCount());
 
         private final Multiset<Equivalence.Wrapper<E>> contents = LinkedHashMultiset.create();
 
@@ -236,23 +221,6 @@ final class SubjectUtils {
             return homogeneousTypeToDisplay.isPresent()
                     ? valuesAndMaybeTypes + " (" + homogeneousTypeToDisplay.get() + ")"
                     : valuesAndMaybeTypes.toString();
-        }
-    }
-
-    /**
-     * Makes a String representation of {@code items} with additional class info.
-     *
-     * <p>Example: {@code iterableToStringWithTypeInfo([1, 2]) == "[1, 2] (java.lang.Integer)"} and
-     * {@code iterableToStringWithTypeInfo([1, 2L]) == "[1 (java.lang.Integer), 2 (java.lang.Long)]"}.
-     */
-    static String iterableToStringWithTypeInfo(Iterable<?> itemsIterable) {
-        Collection<?> items = iterableToCollection(itemsIterable);
-        Optional<String> homogeneousTypeName = getHomogeneousTypeName(items);
-
-        if (homogeneousTypeName.isPresent()) {
-            return lenientFormat("%s (%s)", items, homogeneousTypeName.get());
-        } else {
-            return addTypeInfoToEveryItem(items).toString();
         }
     }
 

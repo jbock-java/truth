@@ -14,30 +14,30 @@
 
 package com.google.common.truth;
 
-public final class Preconditions {
+final class Preconditions {
     private Preconditions() {
     }
 
-    public static void checkArgument(boolean expression) {
+    static void checkArgument(boolean expression) {
         if (!expression) {
             throw new IllegalArgumentException();
         }
     }
 
-    public static void checkArgument(boolean expression, String message) {
+    static void checkArgument(boolean expression, String message) {
         if (!expression) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    public static void checkArgument(
+    static void checkArgument(
             boolean b, String errorMessageTemplate, Object p1) {
         if (!b) {
             throw new IllegalArgumentException(String.format(errorMessageTemplate, p1));
         }
     }
 
-    public static void checkArgument(
+    static void checkArgument(
             boolean b, String errorMessageTemplate, Object p1, Object p2) {
         if (!b) {
             throw new IllegalArgumentException(String.format(errorMessageTemplate, p1, p2));
@@ -50,13 +50,13 @@ public final class Preconditions {
         }
     }
 
-    public static void checkState(boolean expression, Object errorMessage) {
+    static void checkState(boolean expression, Object errorMessage) {
         if (!expression) {
             throw new IllegalStateException(String.valueOf(errorMessage));
         }
     }
 
-    public static void checkState(
+    static void checkState(
             boolean expression,
             String errorMessageTemplate,
             Object p1) {
@@ -65,7 +65,7 @@ public final class Preconditions {
         }
     }
 
-    public static void checkState(
+    static void checkState(
             boolean expression,
             String errorMessageTemplate,
             Object p1,
@@ -75,7 +75,7 @@ public final class Preconditions {
         }
     }
 
-    public static void checkState(
+    static void checkState(
             boolean expression,
             String errorMessageTemplate,
             Object p1,
@@ -86,14 +86,14 @@ public final class Preconditions {
         }
     }
 
-    public static int checkNonnegative(int value, String name) {
+    static int checkNonnegative(int value, String name) {
         if (value < 0) {
             throw new IllegalArgumentException(name + " cannot be negative but was: " + value);
         }
         return value;
     }
 
-    public static long checkNonnegative(long value, String name) {
+    static long checkNonnegative(long value, String name) {
         if (value < 0) {
             throw new IllegalArgumentException(name + " cannot be negative but was: " + value);
         }
@@ -136,7 +136,7 @@ public final class Preconditions {
      * @throws IndexOutOfBoundsException if {@code index} is negative or is not less than {@code size}
      * @throws IllegalArgumentException if {@code size} is negative
      */
-    public static int checkElementIndex(int index, int size) {
+    static int checkElementIndex(int index, int size) {
         return checkElementIndex(index, size, "index");
     }
 
@@ -151,7 +151,7 @@ public final class Preconditions {
      * @throws IndexOutOfBoundsException if {@code index} is negative or is not less than {@code size}
      * @throws IllegalArgumentException if {@code size} is negative
      */
-    public static int checkElementIndex(int index, int size, String desc) {
+    static int checkElementIndex(int index, int size, String desc) {
         // Carefully optimized for execution by hotspot (explanatory comment above)
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException(badElementIndex(index, size, desc));
@@ -181,7 +181,7 @@ public final class Preconditions {
      *     or if {@code end} is less than {@code start}
      * @throws IllegalArgumentException if {@code size} is negative
      */
-    public static void checkPositionIndexes(int start, int end, int size) {
+    static void checkPositionIndexes(int start, int end, int size) {
         // Carefully optimized for execution by hotspot (explanatory comment above)
         if (start < 0 || end < start || end > size) {
             throw new IndexOutOfBoundsException(badPositionIndexes(start, end, size));

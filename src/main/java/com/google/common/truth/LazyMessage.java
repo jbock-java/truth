@@ -15,17 +15,15 @@
  */
 package com.google.common.truth;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.lenientFormat;
+import static com.google.common.truth.Preconditions.checkArgument;
 
 final class LazyMessage {
     private static final String PLACEHOLDER_ERR =
-            "Incorrect number of args (%s) for the given placeholders (%s) in string template:\"%s\"";
+            "Incorrect number of args (%d) for the given placeholders (%d) in string template:\"%s\"";
 
     private final String format;
     private final Object[] args;
@@ -34,7 +32,7 @@ final class LazyMessage {
         this.format = format;
         this.args = args;
         int placeholders = countPlaceholders(format);
-        checkArgument(placeholders == args.length, PLACEHOLDER_ERR, args.length, placeholders, format);
+        checkArgument(placeholders == args.length, String.format(PLACEHOLDER_ERR, args.length, placeholders, format));
     }
 
     @Override
@@ -42,7 +40,6 @@ final class LazyMessage {
         return lenientFormat(format, args);
     }
 
-    @VisibleForTesting
     static int countPlaceholders(String template) {
         int index = 0;
         int count = 0;

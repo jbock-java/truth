@@ -16,7 +16,8 @@
 
 package com.google.common.truth;
 
-import com.google.common.primitives.Doubles;
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 
 /** Math utilities to be shared by numeric subjects. */
 final class MathUtil {
@@ -47,11 +48,15 @@ final class MathUtil {
      * either {@code left} or {@code right} is infinite or NaN.
      */
     public static boolean notEqualWithinTolerance(double left, double right, double tolerance) {
-        if (Doubles.isFinite(left) && Doubles.isFinite(right)) {
+        if (isFinite(left) && isFinite(right)) {
             return Math.abs(left - right) > Math.abs(tolerance);
         } else {
             return false;
         }
+    }
+
+    private static boolean isFinite(double value) {
+        return NEGATIVE_INFINITY < value && value < POSITIVE_INFINITY;
     }
 
     /**
