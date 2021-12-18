@@ -15,10 +15,8 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -53,7 +51,7 @@ import static java.util.Objects.requireNonNull;
 public final class FailureMetadata {
     static FailureMetadata forFailureStrategy(FailureStrategy failureStrategy) {
         return new FailureMetadata(
-                failureStrategy, ImmutableList.<LazyMessage>of(), ImmutableList.<Step>of());
+                failureStrategy, List.of(), List.of());
     }
 
     private final FailureStrategy strategy;
@@ -138,7 +136,7 @@ public final class FailureMetadata {
     FailureMetadata updateForCheckCall(
             OldAndNewValuesAreSimilar valuesAreSimilar, Function<String, String> descriptionUpdate) {
         checkNotNull(descriptionUpdate);
-        ImmutableList<Step> steps =
+        List<Step> steps =
                 append(this.steps, Step.checkCall(valuesAreSimilar, descriptionUpdate));
         return derive(messages, steps);
     }
@@ -161,7 +159,7 @@ public final class FailureMetadata {
      * {@code Subject}) or {@link Truth#assertWithMessage} (for most other calls).
      */
     FailureMetadata withMessage(String format, Object[] args) {
-        ImmutableList<LazyMessage> messages = append(this.messages, new LazyMessage(format, args));
+        List<LazyMessage> messages = append(this.messages, new LazyMessage(format, args));
         return derive(messages, steps);
     }
 
@@ -223,7 +221,7 @@ public final class FailureMetadata {
      * root's exact relationship to the final object, but we know it's some object "different enough"
      * to be worth displaying.)
      */
-    private ImmutableList<Fact> description() {
+    private List<Fact> description() {
         String description = inferDescription();
         boolean descriptionIsInteresting = description != null;
         for (Step step : steps) {
@@ -244,8 +242,8 @@ public final class FailureMetadata {
             }
         }
         return descriptionIsInteresting
-                ? ImmutableList.of(fact("value of", description))
-                : ImmutableList.<Fact>of();
+                ? List.of(fact("value of", description))
+                : List.of();
     }
 
     /**
@@ -269,7 +267,7 @@ public final class FailureMetadata {
      * additional {@code check}-like methods someday.)
      */
     // TODO(b/134505914): Consider returning multiple facts in some cases.
-    private ImmutableList<Fact> rootUnlessThrowable() {
+    private List<Fact> rootUnlessThrowable() {
         Step rootSubject = null;
         boolean seenDerivation = false;
         for (Step step : steps) {
@@ -294,7 +292,7 @@ public final class FailureMetadata {
                      * We'll already include the Throwable as a cause of the AssertionError (see rootCause()),
                      * so we don't need to include it again in the message.
                      */
-                    return ImmutableList.of();
+                    return List.of();
                 }
                 rootSubject = step;
             }
@@ -305,12 +303,12 @@ public final class FailureMetadata {
          * name we have is just "object?"
          */
         return seenDerivation
-                ? ImmutableList.of(
+                ? List.of(
                 fact(
                         // TODO(cpovirk): Use inferDescription() here when appropriate? But it can be long.
                         rootSubject.subject.typeDescription() + " was",
                         rootSubject.subject.actualCustomStringRepresentationForPackageMembersToCall()))
-                : ImmutableList.<Fact>of();
+                : List.of();
     }
 
     /**

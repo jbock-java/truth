@@ -357,19 +357,19 @@ final class SubjectUtils {
     }
 
     @SafeVarargs
-    static <E> ImmutableList<E> concat(Iterable<? extends E>... inputs) {
+    static <E> List<E> concat(Iterable<? extends E>... inputs) {
         return ImmutableList.copyOf(Iterables.concat(inputs));
     }
 
-    static <E> ImmutableList<E> append(E[] array, E object) {
+    static <E> List<E> append(E[] array, E object) {
         return new ImmutableList.Builder<E>().add(array).add(object).build();
     }
 
-    static <E> ImmutableList<E> append(List<? extends E> list, E object) {
+    static <E> List<E> append(List<? extends E> list, E object) {
         return new ImmutableList.Builder<E>().addAll(list).add(object).build();
     }
 
-    static <E> ImmutableList<E> sandwich(E first, E[] array, E last) {
+    static <E> List<E> sandwich(E first, E[] array, E last) {
         return new ImmutableList.Builder<E>().add(first).add(array).add(last).build();
     }
 }
