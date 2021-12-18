@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
@@ -25,10 +24,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 import java.util.ArrayList;
@@ -36,9 +33,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -264,8 +264,9 @@ public class IterableSubject extends Subject {
      * on the object returned by this method. The expected elements must appear in the given order
      * within the actual elements, but they are not required to be consecutive.
      */
-    public final Ordered containsAtLeastElementsIn(Iterable<?> expectedIterable) {
-        List<?> actual = Lists.newLinkedList(this.actual);
+    public final Ordered containsAtLeastElementsIn(Collection<?> expectedIterable) {
+        List<Object> actual = new LinkedList<>();
+        this.actual.forEach(actual::add);
         final Collection<?> expected = iterableToCollection(expectedIterable);
 
         List<Object> missing = newArrayList();
@@ -692,10 +693,10 @@ public class IterableSubject extends Subject {
      * iterable or fails. (Duplicates are irrelevant to this test, which fails if any of the actual
      * elements equal any of the excluded.)
      */
-    public final void containsNoneIn(Iterable<?> excluded) {
+    public final void containsNoneIn(Collection<?> excluded) {
         Collection<?> actual = iterableToCollection(this.actual);
         Collection<Object> present = new ArrayList<>();
-        for (Object item : Sets.newLinkedHashSet(excluded)) {
+        for (Object item : new LinkedHashSet<>(excluded)) {
             if (actual.contains(item)) {
                 present.add(item);
             }
@@ -942,7 +943,7 @@ public class IterableSubject extends Subject {
                 IterableSubject subject, Correspondence<? super A, ? super E> correspondence) {
             this.subject = checkNotNull(subject);
             this.correspondence = checkNotNull(correspondence);
-            this.pairer = Optional.absent();
+            this.pairer = Optional.empty();
         }
 
         UsingCorrespondence(
@@ -1835,11 +1836,11 @@ public class IterableSubject extends Subject {
          * (Duplicates are irrelevant to this test, which fails if any of the subject elements
          * correspond to any of the given elements.)
          */
-        public void containsNoneIn(Iterable<? extends E> excluded) {
+        public void containsNoneIn(Collection<? extends E> excluded) {
             Collection<A> actual = iterableToCollection(getCastActual());
             ListMultimap<E, A> present = LinkedListMultimap.create();
             Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
-            for (E excludedItem : Sets.newLinkedHashSet(excluded)) {
+            for (E excludedItem : new LinkedHashSet<>(excluded)) {
                 for (A actualItem : actual) {
                     if (correspondence.safeCompare(actualItem, excludedItem, exceptions)) {
                         present.put(excludedItem, actualItem);

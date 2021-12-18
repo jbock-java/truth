@@ -16,6 +16,7 @@
 package com.google.common.truth;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -126,7 +127,7 @@ public final class IntStreamSubject extends Subject {
      * on the object returned by this method. The expected elements must appear in the given order
      * within the actual elements, but they are not required to be consecutive.
      */
-    public Ordered containsAtLeastElementsIn(Iterable<?> expected) {
+    public Ordered containsAtLeastElementsIn(Collection<?> expected) {
         return check().that(actualList).containsAtLeastElementsIn(expected);
     }
 
@@ -169,7 +170,7 @@ public final class IntStreamSubject extends Subject {
      * Fails if the subject contains any of the given elements. (Duplicates are irrelevant to this
      * test, which fails if any of the actual elements equal any of the excluded.)
      */
-    public void containsNoneIn(Iterable<?> excluded) {
+    public void containsNoneIn(Collection<?> excluded) {
         check().that(actualList).containsNoneIn(excluded);
     }
 
