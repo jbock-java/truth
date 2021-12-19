@@ -15,8 +15,8 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Correspondence.equality;
@@ -107,7 +107,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void testFrom_viaIterableSubjectContainsExactly_success() {
-        assertThat(ImmutableList.of("foot", "barn"))
+        assertThat(List.of("foot", "barn"))
                 .comparingElementsUsing(STRING_PREFIX_EQUALITY)
                 .containsExactly("foo", "bar");
     }
@@ -116,7 +116,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testFrom_viaIterableSubjectContainsExactly_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("foot", "barn", "gallon"))
+                () -> assertThat(List.of("foot", "barn", "gallon"))
                         .comparingElementsUsing(STRING_PREFIX_EQUALITY)
                         .containsExactly("foo", "bar"));
         assertFailureKeys(
@@ -227,7 +227,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void testTransforming_actual_viaIterableSubjectContainsExactly_success() {
-        assertThat(ImmutableList.of("feet", "barns", "gallons"))
+        assertThat(List.of("feet", "barns", "gallons"))
                 .comparingElementsUsing(LENGTHS)
                 .containsExactly(4, 5, 7)
                 .inOrder();
@@ -237,7 +237,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTransforming_actual_viaIterableSubjectContainsExactly_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("feet", "barns", "gallons"))
+                () -> assertThat(List.of("feet", "barns", "gallons"))
                         .comparingElementsUsing(LENGTHS)
                         .containsExactly(4, 5));
         assertFailureKeys(
@@ -279,7 +279,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTransforming_actual_viaIterableSubjectContainsExactly_nullTransformed() {
         // "mailing-list" and "chat-room" have hyphens at index 7 and 4 respectively.
         // "forum" contains no hyphen so the Function in HYPHEN_INDEXES transforms it to null.
-        assertThat(ImmutableList.of("mailing-list", "chat-room", "forum"))
+        assertThat(List.of("mailing-list", "chat-room", "forum"))
                 .comparingElementsUsing(HYPHEN_INDEXES)
                 .containsExactly(7, 4, null)
                 .inOrder();
@@ -361,7 +361,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void testTransforming_both_viaIterableSubjectContainsExactly_success() {
-        assertThat(ImmutableList.of("mailing-list", "chat-room", "web-app"))
+        assertThat(List.of("mailing-list", "chat-room", "web-app"))
                 .comparingElementsUsing(HYPHENS_MATCH_COLONS)
                 .containsExactly("abcdefg:hij", "abcd:efghij", "abc:defghij")
                 .inOrder();
@@ -371,7 +371,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTransforming_both_viaIterableSubjectContainsExactly_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("mailing-list", "chat-room", "web-app"))
+                () -> assertThat(List.of("mailing-list", "chat-room", "web-app"))
                         .comparingElementsUsing(HYPHENS_MATCH_COLONS)
                         .containsExactly("abcdefg:hij", "abcd:efghij"));
         assertFailureKeys(
@@ -414,7 +414,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTransforming_both_viaIterableSubjectContainsExactly_nullExpected() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("mailing-list", "chat-room"))
+                () -> assertThat(List.of("mailing-list", "chat-room"))
                         .comparingElementsUsing(HYPHENS_MATCH_COLONS)
                         .containsExactly("abcdefg:hij", "abcd:efghij", null));
         assertFailureKeys(
@@ -438,7 +438,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTransforming_both_viaIterableSubjectContainsExactly_nullTransformed() {
         // The actual element "forum" contains no hyphen, and the expected element "abcde-fghij"
         // contains no colon, so they both transform to null, and so they correspond.
-        assertThat(ImmutableList.of("mailing-list", "chat-room", "forum"))
+        assertThat(List.of("mailing-list", "chat-room", "forum"))
                 .comparingElementsUsing(HYPHENS_MATCH_COLONS)
                 .containsExactly("abcdefg:hij", "abcd:efghij", "abcde-fghij")
                 .inOrder();
@@ -529,7 +529,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void testTolerance_viaIterableSubjectContains_success() {
-        assertThat(ImmutableList.of(1.02, 2.04, 3.08))
+        assertThat(List.of(1.02, 2.04, 3.08))
                 .comparingElementsUsing(tolerance(0.05))
                 .contains(2.0);
     }
@@ -538,7 +538,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testTolerance_viaIterableSubjectContains_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of(1.02, 2.04, 3.08))
+                () -> assertThat(List.of(1.02, 2.04, 3.08))
                         .comparingElementsUsing(tolerance(0.05))
                         .contains(3.01));
         assertFailureKeys(
@@ -585,14 +585,14 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void testEquality_viaIterableSubjectContains_success() {
-        assertThat(ImmutableList.of(1.0, 2.0, 3.0)).comparingElementsUsing(equality()).contains(2.0);
+        assertThat(List.of(1.0, 2.0, 3.0)).comparingElementsUsing(equality()).contains(2.0);
     }
 
     @Test
     void testEquality_viaIterableSubjectContains_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of(1.01, 2.02, 3.03))
+                () -> assertThat(List.of(1.01, 2.02, 3.03))
                         .comparingElementsUsing(equality())
                         .contains(2.0));
         // N.B. No "testing whether" fact:
@@ -656,7 +656,7 @@ final class CorrespondenceTest extends BaseSubjectTestCase {
     void testFormattingDiffsUsing_viaIterableSubjectContainsExactly_failure() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("feet", "gallons"))
+                () -> assertThat(List.of("feet", "gallons"))
                         .comparingElementsUsing(LENGTHS_WITH_DIFF)
                         .containsExactly(4, 5));
         assertFailureKeys(

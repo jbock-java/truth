@@ -17,7 +17,6 @@
 package com.google.common.truth;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -169,8 +168,8 @@ class ComparisonFailureWithFactsTest {
 
     @Test
     void testSerialization_ComparisonFailureWithFacts() {
-        ImmutableList<String> messages = ImmutableList.of("hello");
-        ImmutableList<Fact> facts = ImmutableList.of(fact("first", "value"), simpleFact("second"));
+        List<String> messages = List.of("hello");
+        List<Fact> facts = List.of(fact("first", "value"), simpleFact("second"));
         String expected = "expected";
         String actual = "actual";
         Throwable cause = new Throwable("cause");
@@ -186,8 +185,8 @@ class ComparisonFailureWithFactsTest {
 
     @Test
     void testSerialization_AssertionErrorWithFacts() {
-        ImmutableList<String> messages = ImmutableList.of("hello");
-        ImmutableList<Fact> facts = ImmutableList.of(fact("first", "value"), simpleFact("second"));
+        List<String> messages = List.of("hello");
+        List<Fact> facts = List.of(fact("first", "value"), simpleFact("second"));
         Throwable cause = new Throwable("cause");
         AssertionErrorWithFacts original = new AssertionErrorWithFacts(messages, facts, cause);
 

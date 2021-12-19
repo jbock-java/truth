@@ -17,26 +17,25 @@ package com.google.common.truth;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Equivalence.Wrapper;
-import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.isEmpty;
-import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Multisets.immutableEntry;
 
 /**
@@ -154,7 +153,7 @@ final class SubjectUtils {
         }
 
         Iterable<Multiset.Entry<?>> entrySet() {
-            return transform(contents.entrySet(), unwrapKey);
+            return contents.entrySet().stream().map(unwrapKey).collect(Collectors.toList());
         }
 
         String toStringWithBrackets() {
@@ -358,18 +357,31 @@ final class SubjectUtils {
 
     @SafeVarargs
     static <E> List<E> concat(Iterable<? extends E>... inputs) {
-        return ImmutableList.copyOf(Iterables.concat(inputs));
+        List<E> result = new ArrayList<>();
+        for (Iterable<? extends E> it : inputs) {
+            it.forEach(result::add);
+        }
+        return result;
     }
 
     static <E> List<E> append(E[] array, E object) {
-        return new ImmutableList.Builder<E>().add(array).add(object).build();
+        List<E> result = new ArrayList<>();
+        Collections.addAll(result, array);
+        result.add(object);
+        return result;
     }
 
     static <E> List<E> append(List<? extends E> list, E object) {
-        return new ImmutableList.Builder<E>().addAll(list).add(object).build();
+        List<E> result = new ArrayList<>(list);
+        result.add(object);
+        return result;
     }
 
     static <E> List<E> sandwich(E first, E[] array, E last) {
-        return new ImmutableList.Builder<E>().add(first).add(array).add(last).build();
+        List<E> result = new ArrayList<>();
+        result.add(first);
+        Collections.addAll(result, array);
+        result.add(last);
+        return result;
     }
 }

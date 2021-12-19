@@ -15,13 +15,13 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
 

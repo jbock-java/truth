@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -69,7 +68,7 @@ final class Platform {
                     fact(DIFF_KEY, "(line contents match, but line-break characters differ)"));
             // TODO(cpovirk): Possibly include the expected/actual value, too?
         }
-        String result = Joiner.on("\n").join(unifiedDiff);
+        String result = String.join("\n", unifiedDiff);
         if (result.length() > expected.length() && result.length() > actual.length()) {
             return null;
         }

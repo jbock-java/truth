@@ -18,10 +18,10 @@ package com.google.common.truth;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.reflect.TypeToken;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -41,7 +41,7 @@ class TruthAssertThatTest {
 
     @Test
     void staticAssertThatMethodsMatchStandardSubjectBuilderInstanceMethods() {
-        ImmutableSet<TypeToken<?>> verbTypes =
+        Set<TypeToken<?>> verbTypes =
                 FluentIterable.from(asList(StandardSubjectBuilder.class.getMethods()))
                         .filter(
                                 new Predicate<Method>() {
@@ -52,7 +52,7 @@ class TruthAssertThatTest {
                                 })
                         .transform(METHOD_TO_RETURN_TYPE_TOKEN)
                         .toSortedSet(Ordering.usingToString());
-        ImmutableSet<TypeToken<?>> truthTypes =
+        Set<TypeToken<?>> truthTypes =
                 FluentIterable.from(asList(Truth.class.getMethods()))
                         .filter(
                                 new Predicate<Method>() {

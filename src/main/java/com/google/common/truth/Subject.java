@@ -15,6 +15,19 @@
  */
 package com.google.common.truth;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
+import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CharMatcher.whitespace;
@@ -31,16 +44,6 @@ import static com.google.common.truth.SubjectUtils.append;
 import static com.google.common.truth.SubjectUtils.concat;
 import static com.google.common.truth.SubjectUtils.sandwich;
 import static java.util.Arrays.asList;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
-import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * An object that lets you perform checks on the value under test. For example, {@code Subject}
@@ -415,7 +418,7 @@ public class Subject {
     private static final char[] hexDigits = "0123456789ABCDEF".toCharArray();
 
     private static Iterable<?> stringableIterable(Object[] array) {
-        return Iterables.transform(asList(array), STRINGIFY);
+        return Stream.of(array).map(STRINGIFY).collect(Collectors.toList());
     }
 
     private static final Function<Object, Object> STRINGIFY =
@@ -443,7 +446,9 @@ public class Subject {
                         } else {
                             iterable = Arrays.asList((Object[]) input);
                         }
-                        return Iterables.transform(iterable, STRINGIFY);
+                        return StreamSupport.stream(iterable.spliterator(), false)
+                                .map(STRINGIFY)
+                                .collect(Collectors.toList());
                     }
                     return input;
                 }

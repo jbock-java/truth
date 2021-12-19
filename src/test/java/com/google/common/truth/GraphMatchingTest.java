@@ -15,25 +15,24 @@
  */
 package com.google.common.truth;
 
-import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
-import static com.google.common.truth.Truth.assertWithMessage;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
+import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link GraphMatching}.
@@ -177,7 +176,7 @@ public final class GraphMatchingTest {
         }
 
         private final ImmutableListMultimap<String, String> edges;
-        private final ImmutableList<String> lhsVertices;
+        private final List<String> lhsVertices;
 
         private TestInstance(ImmutableListMultimap<String, String> edges) {
             this.edges = edges;
