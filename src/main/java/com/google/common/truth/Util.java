@@ -1,7 +1,12 @@
 package com.google.common.truth;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class Util {
 
@@ -85,5 +90,18 @@ class Util {
         List<E> result = new ArrayList<>();
         iterable.forEach(result::add);
         return result;
+    }
+
+    static <E> Set<E> intersection(Set<E> set1, Set<?> set2) {
+        return set1.stream()
+                .filter(set2::contains)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    static <E> Set<E> union(Set<? extends E> set1, Set<? extends E> set2) {
+        LinkedHashSet<E> result = Stream.concat(
+                        set1.stream(), set2.stream().filter((E e) -> !set1.contains(e)))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(result);
     }
 }

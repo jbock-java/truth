@@ -15,19 +15,16 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -62,7 +59,7 @@ public class MapSubject extends Subject {
 
     @Override
     public final void isEqualTo(Object other) {
-        if (Objects.equal(actual, other)) {
+        if (Objects.equals(actual, other)) {
             return;
         }
 
@@ -138,7 +135,7 @@ public class MapSubject extends Subject {
             } else if (actual.containsValue(value)) {
                 Set<Object> keys = new LinkedHashSet<>();
                 for (Map.Entry<?, ?> actualEntry : actual.entrySet()) {
-                    if (Objects.equal(actualEntry.getValue(), value)) {
+                    if (Objects.equals(actualEntry.getValue(), value)) {
                         keys.add(actualEntry.getKey());
                     }
                 }
@@ -172,7 +169,7 @@ public class MapSubject extends Subject {
 
     /** Fails if the map is not empty. */
     public final Ordered containsExactly() {
-        return containsExactlyEntriesIn(ImmutableMap.of());
+        return containsExactlyEntriesIn(Map.of());
     }
 
     /**
@@ -201,7 +198,7 @@ public class MapSubject extends Subject {
                         + "(i.e., the number of key/value parameters (%s) must be even).",
                 rest.length + 2);
 
-        Map<Object, Object> expectedMap = Maps.newLinkedHashMap();
+        Map<Object, Object> expectedMap = new LinkedHashMap<>();
         expectedMap.put(k0, v0);
         Multiset<Object> keys = LinkedHashMultiset.create();
         keys.add(k0);
@@ -283,7 +280,7 @@ public class MapSubject extends Subject {
             new ValueTester<Object, Object>() {
                 @Override
                 public boolean test(Object actualValue, Object expectedValue) {
-                    return Objects.equal(actualValue, expectedValue);
+                    return Objects.equals(actualValue, expectedValue);
                 }
             };
 
@@ -324,7 +321,7 @@ public class MapSubject extends Subject {
                 unexpected.clear();
             }
             return new MapDifference<>(
-                    missing, unexpected, wrongValues, Sets.union(actual.keySet(), expected.keySet()));
+                    missing, unexpected, wrongValues, Util.union(actual.keySet(), expected.keySet()));
         }
 
         private MapDifference(
@@ -372,7 +369,7 @@ public class MapSubject extends Subject {
         private boolean includeKeyTypes() {
             // We will annotate all the keys in the diff with their types if any of the keys involved have
             // the same toString() without being equal.
-            Set<K> keys = Sets.newHashSet();
+            Set<K> keys = new HashSet<>();
             keys.addAll(missing.keySet());
             keys.addAll(unexpected.keySet());
             keys.addAll(wrongValues.keySet());
@@ -437,9 +434,9 @@ public class MapSubject extends Subject {
         public void inOrder() {
             // We're using the fact that Sets.intersection keeps the order of the first set.
             List<?> expectedKeyOrder =
-                    Lists.newArrayList(Sets.intersection(expectedMap.keySet(), actual.keySet()));
+                    new ArrayList<>(Util.intersection(expectedMap.keySet(), actual.keySet()));
             List<?> actualKeyOrder =
-                    Lists.newArrayList(Sets.intersection(actual.keySet(), expectedMap.keySet()));
+                    new ArrayList<>(Util.intersection(actual.keySet(), expectedMap.keySet()));
             if (!actualKeyOrder.equals(expectedKeyOrder)) {
                 List<Fact> facts = new ArrayList<>();
                 facts.add(
