@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Multiset;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -200,18 +198,18 @@ public class MapSubject extends Subject {
 
         Map<Object, Object> expectedMap = new LinkedHashMap<>();
         expectedMap.put(k0, v0);
-        Multiset<Object> keys = LinkedHashMultiset.create();
+        Set<Object> keys = new LinkedHashSet<>();
         keys.add(k0);
         for (int i = 0; i < rest.length; i += 2) {
             Object key = rest[i];
             expectedMap.put(key, rest[i + 1]);
-            keys.add(key);
+            if (!keys.add(key)) {
+                throw new IllegalArgumentException(String.format(
+                        "Duplicate key (%s) cannot be passed to %s().",
+                        key,
+                        functionName));
+            }
         }
-        checkArgument(
-                keys.size() == expectedMap.size(),
-                "Duplicate keys (%s) cannot be passed to %s().",
-                keys,
-                functionName);
         return expectedMap;
     }
 

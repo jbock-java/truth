@@ -126,7 +126,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
         } catch (IllegalArgumentException expected) {
             assertThat(expected)
                     .hasMessageThat()
-                    .isEqualTo("Duplicate keys ([jan x 3]) cannot be passed to containsExactly().");
+                    .isEqualTo("Duplicate key (jan) cannot be passed to containsExactly().");
         }
     }
 
@@ -140,7 +140,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
         } catch (IllegalArgumentException expected) {
             assertThat(expected)
                     .hasMessageThat()
-                    .isEqualTo("Duplicate keys ([jan x 2, feb x 2]) cannot be passed to containsExactly().");
+                    .isEqualTo("Duplicate key (jan) cannot be passed to containsExactly().");
         }
     }
 
@@ -628,7 +628,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
         } catch (IllegalArgumentException expected) {
             assertThat(expected)
                     .hasMessageThat()
-                    .isEqualTo("Duplicate keys ([jan x 3]) cannot be passed to containsAtLeast().");
+                    .isEqualTo("Duplicate key (jan) cannot be passed to containsAtLeast().");
         }
     }
 
@@ -642,7 +642,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
         } catch (IllegalArgumentException expected) {
             assertThat(expected)
                     .hasMessageThat()
-                    .isEqualTo("Duplicate keys ([jan x 2, feb x 2]) cannot be passed to containsAtLeast().");
+                    .isEqualTo("Duplicate key (jan) cannot be passed to containsAtLeast().");
         }
     }
 
