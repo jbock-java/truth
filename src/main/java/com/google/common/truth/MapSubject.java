@@ -16,7 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Lists;
@@ -24,7 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.truth.Correspondence.DiffFormatter;
-
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -267,13 +266,11 @@ public class MapSubject extends Subject {
         // First, we need to decide whether this kind of cleverness is a line we want to cross.
         // (See also containsEntry, which does do an isEqualTo-like assertion when the expected key is
         // present with the wrong value, which may be the closest we currently get to this.)
-        failWithoutActual(
-                ImmutableList.<Fact>builder()
-                        .addAll(diff.describe(/* differ = */ null))
-                        .add(simpleFact("---"))
-                        .add(fact(allowUnexpected ? "expected to contain at least" : "expected", expectedMap))
-                        .add(butWas())
-                        .build());
+        List<Fact> facts = new ArrayList<>(diff.describe(/* differ = */ null));
+        facts.add(simpleFact("---"));
+        facts.add(fact(allowUnexpected ? "expected to contain at least" : "expected", expectedMap));
+        facts.add(butWas());
+        failWithoutActual(facts);
         return false;
     }
 
@@ -345,9 +342,9 @@ public class MapSubject extends Subject {
             return missing.isEmpty() && unexpected.isEmpty() && wrongValues.isEmpty();
         }
 
-        ImmutableList<Fact> describe(Differ<? super A, ? super E> differ) {
+        List<Fact> describe(Differ<? super A, ? super E> differ) {
             boolean includeKeyTypes = includeKeyTypes();
-            ImmutableList.Builder<Fact> facts = ImmutableList.builder();
+            List<Fact> facts = new ArrayList<>();
             if (!wrongValues.isEmpty()) {
                 facts.add(simpleFact("keys with wrong values"));
             }
@@ -369,7 +366,7 @@ public class MapSubject extends Subject {
                 facts.add(fact("for key", maybeAddType(entry.getKey(), includeKeyTypes)));
                 facts.add(fact("unexpected value", entry.getValue()));
             }
-            return facts.build();
+            return facts;
         }
 
         private boolean includeKeyTypes() {
@@ -392,13 +389,12 @@ public class MapSubject extends Subject {
             this.expected = expected;
         }
 
-        ImmutableList<Fact> describe(Differ<? super A, ? super E> differ) {
+        List<Fact> describe(Differ<? super A, ? super E> differ) {
             boolean includeTypes =
                     differ == null && String.valueOf(actual).equals(String.valueOf(expected));
-            ImmutableList.Builder<Fact> facts =
-                    ImmutableList.<Fact>builder()
-                            .add(fact("expected value", maybeAddType(expected, includeTypes)))
-                            .add(fact("but got value", maybeAddType(actual, includeTypes)));
+            List<Fact> facts = new ArrayList<>();
+            facts.add(fact("expected value", maybeAddType(expected, includeTypes)));
+            facts.add(fact("but got value", maybeAddType(actual, includeTypes)));
 
             if (differ != null) {
                 String diffString = differ.diff(actual, expected);
@@ -406,7 +402,7 @@ public class MapSubject extends Subject {
                     facts.add(fact("diff", diffString));
                 }
             }
-            return facts.build();
+            return facts;
         }
     }
 
@@ -445,21 +441,20 @@ public class MapSubject extends Subject {
             List<?> actualKeyOrder =
                     Lists.newArrayList(Sets.intersection(actual.keySet(), expectedMap.keySet()));
             if (!actualKeyOrder.equals(expectedKeyOrder)) {
-                ImmutableList.Builder<Fact> facts =
-                        ImmutableList.<Fact>builder()
-                                .add(
-                                        simpleFact(
-                                                allowUnexpected
-                                                        ? "required entries were all found, but order was wrong"
-                                                        : "entries match, but order was wrong"))
-                                .add(
-                                        fact(
-                                                allowUnexpected ? "expected to contain at least" : "expected",
-                                                expectedMap));
+                List<Fact> facts = new ArrayList<>();
+                facts.add(
+                        simpleFact(
+                                allowUnexpected
+                                        ? "required entries were all found, but order was wrong"
+                                        : "entries match, but order was wrong"));
+                facts.add(
+                        fact(
+                                allowUnexpected ? "expected to contain at least" : "expected",
+                                expectedMap));
                 if (correspondence != null) {
                     facts.addAll(correspondence.describeForMapValues());
                 }
-                failWithActual(facts.build());
+                failWithActual(facts);
             }
         }
     }
@@ -572,26 +567,24 @@ public class MapSubject extends Subject {
                 // Found matching key with non-matching value.
                 String diff = correspondence.safeFormatDiff(actualValue, expectedValue, exceptions);
                 if (diff != null) {
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .add(fact("for key", expectedKey))
-                                    .add(fact("expected value", expectedValue))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(fact("but got value", actualValue))
-                                    .add(fact("diff", diff))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .addAll(exceptions.describeAsAdditionalInfo())
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.add(fact("for key", expectedKey));
+                    facts.add(fact("expected value", expectedValue));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(fact("but got value", actualValue));
+                    facts.add(fact("diff", diff));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    facts.addAll(exceptions.describeAsAdditionalInfo());
+                    failWithoutActual(facts);
                 } else {
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .add(fact("for key", expectedKey))
-                                    .add(fact("expected value", expectedValue))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(fact("but got value", actualValue))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .addAll(exceptions.describeAsAdditionalInfo())
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.add(fact("for key", expectedKey));
+                    facts.add(fact("expected value", expectedValue));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(fact("but got value", actualValue));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    facts.addAll(exceptions.describeAsAdditionalInfo());
+                    failWithoutActual(facts);
                 }
             } else {
                 // Did not find matching key. Look for the matching value with a different key.
@@ -604,27 +597,25 @@ public class MapSubject extends Subject {
                 }
                 if (!keys.isEmpty()) {
                     // Found matching values with non-matching keys.
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .add(fact("for key", expectedKey))
-                                    .add(fact("expected value", expectedValue))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(simpleFact("but was missing"))
-                                    .add(fact("other keys with matching values", keys))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .addAll(exceptions.describeAsAdditionalInfo())
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.add(fact("for key", expectedKey));
+                    facts.add(fact("expected value", expectedValue));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(simpleFact("but was missing"));
+                    facts.add(fact("other keys with matching values", keys));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    facts.addAll(exceptions.describeAsAdditionalInfo());
+                    failWithoutActual(facts);
                 } else {
                     // Did not find matching key or value.
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .add(fact("for key", expectedKey))
-                                    .add(fact("expected value", expectedValue))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(simpleFact("but was missing"))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .addAll(exceptions.describeAsAdditionalInfo())
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.add(fact("for key", expectedKey));
+                    facts.add(fact("expected value", expectedValue));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(simpleFact("but was missing"));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    facts.addAll(exceptions.describeAsAdditionalInfo());
+                    failWithoutActual(facts);
                 }
             }
         }
@@ -641,25 +632,23 @@ public class MapSubject extends Subject {
                 if (correspondence.safeCompare(actualValue, excludedValue, exceptions)) {
                     // The matching key had a matching value. There's no need to check exceptions here,
                     // because if Correspondence.compare() threw then safeCompare() would return false.
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(fact("but contained", immutableEntry(excludedKey, actualValue)))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .addAll(exceptions.describeAsAdditionalInfo())
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(fact("but contained", immutableEntry(excludedKey, actualValue)));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    facts.addAll(exceptions.describeAsAdditionalInfo());
+                    failWithoutActual(facts);
                 }
                 // The value didn't match, but we still need to fail if we hit an exception along the way.
                 if (exceptions.hasCompareException()) {
-                    failWithoutActual(
-                            ImmutableList.<Fact>builder()
-                                    .addAll(exceptions.describeAsMainCause())
-                                    .add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)))
-                                    .addAll(correspondence.describeForMapValues())
-                                    .add(simpleFact("found no match (but failing because of exception)"))
-                                    .add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()))
-                                    .build());
+                    List<Fact> facts = new ArrayList<>();
+                    facts.addAll(exceptions.describeAsMainCause());
+                    facts.add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)));
+                    facts.addAll(correspondence.describeForMapValues());
+                    facts.add(simpleFact("found no match (but failing because of exception)"));
+                    facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
+                    failWithoutActual(facts);
                 }
             }
         }
@@ -747,15 +736,13 @@ public class MapSubject extends Subject {
                 // record that we had the wrong value for that key.
                 return new MapInOrder(expectedMap, allowUnexpected, correspondence);
             }
-            failWithoutActual(
-                    ImmutableList.<Fact>builder()
-                            .addAll(diff.describe(differ(exceptions)))
-                            .add(simpleFact("---"))
-                            .add(fact(allowUnexpected ? "expected to contain at least" : "expected", expectedMap))
-                            .addAll(correspondence.describeForMapValues())
-                            .add(butWas())
-                            .addAll(exceptions.describeAsAdditionalInfo())
-                            .build());
+            List<Fact> facts = new ArrayList<>(diff.describe(differ(exceptions)));
+            facts.add(simpleFact("---"));
+            facts.add(fact(allowUnexpected ? "expected to contain at least" : "expected", expectedMap));
+            facts.addAll(correspondence.describeForMapValues());
+            facts.add(butWas());
+            facts.addAll(exceptions.describeAsAdditionalInfo());
+            failWithoutActual(facts);
             return ALREADY_FAILED;
         }
 
