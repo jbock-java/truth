@@ -15,17 +15,14 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-import com.google.common.reflect.TypeToken;
-import java.util.Set;
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assert_;
 import static java.util.Arrays.asList;
@@ -36,34 +33,24 @@ import static java.util.Arrays.asList;
  * @author Christian Gruber (cgruber@israfil.net)
  */
 class TruthAssertThatTest {
-    private static final Function<Method, TypeToken<?>> METHOD_TO_RETURN_TYPE_TOKEN =
-            input -> TypeToken.of(Iterables.getOnlyElement(asList(input.getParameterTypes())));
+    private static final Function<Method, String> METHOD_TO_RETURN_TYPE_TOKEN =
+            input -> asList(input.getParameterTypes()).get(0/* expecting exactly one parameter */)
+                    .getCanonicalName();
 
     @Test
     void staticAssertThatMethodsMatchStandardSubjectBuilderInstanceMethods() {
-        Set<TypeToken<?>> verbTypes =
-                FluentIterable.from(asList(StandardSubjectBuilder.class.getMethods()))
-                        .filter(
-                                new Predicate<Method>() {
-                                    @Override
-                                    public boolean apply(Method input) {
-                                        return input.getName().equals("that");
-                                    }
-                                })
-                        .transform(METHOD_TO_RETURN_TYPE_TOKEN)
-                        .toSortedSet(Ordering.usingToString());
-        Set<TypeToken<?>> truthTypes =
-                FluentIterable.from(asList(Truth.class.getMethods()))
-                        .filter(
-                                new Predicate<Method>() {
-                                    @Override
-                                    public boolean apply(Method input) {
-                                        return input.getName().equals("assertThat")
-                                                && Modifier.isStatic(input.getModifiers());
-                                    }
-                                })
-                        .transform(METHOD_TO_RETURN_TYPE_TOKEN)
-                        .toSortedSet(Ordering.usingToString());
+        Set<String> verbTypes =
+                Arrays.stream(StandardSubjectBuilder.class.getMethods())
+                        .filter(input -> input.getName().equals("that"))
+                        .map(METHOD_TO_RETURN_TYPE_TOKEN)
+                        .collect(Collectors.toCollection(TreeSet::new));
+
+        Set<String> truthTypes =
+                Arrays.stream(Truth.class.getMethods())
+                        .filter(input -> input.getName().equals("assertThat")
+                                && Modifier.isStatic(input.getModifiers()))
+                        .map(METHOD_TO_RETURN_TYPE_TOKEN)
+                        .collect(Collectors.toCollection(TreeSet::new));
 
         assert_().that(verbTypes).isNotEmpty();
         assert_().that(truthTypes).isNotEmpty();
