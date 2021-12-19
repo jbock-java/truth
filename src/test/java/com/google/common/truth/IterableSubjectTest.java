@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import org.junit.jupiter.api.Test;
@@ -43,19 +42,19 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void hasSize() {
-        assertThat(ImmutableList.of(1, 2, 3)).hasSize(3);
+        assertThat(List.of(1, 2, 3)).hasSize(3);
     }
 
     @Test
     void hasSizeZero() {
-        assertThat(ImmutableList.of()).hasSize(0);
+        assertThat(List.of()).hasSize(0);
     }
 
     @Test
     void hasSizeFails() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of(1, 2, 3))
+                () -> assertThat(List.of(1, 2, 3))
                         .hasSize(4));
         assertFailureValue(
                 failure,
@@ -65,7 +64,7 @@ class IterableSubjectTest extends BaseSubjectTestCase {
     @Test
     void hasSizeNegative() {
         try {
-            assertThat(ImmutableList.of(1, 2, 3)).hasSize(-1);
+            assertThat(List.of(1, 2, 3)).hasSize(-1);
             fail();
         } catch (IllegalArgumentException expected) {
         }
@@ -779,14 +778,14 @@ class IterableSubjectTest extends BaseSubjectTestCase {
     @Test
     void iterableContainsExactlyArray() {
         String[] stringArray = {"a", "b"};
-        ImmutableList<String[]> iterable = ImmutableList.of(stringArray);
+        List<String[]> iterable = List.<String[]>of(stringArray);
         // This test fails w/o the explicit cast
         assertThat(iterable).containsExactly((Object) stringArray);
     }
 
     @Test
     void arrayContainsExactly() {
-        ImmutableList<String> iterable = ImmutableList.of("a", "b");
+        List<String> iterable = List.of("a", "b");
         String[] array = {"a", "b"};
         assertThat(iterable).containsExactly((Object[]) array);
     }
@@ -988,7 +987,7 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void iterableContainsExactlyElementsInInOrderPassesWithEmptyExpectedAndActual() {
-        assertThat(ImmutableList.of()).containsExactlyElementsIn(ImmutableList.of()).inOrder();
+        assertThat(List.of()).containsExactlyElementsIn(List.of()).inOrder();
     }
 
     @Test
@@ -996,7 +995,7 @@ class IterableSubjectTest extends BaseSubjectTestCase {
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(asList("foo"))
-                        .containsExactlyElementsIn(ImmutableList.of()));
+                        .containsExactlyElementsIn(List.of()));
         assertFailureKeys(
                 failure,
                 "expected to be empty", "but was");
@@ -1411,14 +1410,14 @@ class IterableSubjectTest extends BaseSubjectTestCase {
         assertThrows(
                 AssertionError.class,
                 () -> assertThat((Iterable<?>) null)
-                        .isEqualTo(ImmutableList.of()));
+                        .isEqualTo(List.of()));
     }
 
     @Test
     void somethingEqualToNull() {
         assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of())
+                () -> assertThat(List.of())
                         .isEqualTo(null));
     }
 
@@ -1426,8 +1425,8 @@ class IterableSubjectTest extends BaseSubjectTestCase {
     void somethingEqualToSomething() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of())
-                        .isEqualTo(ImmutableList.of("a")));
+                () -> assertThat(List.of())
+                        .isEqualTo(List.of("a")));
         // isEqualTo uses the containsExactly style of message:
         assertFailureValue(
                 failure,
@@ -1659,24 +1658,24 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void isIn() {
-        ImmutableList<String> actual = ImmutableList.of("a");
-        ImmutableList<String> expectedA = ImmutableList.of("a");
-        ImmutableList<String> expectedB = ImmutableList.of("b");
-        ImmutableList<ImmutableList<String>> expected = ImmutableList.of(expectedA, expectedB);
+        List<String> actual = List.of("a");
+        List<String> expectedA = List.of("a");
+        List<String> expectedB = List.of("b");
+        List<List<String>> expected = List.of(expectedA, expectedB);
 
         assertThat(actual).isIn(expected);
     }
 
     @Test
     void isNotIn() {
-        ImmutableList<String> actual = ImmutableList.of("a");
+        List<String> actual = List.of("a");
 
-        assertThat(actual).isNotIn(ImmutableList.of(ImmutableList.of("b"), ImmutableList.of("c")));
+        assertThat(actual).isNotIn(List.of(List.of("b"), List.of("c")));
 
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
-                        .isNotIn(ImmutableList.of("a", "b")));
+                        .isNotIn(List.of("a", "b")));
         assertThat(failure)
                 .hasMessageThat()
                 .isEqualTo(
@@ -1688,9 +1687,9 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void isAnyOf() {
-        ImmutableList<String> actual = ImmutableList.of("a");
-        ImmutableList<String> expectedA = ImmutableList.of("a");
-        ImmutableList<String> expectedB = ImmutableList.of("b");
+        List<String> actual = List.of("a");
+        List<String> expectedA = List.of("a");
+        List<String> expectedB = List.of("b");
 
         assertThat(actual).isAnyOf(expectedA, expectedB);
     }
@@ -1698,9 +1697,9 @@ class IterableSubjectTest extends BaseSubjectTestCase {
     @Test
     @SuppressWarnings("IncompatibleArgumentType")
     void isNoneOf() {
-        ImmutableList<String> actual = ImmutableList.of("a");
+        List<String> actual = List.of("a");
 
-        assertThat(actual).isNoneOf(ImmutableList.of("b"), ImmutableList.of("c"));
+        assertThat(actual).isNoneOf(List.of("b"), List.of("c"));
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)

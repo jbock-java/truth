@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.truth.TestCorrespondences.Record;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +54,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void contains_success() {
-        ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
+        List<String> actual = List.of("not a number", "+123", "+456", "+789");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .contains(456);
@@ -63,7 +62,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void contains_failure() {
-        ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
+        List<String> actual = List.of("not a number", "+123", "+456", "+789");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -135,8 +134,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     void displayingDiffsPairedBy_1arg_contains() {
         Record expected = Record.create(2, 200);
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(4, 400),
@@ -177,8 +176,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     void displayingDiffsPairedBy_1arg_contains_noDiff() {
         Record expected = Record.create(2, 200);
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(4, 400),
@@ -282,7 +281,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void wrongTypeInActual() {
-        ImmutableList<?> actual = ImmutableList.of("valid", 123);
+        List<?> actual = List.of("valid", 123);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -302,7 +301,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void doesNotContain_success() {
-        ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
+        List<String> actual = List.of("not a number", "+123", "+456", "+789");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .doesNotContain(2345);
@@ -310,7 +309,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void doesNotContains_failure() {
-        ImmutableList<String> actual = ImmutableList.of("not a number", "+123", "+456", "+789");
+        List<String> actual = List.of("not a number", "+123", "+456", "+789");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -382,8 +381,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_inOrder_success() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+128", "+256", "0x80");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactlyElementsIn(expected)
@@ -392,8 +391,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_successOutOfOrder() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+128", "+64", "0x80", "+256");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactlyElementsIn(expected);
@@ -420,8 +419,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
         // (We use doubles with approximate equality for this test, because we can't illustrate this
         // case with the string parsing correspondence used in the other tests, because one string
         // won't parse to more than one integer.)
-        ImmutableList<Double> expected = ImmutableList.of(1.0, 1.1, 1.2);
-        ImmutableList<Double> actual = ImmutableList.of(1.05, 1.15, 0.95);
+        List<Double> expected = List.of(1.0, 1.1, 1.2);
+        List<Double> actual = List.of(1.05, 1.15, 0.95);
         // The comparingElementsUsing test with a tolerance of 0.1 should succeed by pairing 1.0 with
         // 0.95, 1.1 with 1.05, and 1.2 with 1.15. A left-to-right greedy implementation would fail as
         // it would pair 1.0 with 1.05 and 1.1 with 1.15, and fail to pair 1.2 with 0.95. Check that the
@@ -435,8 +434,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMissingOneCandidate() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x40", "0x80");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+128", "0x40", "0x80");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -462,8 +461,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_inOrder_passesWhenBothEmpty() {
-        ImmutableList<Integer> expected = ImmutableList.of();
-        ImmutableList<String> actual = ImmutableList.of();
+        List<Integer> expected = List.of();
+        List<String> actual = List.of();
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactlyElementsIn(expected)
@@ -472,8 +471,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsExpectedIsEmpty() {
-        ImmutableList<Integer> expected = ImmutableList.of();
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x40", "0x80");
+        List<Integer> expected = List.of();
+        List<String> actual = List.of("+64", "+128", "0x40", "0x80");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -486,8 +485,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMultipleMissingCandidates() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+64", "0x40", "0x40");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+64", "0x40", "0x40");
         // Actual list has candidate matches for 64 only, and is missing 128, 256, and the other 128.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -504,8 +503,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsOrderedMissingOneCandidate() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 512);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256");
+        List<Integer> expected = List.of(64, 128, 256, 512);
+        List<String> actual = List.of("+64", "+128", "+256");
         // Actual list has in-order candidate matches for 64, 128, and 256, but is missing 512.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -522,8 +521,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsExtraCandidates() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "cheese");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+128", "+256", "cheese");
         // Actual list has candidate matches for all the expected, but has extra cheese.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -540,8 +539,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsOrderedExtraCandidates() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80", "cheese");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+128", "+256", "0x80", "cheese");
         // Actual list has in-order candidate matches for all the expected, but has extra cheese.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -558,8 +557,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMissingAndExtraCandidates() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "jalapenos", "cheese");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+64", "+128", "jalapenos", "cheese");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256 and has
         // extra jalapenos and cheese.
         AssertionError failure = assertThrows(
@@ -580,7 +579,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMissingAndExtraNull() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
+        List<Integer> expected = List.of(64, 128, 256, 128);
         List<String> actual = asList("+64", "+128", "0x80", null);
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256 and has
         // extra null. (N.B. This tests a previous regression from calling extra.toString().)
@@ -603,7 +602,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     void containsExactlyElementsIn_failsNullMissingAndExtra() {
         List<Integer> expected = asList(64, 128, null, 128);
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "0x80", "cheese");
+        List<String> actual = List.of("+64", "+128", "0x80", "cheese");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing null and has
         // extra cheese.
         AssertionError failure = assertThrows(
@@ -624,7 +623,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_handlesExceptions() {
-        ImmutableList<String> expected = ImmutableList.of("ABC", "DEF", "GHI", "JKL");
+        List<String> expected = List.of("ABC", "DEF", "GHI", "JKL");
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList(null, "xyz", "abc", "def");
         AssertionError failure = assertThrows(
@@ -682,8 +681,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_diffOneMissingSomeExtraCandidate() {
-        ImmutableList<Integer> expected = ImmutableList.of(30, 60, 90);
-        ImmutableList<Integer> actual = ImmutableList.of(101, 65, 35, 190);
+        List<Integer> expected = List.of(30, 60, 90);
+        List<Integer> actual = List.of(101, 65, 35, 190);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -720,14 +719,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_1arg_containsExactlyElementsIn() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(900));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(4, 400),
@@ -777,13 +776,13 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_2arg_containsExactlyElementsIn() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(900));
-        ImmutableList<String> actual = ImmutableList.of("1/100", "2/211", "4/400", "none/999");
+        List<String> actual = List.of("1/100", "2/211", "4/400", "none/999");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -829,14 +828,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsExactlyElementsIn_onlyKeyed() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(3, 303),
@@ -874,14 +873,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsExactlyElementsIn_noKeyed() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(900));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 201),
                         Record.create(4, 400),
@@ -911,14 +910,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsExactlyElementsIn_noDiffs() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(3, 303),
@@ -947,8 +946,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
         // correspondence still passes even if the user specifies a key function such that none of the
         // elements match by key. (We advise against assertions where key function equality is stricter
         // than correspondence, but we should still do the thing we promised we'd do in that case.)
-        ImmutableList<Double> expected = ImmutableList.of(1.0, 1.1, 1.2);
-        ImmutableList<Double> actual = ImmutableList.of(1.05, 1.15, 0.95);
+        List<Double> expected = List.of(1.0, 1.1, 1.2);
+        List<Double> actual = List.of(1.05, 1.15, 0.95);
         assertThat(actual)
                 .comparingElementsUsing(tolerance(0.1))
                 .displayingDiffsPairedBy(identity())
@@ -959,15 +958,15 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     void displayingDiffsPairedBy_containsExactlyElementsIn_notUnique() {
         // The missing elements here are not uniquely keyed by the key function, so the key function
         // should be ignored, but a warning about this should be appended to the failure message.
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.create(3, 301),
                         Record.createWithoutId(900));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 211),
                         Record.create(4, 400),
@@ -998,8 +997,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsExactlyElementsIn_handlesActualKeyerExceptions() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(4, 400));
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.create(4, 400));
         List<Record> actual = asList(Record.create(1, 101), Record.create(2, 211), null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1064,8 +1063,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsExactlyElementsIn_handlesFormatDiffExceptions() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual = asList(Record.create(1, 101), Record.create(2, 211), null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1097,8 +1096,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMissingElementInOneToOne() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+128", "+64", "+256");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1122,8 +1121,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsExtraElementInOneToOne() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x80", "0x40");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+128", "+64", "+256", "0x80", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1145,8 +1144,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_failsMissingAndExtraInOneToOne() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1172,8 +1171,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_diffOneMissingAndExtraInOneToOne() {
-        ImmutableList<Integer> expected = ImmutableList.of(30, 30, 60);
-        ImmutableList<Integer> actual = ImmutableList.of(25, 55, 65);
+        List<Integer> expected = List.of(30, 30, 60);
+        List<Integer> actual = List.of(25, 55, 65);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1202,8 +1201,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyElementsIn_inOrder_failsOutOfOrder() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual = List.of("+128", "+64", "0x80", "+256");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1230,12 +1229,12 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     void containsExactlyElementsIn_array() {
         Integer[] expected = new Integer[]{64, 128, 256, 128};
-        assertThat(ImmutableList.of("+128", "+64", "0x80", "+256"))
+        assertThat(List.of("+128", "+64", "0x80", "+256"))
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactlyElementsIn(expected);
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("+64", "+128", "0x40", "0x80"))
+                () -> assertThat(List.of("+64", "+128", "0x40", "0x80"))
                         .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                         .containsExactlyElementsIn(expected));
         assertFailureKeys(
@@ -1248,7 +1247,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactly_inOrder_success() {
-        ImmutableList<String> actual = ImmutableList.of("+64", "+128", "+256", "0x80");
+        List<String> actual = List.of("+64", "+128", "+256", "0x80");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactly(64, 128, 256, 128)
@@ -1257,7 +1256,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactly_successOutOfOrder() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "0x80", "+256");
+        List<String> actual = List.of("+128", "+64", "0x80", "+256");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsExactly(64, 128, 256, 128);
@@ -1265,7 +1264,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactly_failsMissingAndExtraInOneToOne() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1309,9 +1308,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeastElementsIn(expected)
@@ -1320,9 +1319,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_inOrder_success() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeastElementsIn(expected)
@@ -1331,9 +1330,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_successOutOfOrder() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeastElementsIn(expected);
@@ -1360,8 +1359,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
         // (We use doubles with approximate equality for this test, because we can't illustrate this
         // case with the string parsing correspondence used in the other tests, because one string
         // won't parse to more than one integer.)
-        ImmutableList<Double> expected = ImmutableList.of(1.0, 1.1, 1.2);
-        ImmutableList<Double> actual = ImmutableList.of(99.999, 1.05, 99.999, 1.15, 0.95, 99.999);
+        List<Double> expected = List.of(1.0, 1.1, 1.2);
+        List<Double> actual = List.of(99.999, 1.05, 99.999, 1.15, 0.95, 99.999);
         // The comparingElementsUsing test with a tolerance of 0.1 should succeed by pairing 1.0 with
         // 0.95, 1.1 with 1.05, and 1.2 with 1.15. A left-to-right greedy implementation would fail as
         // it would pair 1.0 with 1.05 and 1.1 with 1.15, and fail to pair 1.2 with 0.95. Check that the
@@ -1375,9 +1374,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_failsMissingOneCandidate() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum");
         // Actual list has candidate matches for 64, 128, and the other 128, but is missing 256.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1403,7 +1402,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_handlesExceptions() {
-        ImmutableList<String> expected = ImmutableList.of("ABC", "DEF", "GHI");
+        List<String> expected = List.of("ABC", "DEF", "GHI");
         // CASE_INSENSITIVE_EQUALITY.compare throws on the null actual element.
         List<String> actual = asList(null, "xyz", "abc", "ghi");
         AssertionError failure = assertThrows(
@@ -1454,10 +1453,10 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingElementsPairedBy_containsAtLeastElementsIn() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
+        List<Record> actual =
+                List.of(
                         Record.create(1, 101),
                         Record.create(2, 211),
                         Record.create(2, 222),
@@ -1512,14 +1511,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingElementsPairedBy_containsAtLeastElementsIn_notUnique() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(2, 201),
                         Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(Record.create(1, 101), Record.create(3, 303), Record.createWithoutId(999));
+        List<Record> actual =
+                List.of(Record.create(1, 101), Record.create(3, 303), Record.createWithoutId(999));
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1542,8 +1541,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingElementsPairedBy_containsAtLeastElementsIn_handlesFormatDiffExceptions() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual =
                 asList(Record.create(1, 101), Record.create(2, 211), Record.create(3, 303), null);
         AssertionError failure = assertThrows(
@@ -1597,9 +1596,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_failsMultipleMissingCandidates() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+64", "fi", "fo", "0x40", "0x40", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+64", "+64", "fi", "fo", "0x40", "0x40", "fum");
         // Actual list has candidate matches for 64 only, and is missing 128, 256, and the other 128.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1616,9 +1615,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_failsOrderedMissingOneCandidate() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 512);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "fi", "fo", "+128", "+256", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 512);
+        List<String> actual =
+                List.of("fee", "+64", "fi", "fo", "+128", "+256", "fum");
         // Actual list has in-order candidate matches for 64, 128, and 256, but is missing 512.
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1635,9 +1634,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_failsMissingElementInOneToOne() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1661,9 +1660,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastElementsIn_inOrder_failsOutOfOrder() {
-        ImmutableList<Integer> expected = ImmutableList.of(64, 128, 256, 128);
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
+        List<Integer> expected = List.of(64, 128, 256, 128);
+        List<String> actual =
+                List.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1693,13 +1692,13 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
     @Test
     void containsAtLeastElementsIn_array() {
         Integer[] expected = new Integer[]{64, 128, 256, 128};
-        assertThat(ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum"))
+        assertThat(List.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum"))
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeastElementsIn(expected);
 
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(ImmutableList.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum"))
+                () -> assertThat(List.of("fee", "+64", "+128", "fi", "fo", "0x40", "0x80", "fum"))
                         .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                         .containsAtLeastElementsIn(expected));
         assertFailureKeys(
@@ -1712,8 +1711,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeast() {
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
+        List<String> actual =
+                List.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeast(64, 128, 256, 128)
@@ -1722,8 +1721,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeast_inOrder_success() {
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
+        List<String> actual =
+                List.of("fee", "+64", "+128", "fi", "fo", "+256", "0x80", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeast(64, 128, 256, 128)
@@ -1732,8 +1731,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeast_successOutOfOrder() {
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
+        List<String> actual =
+                List.of("fee", "+128", "+64", "fi", "fo", "0x80", "+256", "fum");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAtLeast(64, 128, 256, 128);
@@ -1741,8 +1740,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeast_failsMissingElementInOneToOne() {
-        ImmutableList<String> actual =
-                ImmutableList.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
+        List<String> actual =
+                List.of("fee", "+128", "fi", "fo", "+64", "+256", "fum");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1774,7 +1773,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAnyOf_success() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAnyOf(255, 256, 257);
@@ -1782,8 +1781,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAnyOf_failure() {
-        ImmutableList<String> actual =
-                ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
+        List<String> actual =
+                List.of("+128", "+64", "This is not the string you're looking for", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1859,8 +1858,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAnyIn_success() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        ImmutableList<Integer> expected = ImmutableList.of(255, 256, 257);
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
+        List<Integer> expected = List.of(255, 256, 257);
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAnyIn(expected);
@@ -1868,9 +1867,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAnyIn_failure() {
-        ImmutableList<String> actual =
-                ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
-        ImmutableList<Integer> expected = ImmutableList.of(255, 256, 257);
+        List<String> actual =
+                List.of("+128", "+64", "This is not the string you're looking for", "0x40");
+        List<Integer> expected = List.of(255, 256, 257);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1892,14 +1891,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsAnyIn_withKeyMatches() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(3, 300),
                         Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(3, 311),
                         Record.create(2, 211),
                         Record.create(2, 222),
@@ -1966,10 +1965,10 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsAnyIn_withoutKeyMatches() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(Record.create(3, 300), Record.create(4, 411), Record.createWithoutId(888));
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.createWithoutId(999));
+        List<Record> actual =
+                List.of(Record.create(3, 300), Record.create(4, 411), Record.createWithoutId(888));
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -1986,14 +1985,14 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsAnyIn_notUnique() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(
+        List<Record> expected =
+                List.of(
                         Record.create(1, 100),
                         Record.create(2, 200),
                         Record.create(2, 250),
                         Record.createWithoutId(999));
-        ImmutableList<Record> actual =
-                ImmutableList.of(Record.create(3, 300), Record.create(2, 211), Record.createWithoutId(888));
+        List<Record> actual =
+                List.of(Record.create(3, 300), Record.create(2, 211), Record.createWithoutId(888));
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -2011,8 +2010,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void displayingDiffsPairedBy_containsAnyIn_handlesFormatDiffExceptions() {
-        ImmutableList<Record> expected =
-                ImmutableList.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
+        List<Record> expected =
+                List.of(Record.create(1, 100), Record.create(2, 200), Record.create(0, 999));
         List<Record> actual = asList(Record.create(3, 311), Record.create(4, 404), null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -2047,7 +2046,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsAnyIn_array() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsAnyIn(new Integer[]{255, 256, 257});
@@ -2064,8 +2063,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneOf_success() {
-        ImmutableList<String> actual =
-                ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
+        List<String> actual =
+                List.of("+128", "+64", "This is not the string you're looking for", "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsNoneOf(255, 256, 257);
@@ -2073,7 +2072,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneOf_failure() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -2106,7 +2105,7 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneOf_multipleFailures() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -2215,9 +2214,9 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneIn_success() {
-        ImmutableList<String> actual =
-                ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
-        ImmutableList<Integer> excluded = ImmutableList.of(255, 256, 257);
+        List<String> actual =
+                List.of("+128", "+64", "This is not the string you're looking for", "0x40");
+        List<Integer> excluded = List.of(255, 256, 257);
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsNoneIn(excluded);
@@ -2225,8 +2224,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneIn_failure() {
-        ImmutableList<String> actual = ImmutableList.of("+128", "+64", "+256", "0x40");
-        ImmutableList<Integer> excluded = ImmutableList.of(255, 256, 257);
+        List<String> actual = List.of("+128", "+64", "+256", "0x40");
+        List<Integer> excluded = List.of(255, 256, 257);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(actual)
@@ -2275,8 +2274,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void containsNoneIn_array() {
-        ImmutableList<String> actual =
-                ImmutableList.of("+128", "+64", "This is not the string you're looking for", "0x40");
+        List<String> actual =
+                List.of("+128", "+64", "This is not the string you're looking for", "0x40");
         assertThat(actual)
                 .comparingElementsUsing(STRING_PARSES_TO_INTEGER_CORRESPONDENCE)
                 .containsNoneIn(new Integer[]{255, 256, 257});
@@ -2304,8 +2303,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void formattingDiffsUsing_success() {
-        ImmutableList<Record> actual =
-                ImmutableList.of(Record.create(3, 300), Record.create(2, 200), Record.create(1, 100));
+        List<Record> actual =
+                List.of(Record.create(3, 300), Record.create(2, 200), Record.create(1, 100));
         assertThat(actual)
                 .formattingDiffsUsing(RECORD_DIFF_FORMATTER)
                 .displayingDiffsPairedBy(RECORD_ID)
@@ -2314,8 +2313,8 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
 
     @Test
     void formattingDiffsUsing_failure() {
-        ImmutableList<Record> actual =
-                ImmutableList.of(
+        List<Record> actual =
+                List.of(
                         Record.create(3, 300),
                         Record.create(2, 201),
                         Record.create(1, 100),

@@ -16,12 +16,10 @@
 package com.google.common.truth;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -61,13 +59,13 @@ final class Platform {
 
     private static final String DIFF_KEY = "diff (-expected +actual)";
 
-    static ImmutableList<Fact> makeDiff(String expected, String actual) {
-        ImmutableList<String> expectedLines = splitLines(expected);
-        ImmutableList<String> actualLines = splitLines(actual);
+    static List<Fact> makeDiff(String expected, String actual) {
+        List<String> expectedLines = splitLines(expected);
+        List<String> actualLines = splitLines(actual);
         List<String> unifiedDiff =
                 generateUnifiedDiff(expectedLines, actualLines, /* contextSize= */ 3);
         if (unifiedDiff.isEmpty()) {
-            return ImmutableList.of(
+            return List.of(
                     fact(DIFF_KEY, "(line contents match, but line-break characters differ)"));
             // TODO(cpovirk): Possibly include the expected/actual value, too?
         }
@@ -75,12 +73,12 @@ final class Platform {
         if (result.length() > expected.length() && result.length() > actual.length()) {
             return null;
         }
-        return ImmutableList.of(fact(DIFF_KEY, result));
+        return List.of(fact(DIFF_KEY, result));
     }
 
-    private static ImmutableList<String> splitLines(String s) {
+    private static List<String> splitLines(String s) {
         // splitToList is @Beta, so we avoid it.
-        return ImmutableList.copyOf(Splitter.onPattern("\r?\n").split(s));
+        return Arrays.asList(s.split("\r?\n", -1));
     }
 
     abstract static class PlatformComparisonFailure extends AssertionError {

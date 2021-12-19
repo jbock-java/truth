@@ -15,10 +15,10 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.truth.Subject.Factory;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -678,7 +678,7 @@ class SubjectTest extends BaseSubjectTestCase {
         assertThrows(
                 AssertionError.class,
                 () -> assertThat("b")
-                        .isIn(ImmutableList.<String>of()));
+                        .isIn(List.<String>of()));
     }
 
     @Test
@@ -757,7 +757,7 @@ class SubjectTest extends BaseSubjectTestCase {
 
     @Test
     void isNotInEmpty() {
-        assertThat("b").isNotIn(ImmutableList.<String>of());
+        assertThat("b").isNotIn(List.<String>of());
     }
 
     @Test

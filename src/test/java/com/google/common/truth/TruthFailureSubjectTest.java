@@ -16,7 +16,8 @@
 
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Fact.fact;
@@ -254,6 +255,6 @@ class TruthFailureSubjectTest extends BaseSubjectTestCase {
 
     private AssertionErrorWithFacts failure(Fact... facts) {
         return new AssertionErrorWithFacts(
-                ImmutableList.<String>of(), ImmutableList.copyOf(facts), /* cause= */ null);
+                List.of(), Arrays.asList(facts), /* cause= */ null);
     }
 }
