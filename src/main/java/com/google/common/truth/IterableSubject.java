@@ -579,9 +579,9 @@ public class IterableSubject extends Subject {
         List<Fact> facts = new ArrayList<>();
         facts.add(simpleFact(keyToServeAsHeader(label, elements)));
         int n = 1;
-        for (Multiset.Entry<?> entry : elements.entrySet()) {
-            int count = entry.getCount();
-            Object item = entry.getElement();
+        for (Map.Entry<?, Integer> entry : elements.entrySet().entrySet()) {
+            int count = entry.getValue();
+            Object item = entry.getKey();
             facts.add(fact(numberString(n, count), item));
             n += count;
         }
@@ -622,7 +622,7 @@ public class IterableSubject extends Subject {
     }
 
     private static ElementFactGrouping pickGrouping(
-            Iterable<? extends Multiset.Entry<?>> first, Iterable<? extends Multiset.Entry<?>> second) {
+            Map<?, Integer> first, Map<?, Integer> second) {
         boolean firstHasMultiple = hasMultiple(first);
         boolean secondHasMultiple = hasMultiple(second);
         if ((firstHasMultiple || secondHasMultiple) && anyContainsCommaOrNewline(first, second)) {
@@ -637,20 +637,22 @@ public class IterableSubject extends Subject {
         return ALL_IN_ONE_FACT;
     }
 
-    private static boolean anyContainsCommaOrNewline(Iterable<? extends Multiset.Entry<?>>... lists) {
-        for (Multiset.Entry<?> entry : concat(lists)) {
-            String s = String.valueOf(entry.getElement());
-            if (s.contains("\n") || s.contains(",")) {
-                return true;
+    private static boolean anyContainsCommaOrNewline(Map<?, Integer>... lists) {
+        for (Map<?, Integer> list : lists) {
+            for (Map.Entry<?, Integer> entry : list.entrySet()) {
+                String s = String.valueOf(entry.getKey());
+                if (s.contains("\n") || s.contains(",")) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private static boolean hasMultiple(Iterable<? extends Multiset.Entry<?>> entries) {
+    private static boolean hasMultiple(Map<?, Integer> entries) {
         int totalCount = 0;
-        for (Multiset.Entry<?> entry : entries) {
-            totalCount += entry.getCount();
+        for (Map.Entry<?, Integer> entry : entries.entrySet()) {
+            totalCount += entry.getValue();
             if (totalCount > 1) {
                 return true;
             }
@@ -658,10 +660,10 @@ public class IterableSubject extends Subject {
         return false;
     }
 
-    private static boolean containsEmptyOrLong(Iterable<? extends Multiset.Entry<?>> entries) {
+    private static boolean containsEmptyOrLong(Map<?, Integer> entries) {
         int totalLength = 0;
-        for (Multiset.Entry<?> entry : entries) {
-            String s = entryString(entry);
+        for (Map.Entry<?, Integer> entry : entries.entrySet()) {
+            String s = entryString(entry.getKey(), entry.getValue());
             if (s.isEmpty()) {
                 return true;
             }

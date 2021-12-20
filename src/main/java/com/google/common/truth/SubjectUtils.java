@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,9 +69,8 @@ final class SubjectUtils {
         return toStringWithBrackets(countDuplicatesToMultiset(items));
     }
 
-    static String entryString(Multiset.Entry<?> entry) {
-        int count = entry.getCount();
-        String item = String.valueOf(entry.getElement());
+    static String entryString(Object element, int count) {
+        String item = String.valueOf(element);
         return (count > 1) ? item + " [" + count + " copies]" : item;
     }
 
@@ -101,6 +101,14 @@ final class SubjectUtils {
                 : countDuplicates(addTypeInfoToEveryItem(items));
     }
 
+    private static Map<?, Integer> multisetToMap(Multiset<?> multiset) {
+        LinkedHashMap<Object, Integer> result = new LinkedHashMap<>();
+        for (Multiset.Entry<?> entry : multiset.entrySet()) {
+            result.put(entry.getElement(), entry.getCount());
+        }
+        return result;
+    }
+
     /**
      * Similar to {@link #countDuplicatesAndAddTypeInfo} and {@link #countDuplicates} but (a) only
      * adds type info if requested and (b) returns a richer object containing the data.
@@ -126,7 +134,7 @@ final class SubjectUtils {
     static String toStringWithBrackets(Multiset<?> multiset) {
         List<String> parts = new ArrayList<>();
         for (Multiset.Entry<?> entry : multiset.entrySet()) {
-            parts.add(entryString(entry));
+            parts.add(entryString(entry.getElement(), entry.getCount()));
         }
         return parts.toString();
     }
@@ -164,9 +172,10 @@ final class SubjectUtils {
             return valuesAndMaybeTypes.isEmpty();
         }
 
-        Iterable<? extends Multiset.Entry<?>> entrySet() {
-            return valuesAndMaybeTypes.entrySet();
+        Map<?, Integer> entrySet() {
+            return multisetToMap(valuesAndMaybeTypes);
         }
+
 
         @Override
         public String toString() {
