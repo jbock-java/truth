@@ -442,6 +442,7 @@ class IterableSubjectTest extends BaseSubjectTestCase {
                 AssertionError.class,
                 () -> assertThat(asList(1, 2))
                         .containsAtLeast(4, 4, 4));
+        System.out.println(failure.getMessage());
         assertFailureValue(
                 failure,
                 "missing (3)", "4 [3 copies]");
@@ -950,39 +951,6 @@ class IterableSubjectTest extends BaseSubjectTestCase {
         assertFailureValueIndexed(
                 failure,
                 "an instance of", 0, "java.lang.Long");
-    }
-
-    @Test
-    void iterableContainsExactlyWithElementsThatThrowWhenYouCallHashCode() {
-        HashCodeThrower one = new HashCodeThrower();
-        HashCodeThrower two = new HashCodeThrower();
-
-        assertThat(asList(one, two)).containsExactly(two, one);
-        assertThat(asList(one, two)).containsExactly(one, two).inOrder();
-        assertThat(asList(one, two)).containsExactlyElementsIn(asList(two, one));
-        assertThat(asList(one, two)).containsExactlyElementsIn(asList(one, two)).inOrder();
-
-        assertThrows(
-                AssertionError.class,
-                () -> assertThat(asList(one, two))
-                        .containsExactly(one));
-    }
-
-    private static class HashCodeThrower {
-        @Override
-        public boolean equals(Object other) {
-            return this == other;
-        }
-
-        @Override
-        public int hashCode() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String toString() {
-            return "HCT";
-        }
     }
 
     @Test

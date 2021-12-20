@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Equivalence;
-import com.google.common.base.Equivalence.Wrapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
@@ -30,13 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.isEmpty;
-import static com.google.common.collect.Multisets.immutableEntry;
 
 /**
  * Utility methods used in {@code Subject} implementors.
@@ -71,7 +66,7 @@ final class SubjectUtils {
          * will that look OK when we put the result next to a homogeneous type name? If not, maybe move
          * the homogeneous type name to a separate Fact?
          */
-        return countDuplicatesToMultiset(items).toStringWithBrackets();
+        return toStringWithBrackets(countDuplicatesToMultiset(items));
     }
 
     static String entryString(Multiset.Entry<?> entry) {
@@ -80,10 +75,10 @@ final class SubjectUtils {
         return (count > 1) ? item + " [" + count + " copies]" : item;
     }
 
-    private static <T> NonHashingMultiset<T> countDuplicatesToMultiset(Iterable<T> items) {
+    private static <T> Multiset<T> countDuplicatesToMultiset(Iterable<T> items) {
         // We use avoid hashing in case the elements don't have a proper
         // .hashCode() method (e.g., MessageSet from old versions of protobuf).
-        NonHashingMultiset<T> multiset = new NonHashingMultiset<>();
+        Multiset<T> multiset = LinkedHashMultiset.create();
         for (T item : items) {
             multiset.add(item);
         }
@@ -117,7 +112,7 @@ final class SubjectUtils {
             Collection<?> items = iterableToCollection(itemsIterable);
             Optional<String> homogeneousTypeName = getHomogeneousTypeName(items);
 
-            NonHashingMultiset<?> valuesWithCountsAndMaybeTypes =
+            Multiset<?> valuesWithCountsAndMaybeTypes =
                     homogeneousTypeName.isPresent()
                             ? countDuplicatesToMultiset(items)
                             : countDuplicatesToMultiset(addTypeInfoToEveryItem(items));
@@ -129,60 +124,19 @@ final class SubjectUtils {
         }
     }
 
-    private static final class NonHashingMultiset<E> {
-        // This ought to be static, but the generics are easier when I can refer to <E>.
-        private final Function<Multiset.Entry<Wrapper<E>>, Multiset.Entry<?>> unwrapKey =
-                input -> immutableEntry(input.getElement().get(), input.getCount());
-
-        private final Multiset<Equivalence.Wrapper<E>> contents = LinkedHashMultiset.create();
-
-        void add(E element) {
-            contents.add(EQUALITY_WITHOUT_USING_HASH_CODE.wrap(element));
+    static String toStringWithBrackets(Multiset<?> multiset) {
+        List<String> parts = new ArrayList<>();
+        for (Multiset.Entry<?> entry : multiset.entrySet()) {
+            parts.add(entryString(entry));
         }
-
-        boolean remove(E element) {
-            return contents.remove(EQUALITY_WITHOUT_USING_HASH_CODE.wrap(element));
-        }
-
-        int totalCopies() {
-            return contents.size();
-        }
-
-        boolean isEmpty() {
-            return contents.isEmpty();
-        }
-
-        Iterable<Multiset.Entry<?>> entrySet() {
-            return contents.entrySet().stream().map(unwrapKey).collect(Collectors.toList());
-        }
-
-        String toStringWithBrackets() {
-            List<String> parts = new ArrayList<>();
-            for (Multiset.Entry<?> entry : entrySet()) {
-                parts.add(entryString(entry));
-            }
-            return parts.toString();
-        }
-
-        @Override
-        public String toString() {
-            String withBrackets = toStringWithBrackets();
-            return withBrackets.substring(1, withBrackets.length() - 1);
-        }
-
-        private static final Equivalence<Object> EQUALITY_WITHOUT_USING_HASH_CODE =
-                new Equivalence<Object>() {
-                    @Override
-                    protected boolean doEquivalent(Object a, Object b) {
-                        return Objects.equals(a, b);
-                    }
-
-                    @Override
-                    protected int doHash(Object o) {
-                        return 0; // slow but hopefully not much worse than what we get with a flat list
-                    }
-                };
+        return parts.toString();
     }
+
+    static String toStringWithoutBrackets(Multiset<?> multiset) {
+        String string = toStringWithBrackets(multiset);
+        return string.substring(1, string.length() - 1);
+    }
+
 
     /**
      * Missing or unexpected values from a collection assertion, with equal objects grouped together
@@ -194,32 +148,32 @@ final class SubjectUtils {
      * elements and even to output different elements on different lines.
      */
     static final class DuplicateGroupedAndTyped {
-        final NonHashingMultiset<?> valuesAndMaybeTypes;
+        final Multiset<?> valuesAndMaybeTypes;
         final Optional<String> homogeneousTypeToDisplay;
 
         DuplicateGroupedAndTyped(
-                NonHashingMultiset<?> valuesAndMaybeTypes, Optional<String> homogeneousTypeToDisplay) {
+                Multiset<?> valuesAndMaybeTypes, Optional<String> homogeneousTypeToDisplay) {
             this.valuesAndMaybeTypes = valuesAndMaybeTypes;
             this.homogeneousTypeToDisplay = homogeneousTypeToDisplay;
         }
 
         int totalCopies() {
-            return valuesAndMaybeTypes.totalCopies();
+            return valuesAndMaybeTypes.size();
         }
 
         boolean isEmpty() {
             return valuesAndMaybeTypes.isEmpty();
         }
 
-        Iterable<Multiset.Entry<?>> entrySet() {
+        Iterable<? extends Multiset.Entry<?>> entrySet() {
             return valuesAndMaybeTypes.entrySet();
         }
 
         @Override
         public String toString() {
             return homogeneousTypeToDisplay.isPresent()
-                    ? valuesAndMaybeTypes + " (" + homogeneousTypeToDisplay.get() + ")"
-                    : valuesAndMaybeTypes.toString();
+                    ? toStringWithoutBrackets(valuesAndMaybeTypes) + " (" + homogeneousTypeToDisplay.get() + ")"
+                    : toStringWithoutBrackets(valuesAndMaybeTypes);
         }
     }
 

@@ -15,14 +15,14 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Throwables;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Throwables.throwIfUnchecked;
 import static com.google.common.truth.DiffUtils.generateUnifiedDiff;
 import static com.google.common.truth.Fact.fact;
 
@@ -160,7 +160,9 @@ final class Platform {
 
     /** Returns a human readable string representation of the throwable's stack trace. */
     static String getStackTraceAsString(Throwable throwable) {
-        return Throwables.getStackTraceAsString(throwable);
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 
     static AssertionError makeComparisonFailure(
@@ -207,7 +209,12 @@ final class Platform {
         try {
             return constructor.newInstance(messages, facts, expected, actual, cause);
         } catch (InvocationTargetException e) {
-            throwIfUnchecked(e.getCause());
+            if (e.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) e.getCause();
+            }
+            if (e.getCause() instanceof Error) {
+                throw (Error) e.getCause();
+            }
             // That constructor has no `throws` clause.
             throw newLinkageError(e);
         } catch (InstantiationException e) {

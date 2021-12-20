@@ -622,7 +622,7 @@ public class IterableSubject extends Subject {
     }
 
     private static ElementFactGrouping pickGrouping(
-            Iterable<Multiset.Entry<?>> first, Iterable<Multiset.Entry<?>> second) {
+            Iterable<? extends Multiset.Entry<?>> first, Iterable<? extends Multiset.Entry<?>> second) {
         boolean firstHasMultiple = hasMultiple(first);
         boolean secondHasMultiple = hasMultiple(second);
         if ((firstHasMultiple || secondHasMultiple) && anyContainsCommaOrNewline(first, second)) {
@@ -637,7 +637,7 @@ public class IterableSubject extends Subject {
         return ALL_IN_ONE_FACT;
     }
 
-    private static boolean anyContainsCommaOrNewline(Iterable<Multiset.Entry<?>>... lists) {
+    private static boolean anyContainsCommaOrNewline(Iterable<? extends Multiset.Entry<?>>... lists) {
         for (Multiset.Entry<?> entry : concat(lists)) {
             String s = String.valueOf(entry.getElement());
             if (s.contains("\n") || s.contains(",")) {
@@ -647,7 +647,7 @@ public class IterableSubject extends Subject {
         return false;
     }
 
-    private static boolean hasMultiple(Iterable<Multiset.Entry<?>> entries) {
+    private static boolean hasMultiple(Iterable<? extends Multiset.Entry<?>> entries) {
         int totalCount = 0;
         for (Multiset.Entry<?> entry : entries) {
             totalCount += entry.getCount();
@@ -658,7 +658,7 @@ public class IterableSubject extends Subject {
         return false;
     }
 
-    private static boolean containsEmptyOrLong(Iterable<Multiset.Entry<?>> entries) {
+    private static boolean containsEmptyOrLong(Iterable<? extends Multiset.Entry<?>> entries) {
         int totalLength = 0;
         for (Multiset.Entry<?> entry : entries) {
             String s = entryString(entry);
