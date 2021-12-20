@@ -18,7 +18,6 @@ package com.google.common.truth;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Equivalence.Wrapper;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
@@ -33,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.isEmpty;
@@ -340,7 +340,9 @@ final class SubjectUtils {
      * <p>Returns the given iterable if it contains no empty strings.
      */
     static <T> Iterable<T> annotateEmptyStrings(Iterable<T> items) {
-        if (Iterables.contains(items, "")) {
+        boolean containsEmptyString = StreamSupport.stream(items.spliterator(), false)
+                .anyMatch(""::equals);
+        if (containsEmptyString) {
             List<T> annotatedItems = new ArrayList<>();
             for (T item : items) {
                 if (Objects.equals(item, "")) {

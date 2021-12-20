@@ -19,8 +19,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -28,6 +26,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -41,9 +40,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
@@ -52,6 +51,7 @@ import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.ALL_IN_ONE_FACT;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.FACT_PER_ELEMENT;
+import static com.google.common.truth.Preconditions.checkArgument;
 import static com.google.common.truth.SubjectUtils.accumulate;
 import static com.google.common.truth.SubjectUtils.annotateEmptyStrings;
 import static com.google.common.truth.SubjectUtils.countDuplicates;
@@ -64,6 +64,7 @@ import static com.google.common.truth.SubjectUtils.iterableToList;
 import static com.google.common.truth.SubjectUtils.objectToTypeName;
 import static com.google.common.truth.SubjectUtils.retainMatchingToString;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Propositions for {@link Iterable} subjects.
@@ -101,7 +102,8 @@ public class IterableSubject extends Subject {
             String objectToString =
                     actual.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(actual));
             if (actual.toString().equals(objectToString)) {
-                return Iterables.toString(actual);
+                return StreamSupport.stream(actual.spliterator(), false)
+                        .collect(Collectors.toList()).toString();
             }
         }
         return super.actualCustomStringRepresentation();
@@ -133,14 +135,14 @@ public class IterableSubject extends Subject {
 
     /** Fails if the subject is not empty. */
     public final void isEmpty() {
-        if (!Iterables.isEmpty(actual)) {
+        if (actual.iterator().hasNext()) {
             failWithActual(simpleFact("expected to be empty"));
         }
     }
 
     /** Fails if the subject is empty. */
     public final void isNotEmpty() {
-        if (Iterables.isEmpty(actual)) {
+        if (!actual.iterator().hasNext()) {
             failWithoutActual(simpleFact("expected not to be empty"));
         }
     }
@@ -154,7 +156,9 @@ public class IterableSubject extends Subject {
 
     /** Checks (with a side-effect failure) that the subject contains the supplied item. */
     public final void contains(Object element) {
-        if (!Iterables.contains(actual, element)) {
+        boolean containsElement = StreamSupport.stream(actual.spliterator(), false)
+                .anyMatch(obj -> Objects.equals(element, obj));
+        if (!containsElement) {
             List<Object> elementList = newArrayList(element);
             if (hasMatchingToStringPair(actual, elementList)) {
                 failWithoutActual(
@@ -174,7 +178,9 @@ public class IterableSubject extends Subject {
 
     /** Checks (with a side-effect failure) that the subject does not contain the supplied item. */
     public final void doesNotContain(Object element) {
-        if (Iterables.contains(actual, element)) {
+        boolean containsElement = StreamSupport.stream(actual.spliterator(), false)
+                .anyMatch(obj -> Objects.equals(element, obj));
+        if (containsElement) {
             failWithActual("expected not to contain", element);
         }
     }
@@ -450,7 +456,7 @@ public class IterableSubject extends Subject {
                 // Missing elements; elements that are not missing will be removed as we iterate.
                 Collection<Object> missing = newArrayList();
                 missing.add(requiredElement);
-                Iterators.addAll(missing, requiredIter);
+                requiredIter.forEachRemaining(missing::add);
 
                 // Extra elements that the subject had but shouldn't have.
                 Collection<Object> extra = newArrayList();
@@ -763,7 +769,7 @@ public class IterableSubject extends Subject {
      */
     @SuppressWarnings({"unchecked"})
     public final void isInStrictOrder(final Comparator<?> comparator) {
-        checkNotNull(comparator);
+        requireNonNull(comparator);
         pairwiseCheck(
                 "expected to be in strict order",
                 new PairwiseChecker() {
@@ -795,7 +801,7 @@ public class IterableSubject extends Subject {
      */
     @SuppressWarnings({"unchecked"})
     public final void isInOrder(final Comparator<?> comparator) {
-        checkNotNull(comparator);
+        requireNonNull(comparator);
         pairwiseCheck(
                 "expected to be in order",
                 new PairwiseChecker() {
@@ -841,7 +847,9 @@ public class IterableSubject extends Subject {
     @Override
     @Deprecated
     public void isNotIn(Iterable<?> iterable) {
-        if (Iterables.contains(iterable, actual)) {
+        boolean containsElement = StreamSupport.stream(iterable.spliterator(), false)
+                .anyMatch(obj -> Objects.equals(actual, obj));
+        if (containsElement) {
             failWithActual("expected not to be any of", iterable);
         }
         List<Object> nonIterables = new ArrayList<>();
@@ -937,8 +945,8 @@ public class IterableSubject extends Subject {
 
         UsingCorrespondence(
                 IterableSubject subject, Correspondence<? super A, ? super E> correspondence) {
-            this.subject = checkNotNull(subject);
-            this.correspondence = checkNotNull(correspondence);
+            this.subject = requireNonNull(subject);
+            this.correspondence = requireNonNull(correspondence);
             this.pairer = Optional.empty();
         }
 
@@ -946,8 +954,8 @@ public class IterableSubject extends Subject {
                 IterableSubject subject,
                 Correspondence<? super A, ? super E> correspondence,
                 Pairer pairer) {
-            this.subject = checkNotNull(subject);
-            this.correspondence = checkNotNull(correspondence);
+            this.subject = requireNonNull(subject);
+            this.correspondence = requireNonNull(correspondence);
             this.pairer = Optional.of(pairer);
         }
 
