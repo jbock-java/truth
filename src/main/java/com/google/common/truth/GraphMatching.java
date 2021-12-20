@@ -91,7 +91,7 @@ final class GraphMatching {
                 // and a guide which locates all the augmenting paths of that length.
                 Map<U, Integer> layers = new HashMap<>();
                 Optional<Integer> freeRhsVertexLayer = breadthFirstSearch(matching, layers);
-                if (!freeRhsVertexLayer.isPresent()) {
+                if (freeRhsVertexLayer.isEmpty()) {
                     // The BFS failed, i.e. we found no augmenting paths. So we're done.
                     break;
                 }
@@ -157,7 +157,7 @@ final class GraphMatching {
                         // We found a free RHS vertex. Record the layer at which we found it. Since the RHS
                         // vertex is free, there is no matched edge to follow. (Note that the edge from the LHS
                         // to the RHS must be unmatched, because a matched edge cannot lead to a free vertex.)
-                        if (!freeRhsVertexLayer.isPresent()) {
+                        if (freeRhsVertexLayer.isEmpty()) {
                             freeRhsVertexLayer = Optional.of(layer);
                         }
                     } else {

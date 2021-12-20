@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
 import java.lang.reflect.Array;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -134,7 +134,7 @@ public class Subject {
      * objects are equal if any of the following is true:
      *
      * <ul>
-     *   <li>they are equal according to {@link Objects#equal}
+     *   <li>they are equal according to {@link Objects#equals}
      *   <li>they are arrays and are considered equal by the appropriate {@link Arrays#equals}
      *       overload
      *   <li>they are boxed integer types ({@code Byte}, {@code Short}, {@code Character}, {@code
@@ -599,7 +599,7 @@ public class Subject {
         } else if (actual instanceof Float && expected instanceof Float) {
             return Float.floatToIntBits((Float) actual) == Float.floatToIntBits((Float) expected);
         } else {
-            return Objects.equal(actual, expected);
+            return Objects.equals(actual, expected);
         }
     }
 

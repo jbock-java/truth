@@ -17,20 +17,20 @@ package com.google.common.truth;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Equivalence.Wrapper;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -125,7 +125,7 @@ final class SubjectUtils {
         } else {
             return new DuplicateGroupedAndTyped(
                     countDuplicatesToMultiset(itemsIterable),
-                    /* homogeneousTypeToDisplay= */ Optional.<String>absent());
+                    /* homogeneousTypeToDisplay= */ Optional.empty());
         }
     }
 
@@ -174,7 +174,7 @@ final class SubjectUtils {
                 new Equivalence<Object>() {
                     @Override
                     protected boolean doEquivalent(Object a, Object b) {
-                        return Objects.equal(a, b);
+                        return Objects.equals(a, b);
                     }
 
                     @Override
@@ -236,10 +236,10 @@ final class SubjectUtils {
             stringValueToItemsToCheck.put(String.valueOf(itemToCheck), itemToCheck);
         }
 
-        List<Object> result = Lists.newArrayList();
+        List<Object> result = new ArrayList<>();
         for (Object item : items) {
             for (Object itemToCheck : stringValueToItemsToCheck.get(String.valueOf(item))) {
-                if (!Objects.equal(itemToCheck, item)) {
+                if (!Objects.equals(itemToCheck, item)) {
                     result.add(item);
                     break;
                 }
@@ -279,11 +279,11 @@ final class SubjectUtils {
     }
 
     /**
-     * Returns the name of the single type of all given items or {@link Optional#absent()} if no such
+     * Returns the name of the single type of all given items or {@link Optional#empty()} if no such
      * type exists.
      */
     private static Optional<String> getHomogeneousTypeName(Iterable<?> items) {
-        Optional<String> homogeneousTypeName = Optional.absent();
+        Optional<String> homogeneousTypeName = Optional.empty();
         for (Object item : items) {
             if (item == null) {
                 /*
@@ -291,20 +291,20 @@ final class SubjectUtils {
                  * likely, we could have exactly one null, which is still homogeneous. Arguably it's weird
                  * to call a single element "homogeneous" at all, but that's not specific to null.
                  */
-                return Optional.absent();
+                return Optional.empty();
             } else if (!homogeneousTypeName.isPresent()) {
                 // This is the first item
                 homogeneousTypeName = Optional.of(objectToTypeName(item));
             } else if (!objectToTypeName(item).equals(homogeneousTypeName.get())) {
                 // items is a heterogeneous collection
-                return Optional.absent();
+                return Optional.empty();
             }
         }
         return homogeneousTypeName;
     }
 
     private static List<String> addTypeInfoToEveryItem(Iterable<?> items) {
-        List<String> itemsWithTypeInfo = Lists.newArrayList();
+        List<String> itemsWithTypeInfo = new ArrayList<>();
         for (Object item : items) {
             itemsWithTypeInfo.add(lenientFormat("%s (%s)", item, objectToTypeName(item)));
         }
@@ -317,7 +317,9 @@ final class SubjectUtils {
             // iterable, right? I sure hope so.
             return (Collection<T>) iterable;
         } else {
-            return Lists.newArrayList(iterable);
+            ArrayList<T> result = new ArrayList<>();
+            iterable.forEach(result::add);
+            return result;
         }
     }
 
@@ -325,7 +327,9 @@ final class SubjectUtils {
         if (iterable instanceof List) {
             return (List<T>) iterable;
         } else {
-            return Lists.newArrayList(iterable);
+            ArrayList<T> result = new ArrayList<>();
+            iterable.forEach(result::add);
+            return result;
         }
     }
 
@@ -337,9 +341,9 @@ final class SubjectUtils {
      */
     static <T> Iterable<T> annotateEmptyStrings(Iterable<T> items) {
         if (Iterables.contains(items, "")) {
-            List<T> annotatedItems = Lists.newArrayList();
+            List<T> annotatedItems = new ArrayList<>();
             for (T item : items) {
-                if (Objects.equal(item, "")) {
+                if (Objects.equals(item, "")) {
                     // This is a safe cast because know that at least one instance of T (this item) is a
                     // String.
                     @SuppressWarnings("unchecked")
