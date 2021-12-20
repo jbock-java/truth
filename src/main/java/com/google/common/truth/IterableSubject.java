@@ -19,10 +19,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
@@ -43,8 +41,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.base.Strings.lenientFormat;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Fact.fact;
@@ -65,6 +61,7 @@ import static com.google.common.truth.SubjectUtils.objectToTypeName;
 import static com.google.common.truth.SubjectUtils.retainMatchingToString;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Propositions for {@link Iterable} subjects.
@@ -121,8 +118,7 @@ public class IterableSubject extends Subject {
 
         if (actual instanceof List && expected instanceof List) {
             containsExactlyElementsIn((List<?>) expected).inOrder();
-        } else if ((actual instanceof Set && expected instanceof Set)
-                || (actual instanceof Multiset && expected instanceof Multiset)) {
+        } else if ((actual instanceof Set && expected instanceof Set)) {
             containsExactlyElementsIn((Collection<?>) expected);
         } else {
             /*
@@ -187,16 +183,19 @@ public class IterableSubject extends Subject {
 
     /** Checks that the subject does not contain duplicate elements. */
     public final void containsNoDuplicates() {
-        List<Multiset.Entry<?>> duplicates = newArrayList();
-        for (Multiset.Entry<?> entry : LinkedHashMultiset.create(actual).entrySet()) {
-            if (entry.getCount() > 1) {
-                duplicates.add(entry);
-            }
+        Map<Object, Integer> multiset = new LinkedHashMap<>();
+        for (Object entry : actual) {
+            Integer count = multiset.getOrDefault(entry, 0);
+            multiset.put(entry, count + 1);
         }
+        Map<Object, Integer> duplicates = multiset.entrySet().stream().filter(e -> e.getValue() >= 2)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (!duplicates.isEmpty()) {
             failWithoutActual(
                     simpleFact("expected not to contain duplicates"),
-                    fact("but contained", duplicates),
+                    fact("but contained", duplicates.entrySet().stream()
+                            .map(e -> e.getKey() + " x " + e.getValue())
+                            .collect(joining(",", "[", "]"))),
                     fullContents());
         }
     }
@@ -600,7 +599,7 @@ public class IterableSubject extends Subject {
          * any), so we don't want to include it here. (And it's better to have it in the value, rather
          * than in the key, so that it doesn't push the horizontally aligned values over too far.)
          */
-        return lenientFormat("%s (%s)", label, elements.totalCopies());
+        return String.format("%s (%d)", label, elements.totalCopies());
     }
 
     private static String keyToServeAsHeader(String label, DuplicateGroupedAndTyped elements) {
@@ -618,7 +617,7 @@ public class IterableSubject extends Subject {
     }
 
     private static String numberString(int n, int count) {
-        return count == 1 ? lenientFormat("#%s", n) : lenientFormat("#%s [%s copies]", n, count);
+        return count == 1 ? String.format("#%d", n) : String.format("#%s [%d copies]", n, count);
     }
 
     private static ElementFactGrouping pickGrouping(
@@ -863,7 +862,7 @@ public class IterableSubject extends Subject {
         if (!nonIterables.isEmpty()) {
             failWithoutActual(
                     simpleFact(
-                            lenientFormat(
+                            String.format(
                                     "The actual value is an Iterable, and you've written a test that compares it to "
                                             + "some objects that are not Iterables. Did you instead mean to check "
                                             + "whether its *contents* match any of the *contents* of the given values? "
@@ -1384,10 +1383,10 @@ public class IterableSubject extends Subject {
             }
             if (hasDiffs) {
                 List<Fact> extraFacts = new ArrayList<>();
-                extraFacts.add(simpleFact(lenientFormat("%s (%s)", label, extras.size())));
+                extraFacts.add(simpleFact(String.format("%s (%d)", label, extras.size())));
                 for (int i = 0; i < extras.size(); i++) {
                     A extra = extras.get(i);
-                    extraFacts.add(fact(lenientFormat("#%s", i + 1), extra));
+                    extraFacts.add(fact(String.format("#%d", i + 1), extra));
                     if (diffs.get(i) != null) {
                         extraFacts.add(fact("diff", diffs.get(i)));
                     }
@@ -1395,7 +1394,7 @@ public class IterableSubject extends Subject {
                 return extraFacts;
             } else {
                 return List.of(
-                        fact(lenientFormat("%s (%s)", label, extras.size()), countDuplicates(extras)));
+                        fact(String.format("%s (%d)", label, extras.size()), countDuplicates(extras)));
             }
         }
 

@@ -27,7 +27,6 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
@@ -403,7 +402,7 @@ public class MapSubject extends Subject {
 
     private static String maybeAddType(Object object, boolean includeTypes) {
         return includeTypes
-                ? lenientFormat("%s (%s)", object, objectToTypeName(object))
+                ? String.format("%s (%s)", object, objectToTypeName(object))
                 : String.valueOf(object);
     }
 

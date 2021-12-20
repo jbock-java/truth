@@ -17,6 +17,7 @@ package com.google.common.truth;
 
 import com.google.common.collect.Iterables;
 import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,6 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CharMatcher.whitespace;
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Platform.doubleToString;
@@ -995,7 +995,7 @@ public class Subject {
     @Deprecated
     final void failWithBadResults(String verb, Object expected, String failVerb, Object actual) {
         String message =
-                lenientFormat(
+                String.format(
                         "Not true that <%s> %s <%s>. It %s <%s>",
                         actualCustomStringRepresentation(),
                         verb,
@@ -1019,7 +1019,7 @@ public class Subject {
     @Deprecated
     final void failWithCustomSubject(String verb, Object expected, Object actual) {
         String message =
-                lenientFormat(
+                String.format(
                         "Not true that <%s> %s <%s>",
                         (actual == null) ? "null reference" : actual, verb, expected);
         failWithoutActual(simpleFact(message));
@@ -1034,7 +1034,7 @@ public class Subject {
     @Deprecated
     final void failWithoutSubject(String check) {
         String strSubject = this.customName == null ? "the subject" : "\"" + customName + "\"";
-        failWithoutActual(simpleFact(lenientFormat("Not true that %s %s", strSubject, check)));
+        failWithoutActual(simpleFact(String.format("Not true that %s %s", strSubject, check)));
     }
 
     /**

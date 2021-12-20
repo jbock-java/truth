@@ -18,7 +18,6 @@ package com.google.common.truth;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Preconditions.checkArgument;
 
 final class LazyMessage {
@@ -37,7 +36,7 @@ final class LazyMessage {
 
     @Override
     public String toString() {
-        return lenientFormat(format, args);
+        return String.format(format, args);
     }
 
     static int countPlaceholders(String template) {
