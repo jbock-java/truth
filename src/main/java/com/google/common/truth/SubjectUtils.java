@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.collect.Iterables.isEmpty;
 
 /**
@@ -98,7 +97,7 @@ final class SubjectUtils {
         Optional<String> homogeneousTypeName = getHomogeneousTypeName(items);
 
         return homogeneousTypeName.isPresent()
-                ? lenientFormat("%s (%s)", countDuplicates(items), homogeneousTypeName.get())
+                ? String.format("%s (%s)", countDuplicates(items), homogeneousTypeName.get())
                 : countDuplicates(addTypeInfoToEveryItem(items));
     }
 
@@ -226,7 +225,7 @@ final class SubjectUtils {
             String valueTypeName =
                     entry.getValue() == entry ? "Map.Entry" : objectToTypeName(entry.getValue());
 
-            return lenientFormat("Map.Entry<%s, %s>", objectToTypeName(entry.getKey()), valueTypeName);
+            return String.format("Map.Entry<%s, %s>", objectToTypeName(entry.getKey()), valueTypeName);
         } else {
             return item.getClass().getName();
         }
@@ -260,7 +259,7 @@ final class SubjectUtils {
     private static List<String> addTypeInfoToEveryItem(Iterable<?> items) {
         List<String> itemsWithTypeInfo = new ArrayList<>();
         for (Object item : items) {
-            itemsWithTypeInfo.add(lenientFormat("%s (%s)", item, objectToTypeName(item)));
+            itemsWithTypeInfo.add(String.format("%s (%s)", item, objectToTypeName(item)));
         }
         return itemsWithTypeInfo;
     }
