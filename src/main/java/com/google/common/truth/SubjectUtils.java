@@ -15,18 +15,17 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Iterables.isEmpty;
@@ -185,14 +184,20 @@ final class SubjectUtils {
      * <p>Example: {@code retainMatchingToString([1L, 2L, 2L], [2, 3]) == [2L, 2L]}
      */
     static List<Object> retainMatchingToString(Iterable<?> items, Iterable<?> itemsToCheck) {
-        SetMultimap<String, Object> stringValueToItemsToCheck = HashMultimap.create();
+        Map<String, Set<Object>> stringValueToItemsToCheck = new LinkedHashMap<>();
         for (Object itemToCheck : itemsToCheck) {
-            stringValueToItemsToCheck.put(String.valueOf(itemToCheck), itemToCheck);
+            stringValueToItemsToCheck.compute(String.valueOf(itemToCheck), (k, v) -> {
+                if (v == null) {
+                    v = new LinkedHashSet<>();
+                }
+                v.add(itemToCheck);
+                return v;
+            });
         }
 
         List<Object> result = new ArrayList<>();
         for (Object item : items) {
-            for (Object itemToCheck : stringValueToItemsToCheck.get(String.valueOf(item))) {
+            for (Object itemToCheck : stringValueToItemsToCheck.getOrDefault(String.valueOf(item), Set.of())) {
                 if (!Objects.equals(itemToCheck, item)) {
                     result.add(item);
                     break;
