@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Iterables.isEmpty;
@@ -66,7 +67,7 @@ final class SubjectUtils {
          * will that look OK when we put the result next to a homogeneous type name? If not, maybe move
          * the homogeneous type name to a separate Fact?
          */
-        return toStringWithBrackets(countDuplicatesToMultiset(items));
+        return toStringWithBrackets(multisetToMap(countDuplicatesToMultiset(items)));
     }
 
     static String entryString(Object element, int count) {
@@ -131,15 +132,15 @@ final class SubjectUtils {
         }
     }
 
-    static String toStringWithBrackets(Multiset<?> multiset) {
+    static String toStringWithBrackets(Map<?, Integer> multiset) {
         List<String> parts = new ArrayList<>();
-        for (Multiset.Entry<?> entry : multiset.entrySet()) {
-            parts.add(entryString(entry.getElement(), entry.getCount()));
+        for (Map.Entry<?, Integer> entry : multiset.entrySet()) {
+            parts.add(entryString(entry.getKey(), entry.getValue()));
         }
         return parts.toString();
     }
 
-    static String toStringWithoutBrackets(Multiset<?> multiset) {
+    static String toStringWithoutBrackets(Map<?, Integer> multiset) {
         String string = toStringWithBrackets(multiset);
         return string.substring(1, string.length() - 1);
     }
@@ -155,17 +156,18 @@ final class SubjectUtils {
      * elements and even to output different elements on different lines.
      */
     static final class DuplicateGroupedAndTyped {
-        final Multiset<?> valuesAndMaybeTypes;
+        final Map<?, Integer> valuesAndMaybeTypes;
         final Optional<String> homogeneousTypeToDisplay;
 
         DuplicateGroupedAndTyped(
                 Multiset<?> valuesAndMaybeTypes, Optional<String> homogeneousTypeToDisplay) {
-            this.valuesAndMaybeTypes = valuesAndMaybeTypes;
+            this.valuesAndMaybeTypes = multisetToMap(valuesAndMaybeTypes);
             this.homogeneousTypeToDisplay = homogeneousTypeToDisplay;
         }
 
         int totalCopies() {
-            return valuesAndMaybeTypes.size();
+            return valuesAndMaybeTypes.values().stream()
+                    .mapToInt(i -> i).sum();
         }
 
         boolean isEmpty() {
@@ -173,7 +175,7 @@ final class SubjectUtils {
         }
 
         Map<?, Integer> entrySet() {
-            return multisetToMap(valuesAndMaybeTypes);
+            return valuesAndMaybeTypes;
         }
 
 
