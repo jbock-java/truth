@@ -16,8 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
@@ -31,7 +29,6 @@ import java.util.Random;
 import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for {@link GraphMatching}.
@@ -110,17 +107,6 @@ public final class GraphMatchingTest {
         }
     }
 
-    @Test
-    void maximumCardinalityBipartiteMatching_failsWithNullLhs() {
-        ListMultimap<String, String> edges = LinkedListMultimap.create();
-        edges.put(null, "R1");
-        try {
-            Map<String, String> unused = maximumCardinalityBipartiteMatching(edges);
-            fail("Should have thrown.");
-        } catch (NullPointerException expected) {
-        }
-    }
-
     /** Representation of a bipartite graph to be used for testing. */
     private static class TestInstance {
 
@@ -177,7 +163,7 @@ public final class GraphMatchingTest {
          * bipartite matching found by a brute-force approach.
          */
         void testAgainstBruteForce() {
-            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(IterableSubject.multimapToMap(edges));
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
                         edges.containsEntry(entry.getKey(), entry.getValue()),
@@ -197,7 +183,7 @@ public final class GraphMatchingTest {
          * actually a matching of this bipartite graph and that it has the expected size.
          */
         void testAgainstKnownSize(int expectedSize) {
-            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(IterableSubject.multimapToMap(edges));
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
                         edges.containsEntry(entry.getKey(), entry.getValue()),

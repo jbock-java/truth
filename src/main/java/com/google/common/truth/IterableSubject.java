@@ -1439,7 +1439,7 @@ public class IterableSubject extends Subject {
              *
              * So we'll apply a standard algorithm for doing maximum cardinality bipartite matching.
              */
-            return GraphMatching.maximumCardinalityBipartiteMatching(edges);
+            return GraphMatching.maximumCardinalityBipartiteMatching(multimapToMap(edges));
         }
 
         /**
@@ -2033,5 +2033,15 @@ public class IterableSubject extends Subject {
              */
             private final List<A> unpairedActualValues = newArrayList();
         }
+    }
+
+    static <U, V> Map<U, Set<V>> multimapToMap(Multimap<U, V> multimap) {
+        LinkedHashMap<U, Set<V>> result = new LinkedHashMap<>();
+        multimap.forEach((u, v) -> result.compute(u, (u2, v2) -> {
+            Set<V> set2 = v2 == null ? new LinkedHashSet<>() : v2;
+            set2.add(v);
+            return set2;
+        }));
+        return result;
     }
 }

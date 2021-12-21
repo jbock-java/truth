@@ -15,12 +15,9 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Multimap;
-
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,7 +49,7 @@ final class GraphMatching {
      * <p>If there are multiple matchings which share the maximum cardinality, an arbitrary one is
      * returned.
      */
-    static <U, V> Map<U, V> maximumCardinalityBipartiteMatching(Multimap<U, V> graph) {
+    static <U, V> Map<U, V> maximumCardinalityBipartiteMatching(Map<U, Set<V>> graph) {
         return HopcroftKarp.overBipartiteGraph(graph).perform();
     }
 
@@ -76,12 +73,12 @@ final class GraphMatching {
          * Factory method which returns an instance ready to perform the algorithm over the bipartite
          * graph described by the given multimap.
          */
-        static <U, V> HopcroftKarp<U, V> overBipartiteGraph(Multimap<U, V> graph) {
+        static <U, V> HopcroftKarp<U, V> overBipartiteGraph(Map<U, Set<V>> graph) {
             return new HopcroftKarp<>(graph);
         }
 
-        private HopcroftKarp(Multimap<U, V> graph) {
-            this.graph = multimapToMap(graph);
+        private HopcroftKarp(Map<U, Set<V>> graph) {
+            this.graph = graph;
         }
 
         /** Performs the algorithm, and returns a bimap describing the matching found. */
@@ -266,15 +263,5 @@ final class GraphMatching {
             }
             return false;
         }
-    }
-
-    private static <U, V> Map<U, Set<V>> multimapToMap(Multimap<U, V> multimap) {
-        LinkedHashMap<U, Set<V>> result = new LinkedHashMap<>();
-        multimap.forEach((u, v) -> result.compute(u, (u2, v2) -> {
-            Set<V> set2 = v2 == null ? new LinkedHashSet<>() : v2;
-            set2.add(v);
-            return set2;
-        }));
-        return result;
     }
 }
