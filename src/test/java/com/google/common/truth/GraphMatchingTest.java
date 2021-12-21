@@ -19,12 +19,14 @@ import com.google.common.collect.ImmutableListMultimap;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -112,7 +114,7 @@ public final class GraphMatchingTest {
 
         /** Generates a test instance with an empty bipartite graph. */
         static TestInstance empty() {
-            return new TestInstance(ImmutableListMultimap.<String, String>of());
+            return new TestInstance(ImmutableListMultimap.of());
         }
 
         /**
@@ -149,11 +151,11 @@ public final class GraphMatchingTest {
             return new TestInstance(edges.build());
         }
 
-        private final ImmutableListMultimap<String, String> edges;
+        private final Map<String, Set<String>> edges;
         private final List<String> lhsVertices;
 
         private TestInstance(ImmutableListMultimap<String, String> edges) {
-            this.edges = edges;
+            this.edges = IterableSubject.multimapToMap(edges);
             this.lhsVertices = edges.keySet().asList();
         }
 
@@ -163,10 +165,10 @@ public final class GraphMatchingTest {
          * bipartite matching found by a brute-force approach.
          */
         void testAgainstBruteForce() {
-            Map<String, String> actual = maximumCardinalityBipartiteMatching(IterableSubject.multimapToMap(edges));
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
-                        edges.containsEntry(entry.getKey(), entry.getValue()),
+                        edges.getOrDefault(entry.getKey(), Set.of()).contains(entry.getValue()),
                         "The returned bimap <%s> was not a matching of the bipartite graph <%s>");
             }
             Map<String, String> expected = bruteForceMaximalMatching();
@@ -183,10 +185,10 @@ public final class GraphMatchingTest {
          * actually a matching of this bipartite graph and that it has the expected size.
          */
         void testAgainstKnownSize(int expectedSize) {
-            Map<String, String> actual = maximumCardinalityBipartiteMatching(IterableSubject.multimapToMap(edges));
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
-                        edges.containsEntry(entry.getKey(), entry.getValue()),
+                        edges.getOrDefault(entry.getKey(), Set.of()).contains(entry.getValue()),
                         "The returned bimap <%s> was not a matching of the bipartite graph <%s>");
             }
             assertWithMessage(
@@ -362,7 +364,7 @@ public final class GraphMatchingTest {
                     ++rhsIndexForLhs;
                     while (lhsIndex < lhsVertices.size()) {
                         if (!selectedEdges.containsKey(lhsVertex())) {
-                            while (rhsIndexForLhs < edges.get(lhsVertex()).size()) {
+                            while (rhsIndexForLhs < edges.getOrDefault(lhsVertex(), Set.of()).size()) {
                                 if (!selectedEdges.containsValue(rhsVertex())) {
                                     return;
                                 }
@@ -380,7 +382,7 @@ public final class GraphMatchingTest {
                 }
 
                 private String rhsVertex() {
-                    return edges.get(lhsVertex()).get(rhsIndexForLhs);
+                    return new ArrayList<>(edges.getOrDefault(lhsVertex(), Set.of())).get(rhsIndexForLhs);
                 }
             }
         }
