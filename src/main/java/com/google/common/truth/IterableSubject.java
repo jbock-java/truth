@@ -1186,7 +1186,7 @@ public class IterableSubject extends Subject {
             ImmutableSetMultimap<Integer, Integer> candidateMapping =
                     findCandidateMapping(actualList, expectedList, exceptions);
             if (failIfCandidateMappingHasMissingOrExtra(
-                    actualList, expectedList, candidateMapping, exceptions)) {
+                    actualList, expectedList, multimapToMap(candidateMapping), exceptions)) {
                 return ALREADY_FAILED;
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
@@ -1290,10 +1290,11 @@ public class IterableSubject extends Subject {
         private boolean failIfCandidateMappingHasMissingOrExtra(
                 List<? extends A> actual,
                 List<? extends E> expected,
-                ImmutableSetMultimap<Integer, Integer> mapping,
+                Map<Integer, Set<Integer>> mapping,
                 Correspondence.ExceptionStore exceptions) {
             List<? extends A> extra = findNotIndexed(actual, mapping.keySet());
-            List<? extends E> missing = findNotIndexed(expected, mapping.inverse().keySet());
+            List<? extends E> missing = findNotIndexed(expected,
+                    mapping.values().stream().flatMap(Set::stream).collect(Collectors.toSet()));
             if (!missing.isEmpty() || !extra.isEmpty()) {
                 List<Fact> facts = new ArrayList<>();
                 facts.addAll(describeMissingOrExtra(missing, extra, exceptions));
