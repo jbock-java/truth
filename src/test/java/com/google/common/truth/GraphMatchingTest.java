@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -114,7 +115,7 @@ public final class GraphMatchingTest {
 
         /** Generates a test instance with an empty bipartite graph. */
         static TestInstance empty() {
-            return new TestInstance(ImmutableListMultimap.of());
+            return new TestInstance(Map.of());
         }
 
         /**
@@ -123,13 +124,15 @@ public final class GraphMatchingTest {
          * in the other (the RHS).
          */
         static TestInstance fullyConnected(int lhsSize, int rhsSize) {
-            ImmutableListMultimap.Builder<String, String> edges = ImmutableListMultimap.builder();
+            Map<String, Set<String>> edges = new LinkedHashMap<>();
             for (int lhs = 0; lhs < lhsSize; lhs++) {
+                LinkedHashSet<String> v = new LinkedHashSet<>();
                 for (int rhs = 0; rhs < rhsSize; rhs++) {
-                    edges.put("L" + lhs, "R" + rhs);
+                    v.add("R" + rhs);
                 }
+                edges.put("L" + lhs, v);
             }
-            return new TestInstance(edges.build());
+            return new TestInstance(edges);
         }
 
         /**
@@ -140,23 +143,27 @@ public final class GraphMatchingTest {
          * set or not.
          */
         static TestInstance fromBits(int lhsSize, int rhsSize, BitSet bits) {
-            ImmutableListMultimap.Builder<String, String> edges = ImmutableListMultimap.builder();
+            Map<String, Set<String>> edges = new LinkedHashMap<>();
             for (int lhs = 0; lhs < lhsSize; lhs++) {
+                Set<String> v = new LinkedHashSet<>();
                 for (int rhs = 0; rhs < rhsSize; rhs++) {
                     if (bits.get(lhs * rhsSize + rhs)) {
-                        edges.put("L" + lhs, "R" + rhs);
+                        v.add("R" + rhs);
                     }
                 }
+                if (!v.isEmpty()) {
+                    edges.put("L" + lhs, v);
+                }
             }
-            return new TestInstance(edges.build());
+            return new TestInstance(edges);
         }
 
         private final Map<String, Set<String>> edges;
         private final List<String> lhsVertices;
 
-        private TestInstance(ImmutableListMultimap<String, String> edges) {
-            this.edges = IterableSubject.multimapToMap(edges);
-            this.lhsVertices = edges.keySet().asList();
+        private TestInstance(Map<String, Set<String>> edges) {
+            this.edges = edges;
+            this.lhsVertices = new ArrayList<>(edges.keySet());
         }
 
         /**
