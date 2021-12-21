@@ -21,13 +21,14 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.GraphMatching.maximumCardinalityBipartiteMatching;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -115,17 +116,6 @@ public final class GraphMatchingTest {
     void maximumCardinalityBipartiteMatching_failsWithNullLhs() {
         ListMultimap<String, String> edges = LinkedListMultimap.create();
         edges.put(null, "R1");
-        try {
-            Map<String, String> unused = maximumCardinalityBipartiteMatching(edges);
-            fail("Should have thrown.");
-        } catch (NullPointerException expected) {
-        }
-    }
-
-    @Test
-    void maximumCardinalityBipartiteMatching_failsWithNullRhs() {
-        ListMultimap<String, String> edges = LinkedListMultimap.create();
-        edges.put("L1", null);
         try {
             Map<String, String> unused = maximumCardinalityBipartiteMatching(edges);
             fail("Should have thrown.");
