@@ -16,8 +16,6 @@
 package com.google.common.truth;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
 
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Iterables.isEmpty;
@@ -67,7 +64,7 @@ final class SubjectUtils {
          * will that look OK when we put the result next to a homogeneous type name? If not, maybe move
          * the homogeneous type name to a separate Fact?
          */
-        return toStringWithBrackets(multisetToMap(countDuplicatesToMultiset(items)));
+        return toStringWithBrackets(countDuplicatesToMultiset(items));
     }
 
     static String entryString(Object element, int count) {
@@ -75,12 +72,13 @@ final class SubjectUtils {
         return (count > 1) ? item + " [" + count + " copies]" : item;
     }
 
-    private static <T> Multiset<T> countDuplicatesToMultiset(Iterable<T> items) {
+    private static <T> Map<T, Integer> countDuplicatesToMultiset(Iterable<T> items) {
         // We use avoid hashing in case the elements don't have a proper
         // .hashCode() method (e.g., MessageSet from old versions of protobuf).
-        Multiset<T> multiset = LinkedHashMultiset.create();
+        Map<T, Integer> multiset = new LinkedHashMap<>();
         for (T item : items) {
-            multiset.add(item);
+            Integer count = multiset.getOrDefault(item, 0);
+            multiset.put(item, count + 1);
         }
         return multiset;
     }
@@ -102,14 +100,6 @@ final class SubjectUtils {
                 : countDuplicates(addTypeInfoToEveryItem(items));
     }
 
-    private static Map<?, Integer> multisetToMap(Multiset<?> multiset) {
-        LinkedHashMap<Object, Integer> result = new LinkedHashMap<>();
-        for (Multiset.Entry<?> entry : multiset.entrySet()) {
-            result.put(entry.getElement(), entry.getCount());
-        }
-        return result;
-    }
-
     /**
      * Similar to {@link #countDuplicatesAndAddTypeInfo} and {@link #countDuplicates} but (a) only
      * adds type info if requested and (b) returns a richer object containing the data.
@@ -120,7 +110,7 @@ final class SubjectUtils {
             Collection<?> items = iterableToCollection(itemsIterable);
             Optional<String> homogeneousTypeName = getHomogeneousTypeName(items);
 
-            Multiset<?> valuesWithCountsAndMaybeTypes =
+            Map<?, Integer> valuesWithCountsAndMaybeTypes =
                     homogeneousTypeName.isPresent()
                             ? countDuplicatesToMultiset(items)
                             : countDuplicatesToMultiset(addTypeInfoToEveryItem(items));
@@ -160,8 +150,8 @@ final class SubjectUtils {
         final Optional<String> homogeneousTypeToDisplay;
 
         DuplicateGroupedAndTyped(
-                Multiset<?> valuesAndMaybeTypes, Optional<String> homogeneousTypeToDisplay) {
-            this.valuesAndMaybeTypes = multisetToMap(valuesAndMaybeTypes);
+                Map<?, Integer> valuesAndMaybeTypes, Optional<String> homogeneousTypeToDisplay) {
+            this.valuesAndMaybeTypes = valuesAndMaybeTypes;
             this.homogeneousTypeToDisplay = homogeneousTypeToDisplay;
         }
 
