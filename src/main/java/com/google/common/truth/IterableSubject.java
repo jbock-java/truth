@@ -1192,7 +1192,7 @@ public class IterableSubject extends Subject {
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
             Map<Integer, Integer> maximalOneToOneMapping =
-                    findMaximalOneToOneMapping(candidateMapping);
+                    findMaximalOneToOneMapping(multimapToMap(candidateMapping));
             if (failIfOneToOneMappingHasMissingOrExtra(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
                 return ALREADY_FAILED;
@@ -1425,7 +1425,7 @@ public class IterableSubject extends Subject {
          * arbitrary one.
          */
         private Map<Integer, Integer> findMaximalOneToOneMapping(
-                Multimap<Integer, Integer> edges) {
+                Map<Integer, Set<Integer>> edges) {
             /*
              * Finding this 1:1 mapping is analogous to finding a maximum cardinality bipartite matching
              * (https://en.wikipedia.org/wiki/Matching_(graph_theory)#In_unweighted_bipartite_graphs).
@@ -1440,7 +1440,7 @@ public class IterableSubject extends Subject {
              *
              * So we'll apply a standard algorithm for doing maximum cardinality bipartite matching.
              */
-            return GraphMatching.maximumCardinalityBipartiteMatching(multimapToMap(edges));
+            return GraphMatching.maximumCardinalityBipartiteMatching(edges);
         }
 
         /**
@@ -1517,13 +1517,13 @@ public class IterableSubject extends Subject {
             ImmutableSetMultimap<Integer, Integer> candidateMapping =
                     findCandidateMapping(actualList, expectedList, exceptions);
             if (failIfCandidateMappingHasMissing(
-                    actualList, expectedList, candidateMapping, exceptions)) {
+                    actualList, expectedList, multimapToMap(candidateMapping), exceptions)) {
                 return ALREADY_FAILED;
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
             Map<Integer, Integer> maximalOneToOneMapping =
-                    findMaximalOneToOneMapping(candidateMapping);
+                    findMaximalOneToOneMapping(multimapToMap(candidateMapping));
             if (failIfOneToOneMappingHasMissing(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
                 return ALREADY_FAILED;
@@ -1619,9 +1619,10 @@ public class IterableSubject extends Subject {
         private boolean failIfCandidateMappingHasMissing(
                 List<? extends A> actual,
                 List<? extends E> expected,
-                ImmutableSetMultimap<Integer, Integer> mapping,
+                Map<Integer, Set<Integer>> mapping,
                 Correspondence.ExceptionStore exceptions) {
-            List<? extends E> missing = findNotIndexed(expected, mapping.inverse().keySet());
+            List<? extends E> missing = findNotIndexed(expected,
+                    mapping.values().stream().flatMap(Set::stream).collect(Collectors.toSet()));
             if (!missing.isEmpty()) {
                 List<? extends A> extra = findNotIndexed(actual, mapping.keySet());
                 List<Fact> facts = new ArrayList<>(describeMissing(missing, extra, exceptions));
