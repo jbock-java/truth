@@ -20,10 +20,12 @@ import com.google.common.collect.Multimap;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * Helper routines related to <a href="https://en.wikipedia.org/wiki/Matching_(graph_theory)">graph
@@ -68,7 +70,7 @@ final class GraphMatching {
      */
     private static class HopcroftKarp<U, V> {
 
-        private final Multimap<U, V> graph;
+        private final Map<U, Set<V>> graph;
 
         /**
          * Factory method which returns an instance ready to perform the algorithm over the bipartite
@@ -79,7 +81,7 @@ final class GraphMatching {
         }
 
         private HopcroftKarp(Multimap<U, V> graph) {
-            this.graph = graph;
+            this.graph = multimapToMap(graph);
         }
 
         /** Performs the algorithm, and returns a bimap describing the matching found. */
@@ -151,7 +153,7 @@ final class GraphMatching {
                 // then all the matched edges from those RHS vertices back to the LHS, to find the next
                 // layer of LHS vertices. We actually iterate over all edges, both matched and unmatched,
                 // from the current LHS vertex: we'll just do nothing for matched edges.
-                for (V rhs : graph.get(lhs)) {
+                for (V rhs : graph.getOrDefault(lhs, Set.of())) {
                     if (!matching.containsValue(rhs)) {
                         // We found a free RHS vertex. Record the layer at which we found it. Since the RHS
                         // vertex is free, there is no matched edge to follow. (Note that the edge from the LHS
@@ -231,7 +233,7 @@ final class GraphMatching {
                 return false;
             }
             // Consider every edge from this LHS vertex.
-            for (V rhs : graph.get(lhs)) {
+            for (V rhs : graph.getOrDefault(lhs, Set.of())) {
                 if (!matching.containsValue(rhs)) {
                     // We found a free RHS vertex. (This must have been in the target layer because, by
                     // definition, no free RHS vertex is reachable in any earlier layer, and because we stop
@@ -264,5 +266,15 @@ final class GraphMatching {
             }
             return false;
         }
+    }
+
+    private static <U, V> Map<U, Set<V>> multimapToMap(Multimap<U, V> multimap) {
+        LinkedHashMap<U, Set<V>> result = new LinkedHashMap<>();
+        multimap.forEach((u, v) -> result.compute(u, (u2, v2) -> {
+            Set<V> set2 = v2 == null ? new LinkedHashSet<>() : v2;
+            set2.add(v);
+            return set2;
+        }));
+        return result;
     }
 }
