@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -1183,16 +1182,16 @@ public class IterableSubject extends Subject {
             // it for completeness.
             // Exceptions from Correspondence.compare are stored and treated as if false was returned.
             Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
-            ImmutableSetMultimap<Integer, Integer> candidateMapping =
+            Map<Integer, Set<Integer>> candidateMapping =
                     findCandidateMapping(actualList, expectedList, exceptions);
             if (failIfCandidateMappingHasMissingOrExtra(
-                    actualList, expectedList, multimapToMap(candidateMapping), exceptions)) {
+                    actualList, expectedList, candidateMapping, exceptions)) {
                 return ALREADY_FAILED;
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
             Map<Integer, Integer> maximalOneToOneMapping =
-                    findMaximalOneToOneMapping(multimapToMap(candidateMapping));
+                    findMaximalOneToOneMapping(candidateMapping);
             if (failIfOneToOneMappingHasMissingOrExtra(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
                 return ALREADY_FAILED;
@@ -1263,21 +1262,29 @@ public class IterableSubject extends Subject {
          * correspondence. Returns this mapping as a multimap where the keys are indexes into the actual
          * list and the values are indexes into the expected list. Any exceptions are treated as if the
          * elements did not correspond, and the exception added to the store.
+         * @return
          */
-        private ImmutableSetMultimap<Integer, Integer> findCandidateMapping(
+        private Map<Integer, Set<Integer>> findCandidateMapping(
                 List<? extends A> actual,
                 List<? extends E> expected,
                 Correspondence.ExceptionStore exceptions) {
-            ImmutableSetMultimap.Builder<Integer, Integer> mapping = ImmutableSetMultimap.builder();
+            Map<Integer, Set<Integer>> mapping = new LinkedHashMap<>();
             for (int actualIndex = 0; actualIndex < actual.size(); actualIndex++) {
                 for (int expectedIndex = 0; expectedIndex < expected.size(); expectedIndex++) {
                     if (correspondence.safeCompare(
                             actual.get(actualIndex), expected.get(expectedIndex), exceptions)) {
-                        mapping.put(actualIndex, expectedIndex);
+                        int expi = expectedIndex;
+                        mapping.compute(actualIndex, (k, v) -> {
+                            if (v == null) {
+                                v = new LinkedHashSet<>();
+                            }
+                            v.add(expi);
+                            return v;
+                        });
                     }
                 }
             }
-            return mapping.build();
+            return mapping;
         }
 
         /**
@@ -1514,16 +1521,16 @@ public class IterableSubject extends Subject {
             // Find a many:many mapping between the indexes of the elements which correspond, and check
             // it for completeness.
             Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
-            ImmutableSetMultimap<Integer, Integer> candidateMapping =
+            Map<Integer, Set<Integer>> candidateMapping =
                     findCandidateMapping(actualList, expectedList, exceptions);
             if (failIfCandidateMappingHasMissing(
-                    actualList, expectedList, multimapToMap(candidateMapping), exceptions)) {
+                    actualList, expectedList, candidateMapping, exceptions)) {
                 return ALREADY_FAILED;
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
             Map<Integer, Integer> maximalOneToOneMapping =
-                    findMaximalOneToOneMapping(multimapToMap(candidateMapping));
+                    findMaximalOneToOneMapping(candidateMapping);
             if (failIfOneToOneMappingHasMissing(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
                 return ALREADY_FAILED;
