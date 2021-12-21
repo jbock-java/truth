@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedListMultimap;
@@ -28,6 +26,7 @@ import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -1193,7 +1192,7 @@ public class IterableSubject extends Subject {
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
-            ImmutableBiMap<Integer, Integer> maximalOneToOneMapping =
+            Map<Integer, Integer> maximalOneToOneMapping =
                     findMaximalOneToOneMapping(candidateMapping);
             if (failIfOneToOneMappingHasMissingOrExtra(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
@@ -1425,7 +1424,7 @@ public class IterableSubject extends Subject {
          * there are multiple possible output mappings tying for the largest possible, this returns an
          * arbitrary one.
          */
-        private ImmutableBiMap<Integer, Integer> findMaximalOneToOneMapping(
+        private Map<Integer, Integer> findMaximalOneToOneMapping(
                 ImmutableMultimap<Integer, Integer> edges) {
             /*
              * Finding this 1:1 mapping is analogous to finding a maximum cardinality bipartite matching
@@ -1453,10 +1452,10 @@ public class IterableSubject extends Subject {
         private boolean failIfOneToOneMappingHasMissingOrExtra(
                 List<? extends A> actual,
                 List<? extends E> expected,
-                BiMap<Integer, Integer> mapping,
+                Map<Integer, Integer> mapping,
                 Correspondence.ExceptionStore exceptions) {
             List<? extends A> extra = findNotIndexed(actual, mapping.keySet());
-            List<? extends E> missing = findNotIndexed(expected, mapping.values());
+            List<? extends E> missing = findNotIndexed(expected, new HashSet<>(mapping.values()));
             if (!missing.isEmpty() || !extra.isEmpty()) {
                 List<Fact> facts = new ArrayList<>();
                 facts.add(
@@ -1523,7 +1522,7 @@ public class IterableSubject extends Subject {
             }
             // We know that every expected element maps to at least one actual element, and vice versa.
             // Find a maximal 1:1 mapping, and check it for completeness.
-            ImmutableBiMap<Integer, Integer> maximalOneToOneMapping =
+            Map<Integer, Integer> maximalOneToOneMapping =
                     findMaximalOneToOneMapping(candidateMapping);
             if (failIfOneToOneMappingHasMissing(
                     actualList, expectedList, maximalOneToOneMapping, exceptions)) {
@@ -1698,9 +1697,9 @@ public class IterableSubject extends Subject {
         private boolean failIfOneToOneMappingHasMissing(
                 List<? extends A> actual,
                 List<? extends E> expected,
-                BiMap<Integer, Integer> mapping,
+                Map<Integer, Integer> mapping,
                 Correspondence.ExceptionStore exceptions) {
-            List<? extends E> missing = findNotIndexed(expected, mapping.values());
+            List<? extends E> missing = findNotIndexed(expected, new HashSet<>(mapping.values()));
             if (!missing.isEmpty()) {
                 List<? extends A> extra = findNotIndexed(actual, mapping.keySet());
                 List<Fact> facts = new ArrayList<>();

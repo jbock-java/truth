@@ -16,13 +16,14 @@
 package com.google.common.truth;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Multimap;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -51,7 +52,7 @@ final class GraphMatching {
      * <p>If there are multiple matchings which share the maximum cardinality, an arbitrary one is
      * returned.
      */
-    static <U, V> ImmutableBiMap<U, V> maximumCardinalityBipartiteMatching(Multimap<U, V> graph) {
+    static <U, V> Map<U, V> maximumCardinalityBipartiteMatching(Multimap<U, V> graph) {
         return HopcroftKarp.overBipartiteGraph(graph).perform();
     }
 
@@ -84,8 +85,8 @@ final class GraphMatching {
         }
 
         /** Performs the algorithm, and returns a bimap describing the matching found. */
-        ImmutableBiMap<U, V> perform() {
-            BiMap<U, V> matching = HashBiMap.create();
+        Map<U, V> perform() {
+            Map<U, V> matching = new LinkedHashMap<>();
             while (true) {
                 // Perform the BFS as described below. This finds the length of the shortest augmenting path
                 // and a guide which locates all the augmenting paths of that length.
@@ -104,7 +105,7 @@ final class GraphMatching {
                     }
                 }
             }
-            return ImmutableBiMap.copyOf(matching);
+            return matching;
         }
 
         /**
@@ -128,7 +129,7 @@ final class GraphMatching {
          * @return The number of the layer in which the first free RHS vertex was found, if any, and the
          *     absent value if the BFS was exhausted without finding any free RHS vertex
          */
-        private Optional<Integer> breadthFirstSearch(BiMap<U, V> matching, Map<U, Integer> layers) {
+        private Optional<Integer> breadthFirstSearch(Map<U, V> matching, Map<U, Integer> layers) {
             Queue<U> queue = new ArrayDeque<>();
             Optional<Integer> freeRhsVertexLayer = Optional.empty();
 
@@ -165,7 +166,10 @@ final class GraphMatching {
                         // that new LHS vertex yet, add it to the next layer. (If the edge from the LHS to the
                         // RHS was matched then the matched edge from the RHS to the LHS will lead back to the
                         // current LHS vertex, which has definitely been visited, so we correctly do nothing.)
-                        U nextLhs = matching.inverse().get(rhs);
+                        U nextLhs = matching.entrySet().stream()
+                                .filter(e -> e.getValue().equals(rhs))
+                                .map(Map.Entry::getKey)
+                                .findFirst().orElse(null);
                         if (!layers.containsKey(nextLhs)) {
                             layers.put(nextLhs, layer + 1);
                             queue.add(nextLhs);
@@ -215,7 +219,7 @@ final class GraphMatching {
          * @return Whether or not the DFS was successful
          */
         private boolean depthFirstSearch(
-                BiMap<U, V> matching, Map<U, Integer> layers, int freeRhsVertexLayer, U lhs) {
+                Map<U, V> matching, Map<U, Integer> layers, int freeRhsVertexLayer, U lhs) {
             // Note that this differs from the method described in the text of the wikipedia article (at
             // time of writing) in two ways. Firstly, we proceed from a free LHS vertex to a free RHS
             // vertex in the target layer instead of the other way around, which makes no difference.
@@ -235,12 +239,16 @@ final class GraphMatching {
                     // definition, no free RHS vertex is reachable in any earlier layer, and because we stop
                     // when we get past that layer.) We add the unmatched edge used to get here to the
                     // matching, and remove any previous matched edge leading to the LHS vertex.
-                    matching.forcePut(lhs, rhs);
+                    matching.put(lhs, rhs);
                     return true;
                 } else {
                     // We found a non-free RHS vertex. Follow the matched edge from that RHS vertex to find
                     // the next LHS vertex.
-                    U nextLhs = matching.inverse().get(rhs);
+                    U nextLhs = matching.entrySet().stream()
+                            .filter(e -> Objects.equals(e.getValue(), rhs))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElseThrow();
                     if (layers.containsKey(nextLhs) && layers.get(nextLhs) == layer + 1) {
                         // The next LHS vertex is in the next layer of the BFS, so we can use this path for our
                         // DFS. Recurse into the DFS.
@@ -250,7 +258,7 @@ final class GraphMatching {
                             // matched edge previously leading to the LHS. The combined effect of all the
                             // modifications made while reversing all the way back up the search path is to update
                             // the matching as described in the javadoc.
-                            matching.forcePut(lhs, rhs);
+                            matching.put(lhs, rhs);
                             return true;
                         }
                     }

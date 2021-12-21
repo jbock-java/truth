@@ -116,7 +116,7 @@ public final class GraphMatchingTest {
         ListMultimap<String, String> edges = LinkedListMultimap.create();
         edges.put(null, "R1");
         try {
-            BiMap<String, String> unused = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> unused = maximumCardinalityBipartiteMatching(edges);
             fail("Should have thrown.");
         } catch (NullPointerException expected) {
         }
@@ -127,7 +127,7 @@ public final class GraphMatchingTest {
         ListMultimap<String, String> edges = LinkedListMultimap.create();
         edges.put("L1", null);
         try {
-            BiMap<String, String> unused = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> unused = maximumCardinalityBipartiteMatching(edges);
             fail("Should have thrown.");
         } catch (NullPointerException expected) {
         }
@@ -189,13 +189,13 @@ public final class GraphMatchingTest {
          * bipartite matching found by a brute-force approach.
          */
         void testAgainstBruteForce() {
-            ImmutableBiMap<String, String> actual = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
                         edges.containsEntry(entry.getKey(), entry.getValue()),
                         "The returned bimap <%s> was not a matching of the bipartite graph <%s>");
             }
-            ImmutableBiMap<String, String> expected = bruteForceMaximalMatching();
+            Map<String, String> expected = bruteForceMaximalMatching();
             assertWithMessage(
                     "The returned matching for the bipartite graph <%s> was not the same size as "
                             + "the brute-force maximal matching <%s>",
@@ -209,7 +209,7 @@ public final class GraphMatchingTest {
          * actually a matching of this bipartite graph and that it has the expected size.
          */
         void testAgainstKnownSize(int expectedSize) {
-            ImmutableBiMap<String, String> actual = maximumCardinalityBipartiteMatching(edges);
+            Map<String, String> actual = maximumCardinalityBipartiteMatching(edges);
             for (Map.Entry<String, String> entry : actual.entrySet()) {
                 assertTrue(
                         edges.containsEntry(entry.getKey(), entry.getValue()),
