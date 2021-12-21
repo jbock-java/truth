@@ -25,16 +25,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Preconditions.checkArgument;
 import static com.google.common.truth.SubjectUtils.countDuplicatesAndAddTypeInfo;
 import static com.google.common.truth.SubjectUtils.hasMatchingToStringPair;
 import static com.google.common.truth.SubjectUtils.objectToTypeName;
 import static com.google.common.truth.SubjectUtils.retainMatchingToString;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Propositions for {@link Map} subjects.
@@ -541,7 +541,7 @@ public class MapSubject extends Subject {
         private final Correspondence<? super A, ? super E> correspondence;
 
         private UsingCorrespondence(Correspondence<? super A, ? super E> correspondence) {
-            this.correspondence = checkNotNull(correspondence);
+            this.correspondence = requireNonNull(correspondence);
         }
 
         /**

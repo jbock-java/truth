@@ -745,17 +745,17 @@ class StringSubjectTest extends BaseSubjectTestCase {
     void trailingWhitespaceInBoth() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat("foo \n")
-                        .isEqualTo("foo\u00a0"));
+                () -> assertThat("foo ")
+                        .isEqualTo("foo\n"));
         assertFailureKeys(
                 failure,
                 "expected", "with trailing whitespace", "but trailing whitespace was");
         assertFailureValue(
                 failure,
-                "with trailing whitespace", "\\u00a0");
+                "with trailing whitespace", "\\n");
         assertFailureValue(
                 failure,
-                "but trailing whitespace was", "␣\\n");
+                "but trailing whitespace was", "␣");
     }
 
     @Test

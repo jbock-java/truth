@@ -22,16 +22,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CharMatcher.whitespace;
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Platform.doubleToString;
@@ -502,7 +499,7 @@ public class Subject {
         }
 
         List<Fact> factsOrEmpty() {
-            return firstNonNull(facts, List.of());
+            return facts != null ? facts : List.of();
         }
 
         /** Returns an instance with the same "equal"/"not-equal" bit but with no description. */
@@ -886,8 +883,8 @@ public class Subject {
          */
         String actualString = (String) actual;
         String expectedString = (String) expected;
-        String actualNoTrailing = whitespace().trimTrailingFrom(actualString);
-        String expectedNoTrailing = whitespace().trimTrailingFrom(expectedString);
+        String actualNoTrailing = actualString.stripTrailing();
+        String expectedNoTrailing = expectedString.stripTrailing();
         String expectedTrailing =
                 escapeWhitespace(expectedString.substring(expectedNoTrailing.length()));
         String actualTrailing = escapeWhitespace(actualString.substring(actualNoTrailing.length()));
@@ -1169,7 +1166,7 @@ public class Subject {
                 (subjectClass.endsWith("Subject") && !subjectClass.equals("Subject"))
                         ? subjectClass.substring(0, subjectClass.length() - "Subject".length())
                         : "Object";
-        return UPPER_CAMEL.to(LOWER_CAMEL, actualClass);
+        return actualClass.substring(0, 1).toLowerCase(Locale.ROOT) + actualClass.substring(1);
     }
 
     private static boolean classMetadataUnsupported() {

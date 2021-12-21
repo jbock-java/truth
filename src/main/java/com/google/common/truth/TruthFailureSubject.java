@@ -16,14 +16,13 @@
 
 package com.google.common.truth;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.Fact.fact;
-import static com.google.common.truth.Fact.simpleFact;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.truth.Fact.fact;
+import static com.google.common.truth.Fact.simpleFact;
+import static com.google.common.truth.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Subject for {@link AssertionError} objects thrown by Truth. {@code TruthFailureSubject} contains
@@ -120,7 +119,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
     }
 
     private StringSubject doFactValue(String key, Integer index) {
-        checkNotNull(key);
+        requireNonNull(key);
         if (!(actual instanceof ErrorWithFacts)) {
             failWithActual(simpleFact("expected a failure thrown by Truth's new failure API"));
             return ignoreCheck().that("");
@@ -150,7 +149,7 @@ public final class TruthFailureSubject extends ThrowableSubject {
                     fact("fact count was", factsWithName.size()));
             return ignoreCheck().that("");
         }
-        String value = factsWithName.get(firstNonNull(index, 0)).value;
+        String value = factsWithName.get(index != null ? index : 0).value;
         if (value == null) {
             if (index == null) {
                 failWithoutActual(
