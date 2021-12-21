@@ -16,6 +16,9 @@
 package com.google.common.truth;
 
 import com.google.common.truth.Correspondence.DiffFormatter;
+
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Preconditions.checkArgument;
@@ -102,7 +104,7 @@ public class MapSubject extends Subject {
 
     /** Fails if the map does not contain the given entry. */
     public final void containsEntry(Object key, Object value) {
-        Map.Entry<Object, Object> entry = immutableEntry(key, value);
+        Map.Entry<Object, Object> entry = new SimpleImmutableEntry<>(key, value);
         if (!actual.entrySet().contains(entry)) {
             List<Object> keyList = singletonList(key);
             List<Object> valueList = singletonList(value);
@@ -161,7 +163,7 @@ public class MapSubject extends Subject {
     public final void doesNotContainEntry(Object key, Object value) {
         checkNoNeedToDisplayBothValues("entrySet()")
                 .that(actual.entrySet())
-                .doesNotContain(immutableEntry(key, value));
+                .doesNotContain(new SimpleImmutableEntry<>(key, value));
     }
 
     /** Fails if the map is not empty. */
@@ -627,9 +629,9 @@ public class MapSubject extends Subject {
                     // The matching key had a matching value. There's no need to check exceptions here,
                     // because if Correspondence.compare() threw then safeCompare() would return false.
                     List<Fact> facts = new ArrayList<>();
-                    facts.add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)));
+                    facts.add(fact("expected not to contain", new SimpleImmutableEntry<>(excludedKey, excludedValue)));
                     facts.addAll(correspondence.describeForMapValues());
-                    facts.add(fact("but contained", immutableEntry(excludedKey, actualValue)));
+                    facts.add(fact("but contained", new SimpleImmutableEntry<>(excludedKey, actualValue)));
                     facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
                     facts.addAll(exceptions.describeAsAdditionalInfo());
                     failWithoutActual(facts);
@@ -638,7 +640,7 @@ public class MapSubject extends Subject {
                 if (exceptions.hasCompareException()) {
                     List<Fact> facts = new ArrayList<>();
                     facts.addAll(exceptions.describeAsMainCause());
-                    facts.add(fact("expected not to contain", immutableEntry(excludedKey, excludedValue)));
+                    facts.add(fact("expected not to contain", new SimpleImmutableEntry<>(excludedKey, excludedValue)));
                     facts.addAll(correspondence.describeForMapValues());
                     facts.add(simpleFact("found no match (but failing because of exception)"));
                     facts.add(fact("full map", actualCustomStringRepresentationForPackageMembersToCall()));
