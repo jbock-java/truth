@@ -15,9 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -26,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayDeque;
 import java.util.BitSet;
 import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -215,8 +213,8 @@ public final class GraphMatchingTest {
          * Returns a maximal bipartite matching of the bipartite graph, performing a brute force
          * evaluation of every possible matching.
          */
-        private ImmutableBiMap<String, String> bruteForceMaximalMatching() {
-            ImmutableBiMap<String, String> best = ImmutableBiMap.of();
+        private Map<String, String> bruteForceMaximalMatching() {
+            Map<String, String> best = new LinkedHashMap<>();
             Matching candidate = new Matching();
             while (candidate.valid()) {
                 if (candidate.size() > best.size()) {
@@ -235,12 +233,12 @@ public final class GraphMatchingTest {
         private class Matching {
 
             private final Deque<Edge> edgeStack;
-            private final BiMap<String, String> selectedEdges;
+            private final Map<String, String> selectedEdges;
 
             /** Constructs the first non-empty matching in the sequence. */
             Matching() {
                 this.edgeStack = new ArrayDeque<>();
-                this.selectedEdges = HashBiMap.create();
+                this.selectedEdges = new LinkedHashMap<>();
                 if (!edges.isEmpty()) {
                     Edge firstEdge = new Edge();
                     edgeStack.addLast(firstEdge);
@@ -264,9 +262,9 @@ public final class GraphMatchingTest {
              * the values identify the vertices in the second set. The bimap is guaranteed not to be
              * empty. Fails if this cursor is invalid.
              */
-            ImmutableBiMap<String, String> asBiMap() {
+            Map<String, String> asBiMap() {
                 Preconditions.checkState(valid());
-                return ImmutableBiMap.copyOf(selectedEdges);
+                return Map.copyOf(selectedEdges);
             }
 
             /**

@@ -15,8 +15,9 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -268,15 +269,15 @@ class IntegerSubjectTest extends BaseSubjectTestCase {
         int int42 = 42;
         long long42 = (long) 42;
 
-        ImmutableSet<Object> fortyTwos =
-                ImmutableSet.<Object>of(byte42, short42, char42, int42, long42);
+        Set<Object> fortyTwos =
+                Set.of(byte42, short42, char42, int42, long42);
         for (Object actual : fortyTwos) {
             for (Object expected : fortyTwos) {
                 assertThat(actual).isEqualTo(expected);
             }
         }
 
-        ImmutableSet<Object> fortyTwosNoChar = ImmutableSet.<Object>of(byte42, short42, int42, long42);
+        Set<Object> fortyTwosNoChar = Set.of(byte42, short42, int42, long42);
         for (final Object actual : fortyTwosNoChar) {
             for (final Object expected : fortyTwosNoChar) {
                 ExpectFailure.SimpleSubjectBuilderCallback<Subject, Object> actualFirst =
@@ -294,8 +295,8 @@ class IntegerSubjectTest extends BaseSubjectTestCase {
         int int41 = 41;
         long long41 = (long) 41;
 
-        ImmutableSet<Object> fortyOnes =
-                ImmutableSet.<Object>of(byte41, short41, char41, int41, long41);
+        Set<Object> fortyOnes =
+                Set.of(byte41, short41, char41, int41, long41);
 
         for (Object first : fortyTwos) {
             for (Object second : fortyOnes) {

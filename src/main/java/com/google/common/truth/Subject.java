@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Iterables;
 import com.google.common.truth.FailureMetadata.OldAndNewValuesAreSimilar;
 
 import java.lang.reflect.Array;
@@ -334,7 +333,9 @@ public class Subject {
 
     /** Fails unless the subject is equal to any element in the given iterable. */
     public void isIn(Iterable<?> iterable) {
-        if (!Iterables.contains(iterable, actual)) {
+        boolean notFound = StreamSupport.stream(iterable.spliterator(), false)
+                .noneMatch(e -> Objects.equals(actual, e));
+        if (notFound) {
             failWithActual("expected any of", iterable);
         }
     }
@@ -347,7 +348,9 @@ public class Subject {
 
     /** Fails if the subject is equal to any element in the given iterable. */
     public void isNotIn(Iterable<?> iterable) {
-        if (Iterables.contains(iterable, actual)) {
+        boolean found = StreamSupport.stream(iterable.spliterator(), false)
+                .anyMatch(e -> Objects.equals(actual, e));
+        if (found) {
             failWithActual("expected not to be any of", iterable);
         }
     }
@@ -395,7 +398,9 @@ public class Subject {
         if (o instanceof byte[]) {
             return base16((byte[]) o);
         } else if (o != null && o.getClass().isArray()) {
-            String wrapped = Iterables.toString(stringableIterable(new Object[]{o}));
+            String wrapped = StreamSupport.stream(stringableIterable(new Object[]{o}).spliterator(), false)
+                    .map(Objects::toString)
+                    .collect(Collectors.joining(", ", "[", "]"));
             return wrapped.substring(1, wrapped.length() - 1);
         } else if (o instanceof Double) {
             return doubleToString((Double) o);

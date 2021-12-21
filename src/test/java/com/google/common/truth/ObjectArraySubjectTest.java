@@ -15,7 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -320,8 +319,8 @@ class ObjectArraySubjectTest extends BaseSubjectTestCase {
     void setArrayIsEqualTo_Fail_UnequalOrdering() {
         AssertionError failure = assertThrows(
                 AssertionError.class,
-                () -> assertThat(objectArray(ImmutableSet.of("A"), ImmutableSet.of("B")))
-                        .isEqualTo(objectArray(ImmutableSet.of("B"), ImmutableSet.of("A"))));
+                () -> assertThat(objectArray(Set.of("A"), Set.of("B")))
+                        .isEqualTo(objectArray(Set.of("B"), Set.of("A"))));
         assertFailureValue(
                 failure,
                 "differs at index", "[0]");

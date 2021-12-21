@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -570,20 +568,9 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void iterableContainsAtLeastInOrderWithOneShotIterable() {
-        final Iterable<Object> iterable = Arrays.<Object>asList(2, 1, null, 4, "a", 3, "b");
-        final Iterator<Object> iterator = iterable.iterator();
-        Iterable<Object> oneShot =
-                new Iterable<Object>() {
-                    @Override
-                    public Iterator<Object> iterator() {
-                        return iterator;
-                    }
-
-                    @Override
-                    public String toString() {
-                        return Iterables.toString(iterable);
-                    }
-                };
+        Iterable<Object> iterable = Arrays.asList(2, 1, null, 4, "a", 3, "b");
+        Iterator<Object> iterator = iterable.iterator();
+        Iterable<Object> oneShot = () -> iterator;
 
         assertThat(oneShot).containsAtLeast(1, null, 3).inOrder();
     }
@@ -1332,8 +1319,7 @@ class IterableSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void iterableWithNoToStringOverride() {
-        Iterable<Integer> iterable =
-                () -> Iterators.forArray(1, 2, 3);
+        Iterable<Integer> iterable = List.of(1, 2, 3);
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(iterable)

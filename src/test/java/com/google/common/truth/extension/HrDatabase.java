@@ -15,8 +15,9 @@
  */
 package com.google.common.truth.extension;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.truth.extension.Employee.Location;
+
+import java.util.Set;
 
 /**
  * Service for accessing human resources data.
@@ -31,5 +32,5 @@ public interface HrDatabase {
 
     void relocate(long id, Location location);
 
-    ImmutableSet<Employee> getByLocation(Location location);
+    Set<Employee> getByLocation(Location location);
 }

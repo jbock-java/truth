@@ -15,12 +15,9 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Range;
-import com.google.common.primitives.Ints;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -86,7 +83,7 @@ class ComparableSubjectTest extends BaseSubjectTestCase {
 
         @Override
         public int compareTo(StringComparedByLength other) {
-            return Ints.compare(value.length(), other.value.length());
+            return Integer.compare(value.length(), other.value.length());
         }
 
         @Override

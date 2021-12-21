@@ -15,11 +15,12 @@
  */
 package com.google.common.truth.extension;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.truth.extension.Employee.Location;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -46,14 +47,14 @@ public final class FakeHrDatabase implements HrDatabase {
     }
 
     @Override
-    public ImmutableSet<Employee> getByLocation(Location location) {
+    public Set<Employee> getByLocation(Location location) {
         checkNotNull(location);
-        ImmutableSet.Builder<Employee> result = ImmutableSet.builder();
+        Set<Employee> result = new LinkedHashSet<>();
         for (Employee employee : employees.values()) {
             if (employee.location() == location) {
                 result.add(employee);
             }
         }
-        return result.build();
+        return result;
     }
 }

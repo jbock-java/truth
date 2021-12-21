@@ -15,14 +15,13 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Iterators;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.truth.Subject.Factory;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.ExpectFailure.assertThat;
@@ -827,7 +826,7 @@ class SubjectTest extends BaseSubjectTestCase {
     }
 
     private static <T> Iterable<T> oneShotIterable(final T... values) {
-        final Iterator<T> iterator = Iterators.forArray(values);
+        final Iterator<T> iterator = Arrays.asList(values).iterator();
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {

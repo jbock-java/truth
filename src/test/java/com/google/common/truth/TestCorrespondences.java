@@ -18,7 +18,6 @@ package com.google.common.truth;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
-import com.google.common.primitives.Ints;
 
 import java.util.List;
 import java.util.function.Function;
@@ -205,12 +204,17 @@ final class TestCorrespondences {
             if (parts.size() != 2) {
                 return null;
             }
-            Integer id = parts.get(0).equals("none") ? -1 : Ints.tryParse(parts.get(0));
-            Integer score = Ints.tryParse(parts.get(1));
-            if (id == null || score == null) {
+            try {
+                int id = parts.get(0).equals("none") ? -1 : Integer.parseInt(parts.get(0));
+                try {
+                    int score = Integer.parseInt(parts.get(1));
+                    return new Record(id, score);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            } catch (NumberFormatException e) {
                 return null;
             }
-            return new Record(id, score);
         }
     }
 

@@ -15,22 +15,69 @@
  */
 package com.google.common.truth.extension;
 
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
+
 /** Represents an employee. */
-public abstract class Employee {
-    public static Employee create(
-            String username, long id, String name, Location location, boolean isCeo) {
-        return new AutoValue_Employee(username, id, name, location, isCeo);
+public final class Employee {
+
+    private final String username;
+    private final long id;
+    private final String name;
+    private final Employee.Location location;
+    private final boolean isCeo;
+
+    Employee(
+            String username,
+            long id,
+            String name,
+            Employee.Location location,
+            boolean isCeo) {
+        this.username = requireNonNull(username);
+        this.id = id;
+        this.name = requireNonNull(name);
+        this.location = requireNonNull(location);
+        this.isCeo = isCeo;
     }
 
-    abstract String username();
+    public static Employee create(
+            String username, long id, String name, Location location, boolean isCeo) {
+        return new Employee(username, id, name, location, isCeo);
+    }
 
-    abstract long id();
+    String username() {
+        return username;
+    }
 
-    abstract String name();
+    long id() {
+        return id;
+    }
 
-    abstract Location location();
+    String name() {
+        return name;
+    }
 
-    abstract boolean isCeo();
+    Location location() {
+        return location;
+    }
+
+    boolean isCeo() {
+        return isCeo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id == employee.id && isCeo == employee.isCeo && username.equals(employee.username) && name.equals(employee.name) && location == employee.location;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, id, name, location, isCeo);
+    }
 
     public enum Location {
         MTV,

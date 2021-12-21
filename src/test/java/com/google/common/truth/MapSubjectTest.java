@@ -16,9 +16,9 @@
 package com.google.common.truth;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,7 +42,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyWithNullKey() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, "value");
 
         assertThat(actual).containsExactly(null, "value");
@@ -53,7 +53,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsExactlyWithNullValue() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put("key", null);
 
         assertThat(actual).containsExactly("key", null);
@@ -564,10 +564,10 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastWithNullKey() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, "value");
         actual.put("unexpectedKey", "unexpectedValue");
-        Map<String, String> expected = Maps.newHashMap();
+        Map<String, String> expected = new HashMap<>();
         expected.put(null, "value");
 
         assertThat(actual).containsAtLeast(null, "value");
@@ -578,10 +578,10 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsAtLeastWithNullValue() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put("key", null);
         actual.put("unexpectedKey", "unexpectedValue");
-        Map<String, String> expected = Maps.newHashMap();
+        Map<String, String> expected = new HashMap<>();
         expected.put("key", null);
 
         assertThat(actual).containsAtLeast("key", null);
@@ -1285,7 +1285,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsKey_failsWithNullStringAndNull() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put("null", "value1");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1310,7 +1310,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsNullKey() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, "null");
         assertThat(actual).containsKey(null);
     }
@@ -1345,7 +1345,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void doesNotContainNullKey() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, "null");
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1452,14 +1452,14 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsNullEntry() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, null);
         assertThat(actual).containsEntry(null, null);
     }
 
     @Test
     void containsNullEntryValue() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1484,7 +1484,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsNullEntryKey() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1561,7 +1561,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void doesNotContainNullEntry() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, null);
         assertThat(actual).doesNotContainEntry("kurt", null);
         assertThat(actual).doesNotContainEntry(null, "kluever");
@@ -1569,7 +1569,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void doesNotContainNullEntryFailure() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put(null, null);
         AssertionError failure = assertThrows(
                 AssertionError.class,
@@ -1660,7 +1660,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void containsKeyWithNullValueNullExpected() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put("a", null);
         assertThat(actual).containsEntry("a", null);
     }
@@ -1682,7 +1682,7 @@ class MapSubjectTest extends BaseSubjectTestCase {
 
     @Test
     void failMapContainsKeyWithNullValuePresentExpected() {
-        Map<String, String> actual = Maps.newHashMap();
+        Map<String, String> actual = new HashMap<>();
         actual.put("a", null);
         AssertionError failure = assertThrows(
                 AssertionError.class,

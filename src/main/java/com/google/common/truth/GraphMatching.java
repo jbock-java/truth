@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Multimap;
 
 import java.util.ArrayDeque;
@@ -47,7 +45,7 @@ final class GraphMatching {
      * a value has no special significance: effectively, they are in different domains.) Fails if any
      * of the vertices (keys or values) are null. The output matching is similarly represented as a
      * {@code BiMap<U, V>} (the property that a matching has no common vertices translates into the
-     * bidirectional uniqueness property of the {@link BiMap}).
+     * bidirectional uniqueness property of the {@link Map}).
      *
      * <p>If there are multiple matchings which share the maximum cardinality, an arbitrary one is
      * returned.
