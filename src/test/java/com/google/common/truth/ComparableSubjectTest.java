@@ -17,9 +17,9 @@ package com.google.common.truth;
 
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -78,7 +78,7 @@ class ComparableSubjectTest extends BaseSubjectTestCase {
         private final String value;
 
         StringComparedByLength(String value) {
-            this.value = checkNotNull(value);
+            this.value = requireNonNull(value);
         }
 
         @Override

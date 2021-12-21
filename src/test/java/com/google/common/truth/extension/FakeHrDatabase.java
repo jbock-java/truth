@@ -22,8 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 /** In-memory implementation of {@link HrDatabase}, suitable for testing. */
 public final class FakeHrDatabase implements HrDatabase {
@@ -40,15 +39,17 @@ public final class FakeHrDatabase implements HrDatabase {
 
     @Override
     public void relocate(long id, Location location) {
-        checkNotNull(location);
+        requireNonNull(location);
         Employee old = get(id);
-        checkState(old != null, "No employee found with ID %s", id);
+        if (old == null) {
+            throw new IllegalStateException(String.format("No employee found with ID %s", id));
+        }
         employees.put(id, Employee.create(old.username(), old.id(), old.name(), location, old.isCeo()));
     }
 
     @Override
     public Set<Employee> getByLocation(Location location) {
-        checkNotNull(location);
+        requireNonNull(location);
         Set<Employee> result = new LinkedHashSet<>();
         for (Employee employee : employees.values()) {
             if (employee.location() == location) {

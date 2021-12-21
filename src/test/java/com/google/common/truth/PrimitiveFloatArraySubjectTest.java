@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Locale;
 
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Platform.floatToString;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.Float.NEGATIVE_INFINITY;
@@ -377,7 +377,7 @@ class PrimitiveFloatArraySubjectTest extends BaseSubjectTestCase {
                 "but was");
         assertFailureValue(
                 failure,
-                "expected order for required elements", lenientFormat("[%s, %s]", 2.2f, 1.1f));
+                "expected order for required elements", String.format(Locale.ROOT, "[%.1f, %.1f]", 2.2f, 1.1f));
     }
 
     @Test
@@ -449,7 +449,7 @@ class PrimitiveFloatArraySubjectTest extends BaseSubjectTestCase {
                 "but was");
         assertFailureValue(
                 failure,
-                "expected", lenientFormat("[%s, %s, %s]", 2.2f, 1.1f, 3.3f));
+                "expected", String.format(Locale.ROOT, "[%.1f, %.1f, %.1f]", 2.2f, 1.1f, 3.3f));
     }
 
     @Test
@@ -798,7 +798,7 @@ class PrimitiveFloatArraySubjectTest extends BaseSubjectTestCase {
                 "but was");
         assertFailureValue(
                 failure,
-                "expected order for required elements", lenientFormat("[%s, %s]", 2.2f, 1.1f));
+                "expected order for required elements", String.format(Locale.ROOT, "[%.1f, %.1f]", 2.2f, 1.1f));
     }
 
     @Test
@@ -865,7 +865,7 @@ class PrimitiveFloatArraySubjectTest extends BaseSubjectTestCase {
                 "but was");
         assertFailureValue(
                 failure,
-                "expected", lenientFormat("[%s, %s, %s]", 2.2f, 1.1f, 3.3f));
+                "expected", String.format(Locale.ROOT, "[%.1f, %.1f, %.1f]", 2.2f, 1.1f, 3.3f));
     }
 
     @Test

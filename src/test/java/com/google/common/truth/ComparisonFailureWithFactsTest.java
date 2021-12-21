@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.google.common.base.Strings.repeat;
 import static com.google.common.truth.ComparisonFailures.formatExpectedAndActual;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
@@ -45,32 +44,32 @@ class ComparisonFailureWithFactsTest {
     @Test
     void formatDiffOmitStart() {
         runFormatTest(
-                repeat("a\n", 100) + "b",
-                repeat("a\n", 100) + "c",
+                "a\n".repeat(100) + "b",
+                "a\n".repeat(100) + "c",
                 joinNewline("@@ -98,4 +98,4 @@", " a", " a", " a", "-b", "+c"));
     }
 
     @Test
     void formatDiffOmitEnd() {
         runFormatTest(
-                "a" + repeat("\nz", 100),
-                "b" + repeat("\nz", 100),
+                "a" + "\nz".repeat(100),
+                "b" + "\nz".repeat(100),
                 joinNewline("@@ -1,4 +1,4 @@", "-a", "+b", " z", " z", " z"));
     }
 
     @Test
     void formatDiffOmitBoth() {
         runFormatTest(
-                repeat("a\n", 100) + "m" + repeat("\nz", 100),
-                repeat("a\n", 100) + "n" + repeat("\nz", 100),
+                "a\n".repeat(100) + "m" + "\nz".repeat(100),
+                "a\n".repeat(100) + "n" + "\nz".repeat(100),
                 joinNewline("@@ -98,7 +98,7 @@", " a", " a", " a", "-m", "+n", " z", " z", " z"));
     }
 
     @Test
     void formatDiffOmitBothMultipleDifferingLines() {
         runFormatTest(
-                repeat("a\n", 100) + "m\nn\no\np" + repeat("\nz", 100),
-                repeat("a\n", 100) + "q\nr\ns\nt" + repeat("\nz", 100),
+                "a\n".repeat(100) + "m\nn\no\np" + "\nz".repeat(100),
+                "a\n".repeat(100) + "q\nr\ns\nt" + "\nz".repeat(100),
                 joinNewline(
                         "@@ -98,10 +98,10 @@",
                         " a",
@@ -92,8 +91,8 @@ class ComparisonFailureWithFactsTest {
     @Test
     void formatDiffOmitBothMultipleDifferingLinesDifferentLength() {
         runFormatTest(
-                repeat("a\n", 100) + "m\nn\no\np" + repeat("\nz", 100),
-                repeat("a\n", 100) + "q\nr\ns\nt\nu\nv" + repeat("\nz", 100),
+                "a\n".repeat(100) + "m\nn\no\np" + "\nz".repeat(100),
+                "a\n".repeat(100) + "q\nr\ns\nt\nu\nv" + "\nz".repeat(100),
                 joinNewline(
                         "@@ -98,10 +98,12 @@",
                         " a",
@@ -117,8 +116,8 @@ class ComparisonFailureWithFactsTest {
     @Test
     void formatDiffPrefixAndSuffixWouldOverlapSimple() {
         runFormatTest(
-                repeat("a\n", 40) + "l\nm\nn\no\np\n" + repeat("a\n", 40),
-                repeat("a\n", 40) + "l\nm\nn\no\np\nl\nm\nn\no\np\n" + repeat("a\n", 40),
+                "a\n".repeat(40) + "l\nm\nn\no\np\n" + "a\n".repeat(40),
+                "a\n".repeat(40) + "l\nm\nn\no\np\nl\nm\nn\no\np\n" + "a\n".repeat(40),
                 joinNewline(
                         "@@ -43,6 +43,11 @@",
                         " n",
@@ -137,8 +136,8 @@ class ComparisonFailureWithFactsTest {
     @Test
     void formatDiffPrefixAndSuffixWouldOverlapAllSame() {
         runFormatTest(
-                repeat("a\n", 80),
-                repeat("a\n", 82),
+                "a\n".repeat(80),
+                "a\n".repeat(82),
                 joinNewline("@@ -78,4 +78,6 @@", " a", " a", " a", "+a", "+a", " "));
         /*
          * The final blank line here is odd, and it's different than what Unix diff produces. Maybe look
@@ -149,16 +148,16 @@ class ComparisonFailureWithFactsTest {
     @Test
     void formatDiffSameExceptNewlineStyle() {
         runFormatTest(
-                repeat("a\n", 10),
-                repeat("a\r\n", 10),
+                "a\n".repeat(10),
+                "a\r\n".repeat(10),
                 "(line contents match, but line-break characters differ)");
     }
 
     @Test
     void formatDiffSameExceptTrailingNewline() {
         runFormatTest(
-                repeat("a\n", 19) + "a",
-                repeat("a\n", 19) + "a\n",
+                "a\n".repeat(19) + "a",
+                "a\n".repeat(19) + "a\n",
                 joinNewline("@@ -18,3 +18,4 @@", " a", " a", " a", "+"));
     }
 

@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.truth.ExpectFailure.assertThat;
 import static com.google.common.truth.Truth.assertAbout;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -862,7 +862,7 @@ class SubjectTest extends BaseSubjectTestCase {
         @SuppressWarnings("EqualsHashCode")
         @Override
         public boolean equals(Object obj) {
-            checkNotNull(obj); // buggy implementation but one that we're working around, at least for now
+            requireNonNull(obj); // buggy implementation but one that we're working around, at least for now
             return super.equals(obj);
         }
     }

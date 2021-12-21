@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.base.Functions.identity;
-import static com.google.common.collect.Collections2.permutations;
 import static com.google.common.truth.Correspondence.equality;
 import static com.google.common.truth.Correspondence.tolerance;
 import static com.google.common.truth.TestCorrespondences.CASE_INSENSITIVE_EQUALITY;
@@ -38,6 +36,7 @@ import static com.google.common.truth.TestCorrespondences.STRING_PARSES_TO_INTEG
 import static com.google.common.truth.TestCorrespondences.WITHIN_10_OF;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.asList;
+import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -425,7 +424,13 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
         // 0.95, 1.1 with 1.05, and 1.2 with 1.15. A left-to-right greedy implementation would fail as
         // it would pair 1.0 with 1.05 and 1.1 with 1.15, and fail to pair 1.2 with 0.95. Check that the
         // implementation is truly non-greedy by testing all permutations.
-        for (List<Double> permutedActual : permutations(actual)) {
+        for (List<Double> permutedActual : List.of(
+                List.of(0.95, 1.05, 1.15),
+                List.of(0.95, 1.15, 1.05),
+                List.of(1.05, 0.95, 1.15),
+                List.of(1.15, 1.05, 0.95),
+                List.of(1.15, 0.95, 1.05),
+                List.of(1.05, 1.15, 0.95))) {
             assertThat(permutedActual)
                     .comparingElementsUsing(tolerance(0.1))
                     .containsExactlyElementsIn(expected);
@@ -1364,8 +1369,13 @@ class IterableSubjectCorrespondenceTest extends BaseSubjectTestCase {
         // The comparingElementsUsing test with a tolerance of 0.1 should succeed by pairing 1.0 with
         // 0.95, 1.1 with 1.05, and 1.2 with 1.15. A left-to-right greedy implementation would fail as
         // it would pair 1.0 with 1.05 and 1.1 with 1.15, and fail to pair 1.2 with 0.95. Check that the
-        // implementation is truly non-greedy by testing all permutations.
-        for (List<Double> permutedActual : permutations(actual)) {
+        // implementation is truly non-greedy by testing some permutations.
+        for (List<Double> permutedActual : List.of(
+                List.of(99.999, 1.05, 99.999, 1.15, 0.95, 99.999),
+                List.of(1.05, 99.999, 99.999, 1.15, 0.95, 99.999),
+                List.of(99.999, 99.999, 1.05, 1.15, 0.95, 99.999),
+                List.of(99.999, 1.05, 1.15, 99.999, 0.95, 99.999),
+                List.of(1.05, 99.999, 99.999, 1.15, 99.999, 0.95))) {
             assertThat(permutedActual)
                     .comparingElementsUsing(tolerance(0.1))
                     .containsAtLeastElementsIn(expected);

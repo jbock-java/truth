@@ -22,7 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.truth.Preconditions.checkState;
 
 /** {@link Correspondence} implementations for testing purposes. */
 final class TestCorrespondences {

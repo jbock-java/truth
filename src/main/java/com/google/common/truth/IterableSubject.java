@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.Iterators;
-import com.google.common.primitives.Ints;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 

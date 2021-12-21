@@ -18,7 +18,6 @@ package com.google.common.truth;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Strings.lenientFormat;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.Truth.assertThat;
 
@@ -133,9 +132,9 @@ class ExpectFailureTest {
         public void isEqualTo(Object expected) {
             if (!actual.equals(expected)) {
                 failWithoutActual(
-                        simpleFact(lenientFormat("expected <%s> is equal to <%s>", actual, expected)));
+                        simpleFact(String.format("expected <%s> is equal to <%s>", actual, expected)));
                 failWithoutActual(
-                        simpleFact(lenientFormat("expected <%s> is equal to <%s>", expected, actual)));
+                        simpleFact(String.format("expected <%s> is equal to <%s>", expected, actual)));
             }
         }
 
