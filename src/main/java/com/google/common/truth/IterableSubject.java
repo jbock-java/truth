@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.ALL_IN_ONE_FACT;
@@ -149,7 +148,8 @@ public class IterableSubject extends Subject {
         boolean containsElement = StreamSupport.stream(actual.spliterator(), false)
                 .anyMatch(obj -> Objects.equals(element, obj));
         if (!containsElement) {
-            List<Object> elementList = newArrayList(element);
+            List<Object> elementList = new ArrayList<>();
+            elementList.add(element);
             if (hasMatchingToStringPair(actual, elementList)) {
                 failWithoutActual(
                         fact("expected to contain", element),
@@ -264,8 +264,8 @@ public class IterableSubject extends Subject {
         this.actual.forEach(actual::add);
         final Collection<?> expected = iterableToCollection(expectedIterable);
 
-        List<Object> missing = newArrayList();
-        List<Object> actualNotInOrder = newArrayList();
+        List<Object> missing = new ArrayList<>();
+        List<Object> actualNotInOrder = new ArrayList<>();
 
         boolean ordered = true;
         // step through the expected elements...
@@ -367,7 +367,13 @@ public class IterableSubject extends Subject {
      * elements, not an element itself. This helps human readers and avoids a compiler warning.
      */
     public final Ordered containsExactly(Object... varargs) {
-        List<Object> expected = (varargs == null) ? newArrayList((Object) null) : asList(varargs);
+        List<Object> expected;
+        if (varargs == null) {
+            expected = new ArrayList<>();
+            expected.add((Object) null);
+        } else {
+            expected = asList(varargs);
+        }
         return containsExactlyElementsIn(
                 expected, varargs != null && varargs.length == 1 && varargs[0] instanceof Iterable);
     }
@@ -447,12 +453,12 @@ public class IterableSubject extends Subject {
                     return ALREADY_FAILED;
                 }
                 // Missing elements; elements that are not missing will be removed as we iterate.
-                Collection<Object> missing = newArrayList();
+                Collection<Object> missing = new ArrayList<>();
                 missing.add(requiredElement);
                 requiredIter.forEachRemaining(missing::add);
 
                 // Extra elements that the subject had but shouldn't have.
-                Collection<Object> extra = newArrayList();
+                Collection<Object> extra = new ArrayList<>();
 
                 // Remove all actual elements from missing, and add any that weren't in missing
                 // to extra.
@@ -489,16 +495,20 @@ public class IterableSubject extends Subject {
         // pairs of elements that differ. If the actual iterator still has elements, they're
         // extras. If the required iterator has elements, they're missing elements.
         if (actualIter.hasNext()) {
+            List<Object> extraRawObjects = new ArrayList<>();
+            actualIter.forEachRemaining(extraRawObjects::add);
             return failExactly(
                     required,
                     addElementsInWarning,
                     /* missingRawObjects= */ List.of(),
-                    /* extraRawObjects= */ newArrayList(actualIter));
+                    /* extraRawObjects= */ extraRawObjects);
         } else if (requiredIter.hasNext()) {
+            List<Object> missingRawObjects = new ArrayList<>();
+            requiredIter.forEachRemaining(missingRawObjects::add);
             return failExactly(
                     required,
                     addElementsInWarning,
-                    /* missingRawObjects= */ newArrayList(requiredIter),
+                    /* missingRawObjects= */ missingRawObjects,
                     /* extraRawObjects= */ List.of());
         }
 
@@ -1143,8 +1153,14 @@ public class IterableSubject extends Subject {
          */
         @SafeVarargs
         public final Ordered containsExactly(E... expected) {
-            return containsExactlyElementsIn(
-                    (expected == null) ? newArrayList((E) null) : asList(expected));
+            List<E> expectedList;
+            if (expected == null) {
+                expectedList = new ArrayList<>();
+                expectedList.add((E) null);
+            } else {
+                expectedList = asList(expected);
+            }
+            return containsExactlyElementsIn(expectedList);
         }
 
         /**
@@ -1411,7 +1427,7 @@ public class IterableSubject extends Subject {
                 // index must be in there once.
                 return asList();
             }
-            List<T> notIndexed = newArrayList();
+            List<T> notIndexed = new ArrayList<>();
             for (int index = 0; index < list.size(); index++) {
                 if (!indexes.contains(index)) {
                     notIndexed.add(list.get(index));
@@ -2043,13 +2059,13 @@ public class IterableSubject extends Subject {
              * List of the expected values not used in the pairing. Iterates in the order they appear in
              * the input.
              */
-            private final List<E> unpairedExpectedValues = newArrayList();
+            private final List<E> unpairedExpectedValues = new ArrayList<>();
 
             /**
              * List of the actual values not used in the pairing. Iterates in the order they appear in the
              * input.
              */
-            private final List<A> unpairedActualValues = newArrayList();
+            private final List<A> unpairedActualValues = new ArrayList<>();
         }
     }
 }
