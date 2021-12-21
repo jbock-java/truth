@@ -16,7 +16,6 @@
 
 package com.google.common.truth;
 
-import com.google.common.base.Joiner;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -48,7 +47,7 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 100) + "b",
                 repeat("a\n", 100) + "c",
-                Joiner.on('\n').join("@@ -98,4 +98,4 @@", " a", " a", " a", "-b", "+c"));
+                joinNewline("@@ -98,4 +98,4 @@", " a", " a", " a", "-b", "+c"));
     }
 
     @Test
@@ -56,7 +55,7 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 "a" + repeat("\nz", 100),
                 "b" + repeat("\nz", 100),
-                Joiner.on('\n').join("@@ -1,4 +1,4 @@", "-a", "+b", " z", " z", " z"));
+                joinNewline("@@ -1,4 +1,4 @@", "-a", "+b", " z", " z", " z"));
     }
 
     @Test
@@ -64,7 +63,7 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 100) + "m" + repeat("\nz", 100),
                 repeat("a\n", 100) + "n" + repeat("\nz", 100),
-                Joiner.on('\n').join("@@ -98,7 +98,7 @@", " a", " a", " a", "-m", "+n", " z", " z", " z"));
+                joinNewline("@@ -98,7 +98,7 @@", " a", " a", " a", "-m", "+n", " z", " z", " z"));
     }
 
     @Test
@@ -72,23 +71,22 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 100) + "m\nn\no\np" + repeat("\nz", 100),
                 repeat("a\n", 100) + "q\nr\ns\nt" + repeat("\nz", 100),
-                Joiner.on('\n')
-                        .join(
-                                "@@ -98,10 +98,10 @@",
-                                " a",
-                                " a",
-                                " a",
-                                "-m",
-                                "-n",
-                                "-o",
-                                "-p",
-                                "+q",
-                                "+r",
-                                "+s",
-                                "+t",
-                                " z",
-                                " z",
-                                " z"));
+                joinNewline(
+                        "@@ -98,10 +98,10 @@",
+                        " a",
+                        " a",
+                        " a",
+                        "-m",
+                        "-n",
+                        "-o",
+                        "-p",
+                        "+q",
+                        "+r",
+                        "+s",
+                        "+t",
+                        " z",
+                        " z",
+                        " z"));
     }
 
     @Test
@@ -96,25 +94,24 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 100) + "m\nn\no\np" + repeat("\nz", 100),
                 repeat("a\n", 100) + "q\nr\ns\nt\nu\nv" + repeat("\nz", 100),
-                Joiner.on('\n')
-                        .join(
-                                "@@ -98,10 +98,12 @@",
-                                " a",
-                                " a",
-                                " a",
-                                "-m",
-                                "-n",
-                                "-o",
-                                "-p",
-                                "+q",
-                                "+r",
-                                "+s",
-                                "+t",
-                                "+u",
-                                "+v",
-                                " z",
-                                " z",
-                                " z"));
+                joinNewline(
+                        "@@ -98,10 +98,12 @@",
+                        " a",
+                        " a",
+                        " a",
+                        "-m",
+                        "-n",
+                        "-o",
+                        "-p",
+                        "+q",
+                        "+r",
+                        "+s",
+                        "+t",
+                        "+u",
+                        "+v",
+                        " z",
+                        " z",
+                        " z"));
     }
 
     @Test
@@ -122,20 +119,19 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 40) + "l\nm\nn\no\np\n" + repeat("a\n", 40),
                 repeat("a\n", 40) + "l\nm\nn\no\np\nl\nm\nn\no\np\n" + repeat("a\n", 40),
-                Joiner.on('\n')
-                        .join(
-                                "@@ -43,6 +43,11 @@",
-                                " n",
-                                " o",
-                                " p",
-                                "+l",
-                                "+m",
-                                "+n",
-                                "+o",
-                                "+p",
-                                " a",
-                                " a",
-                                " a"));
+                joinNewline(
+                        "@@ -43,6 +43,11 @@",
+                        " n",
+                        " o",
+                        " p",
+                        "+l",
+                        "+m",
+                        "+n",
+                        "+o",
+                        "+p",
+                        " a",
+                        " a",
+                        " a"));
     }
 
     @Test
@@ -143,7 +139,7 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 80),
                 repeat("a\n", 82),
-                Joiner.on('\n').join("@@ -78,4 +78,6 @@", " a", " a", " a", "+a", "+a", " "));
+                joinNewline("@@ -78,4 +78,6 @@", " a", " a", " a", "+a", "+a", " "));
         /*
          * The final blank line here is odd, and it's different than what Unix diff produces. Maybe look
          * into removing it if we can do so safely?
@@ -163,7 +159,7 @@ class ComparisonFailureWithFactsTest {
         runFormatTest(
                 repeat("a\n", 19) + "a",
                 repeat("a\n", 19) + "a\n",
-                Joiner.on('\n').join("@@ -18,3 +18,4 @@", " a", " a", " a", "+"));
+                joinNewline("@@ -18,3 +18,4 @@", " a", " a", " a", "+"));
     }
 
     @Test
@@ -210,5 +206,9 @@ class ComparisonFailureWithFactsTest {
         assertThat(facts).hasSize(1);
         assertThat(facts.get(0).key).isEqualTo("diff (-expected +actual)");
         assertThat(facts.get(0).value).isEqualTo(expectedDiff);
+    }
+
+    private static String joinNewline(String... strings) {
+        return String.join("\n", strings);
     }
 }

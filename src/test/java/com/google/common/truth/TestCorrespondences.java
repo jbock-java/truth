@@ -15,12 +15,12 @@
  */
 package com.google.common.truth;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -183,7 +183,7 @@ final class TestCorrespondences {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(id, score);
+            return Objects.hash(id, score);
         }
 
         /**
@@ -192,7 +192,8 @@ final class TestCorrespondences {
          */
         @Override
         public String toString() {
-            return Joiner.on('/').join(hasId() ? getId() : "none", getScore());
+            return Stream.of(hasId() ? Integer.toString(getId()) : "none", Integer.toString(getScore()))
+                    .collect(Collectors.joining("/"));
         }
 
         /**
@@ -200,7 +201,7 @@ final class TestCorrespondences {
          * null}.
          */
         static Record parse(String str) {
-            List<String> parts = Splitter.on('/').splitToList(str);
+            List<String> parts = Arrays.asList(str.split("/", -1));
             if (parts.size() != 2) {
                 return null;
             }

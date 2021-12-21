@@ -15,11 +15,10 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Ordering;
+import com.google.common.collect.Multimap;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 
@@ -757,7 +756,7 @@ public class IterableSubject extends Subject {
      * and the other not, anyway.
      */
     public void isInStrictOrder() {
-        isInStrictOrder(Ordering.natural());
+        isInStrictOrder(Comparator.naturalOrder());
     }
 
     /**
@@ -790,7 +789,7 @@ public class IterableSubject extends Subject {
      */
     // non-final because it's overridden by IterableOfProtosSubject. See isInStrictOrder.
     public void isInOrder() {
-        isInOrder(Ordering.natural());
+        isInOrder(Comparator.naturalOrder());
     }
 
     /**
@@ -1425,7 +1424,7 @@ public class IterableSubject extends Subject {
          * arbitrary one.
          */
         private Map<Integer, Integer> findMaximalOneToOneMapping(
-                ImmutableMultimap<Integer, Integer> edges) {
+                Multimap<Integer, Integer> edges) {
             /*
              * Finding this 1:1 mapping is analogous to finding a maximum cardinality bipartite matching
              * (https://en.wikipedia.org/wiki/Matching_(graph_theory)#In_unweighted_bipartite_graphs).

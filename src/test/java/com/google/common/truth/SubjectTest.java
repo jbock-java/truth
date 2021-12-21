@@ -15,10 +15,10 @@
  */
 package com.google.common.truth;
 
-import com.google.common.primitives.UnsignedInteger;
 import com.google.common.truth.Subject.Factory;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -129,8 +129,8 @@ class SubjectTest extends BaseSubjectTestCase {
 
     @Test
     void isSameInstanceAsFailureWithComparableObjects_nonString() {
-        Object a = UnsignedInteger.valueOf(42);
-        Object b = UnsignedInteger.fromIntBits(42);
+        Object a = LocalDate.parse("2014-04-01");
+        Object b = LocalDate.parse("2014-04-01");
         AssertionError failure = assertThrows(
                 AssertionError.class,
                 () -> assertThat(a)
@@ -140,7 +140,7 @@ class SubjectTest extends BaseSubjectTestCase {
                 "expected specific instance", "but was");
         assertFailureValue(
                 failure,
-                "expected specific instance", "42");
+                "expected specific instance", "2014-04-01");
         assertFailureValue(
                 failure,
                 "but was", "(different but equal instance of same class with same string representation)");
@@ -227,8 +227,8 @@ class SubjectTest extends BaseSubjectTestCase {
 
     @Test
     void isNotSameInstanceAsWithComparableObjects_nonString() {
-        Object a = UnsignedInteger.valueOf(42);
-        Object b = UnsignedInteger.fromIntBits(42);
+        Object a = LocalDate.parse("2014-04-01");
+        Object b = LocalDate.parse("2014-04-01");
         assertThat(a).isNotSameInstanceAs(b);
     }
 
