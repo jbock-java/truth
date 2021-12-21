@@ -15,6 +15,8 @@
  */
 package com.google.common.truth;
 
+import com.google.common.collect.Iterators;
+import com.google.common.primitives.Ints;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 
@@ -35,7 +37,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.collect.Iterables.size;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;
 import static com.google.common.truth.IterableSubject.ElementFactGrouping.ALL_IN_ONE_FACT;
@@ -141,6 +142,20 @@ public class IterableSubject extends Subject {
         checkArgument(expectedSize >= 0, "expectedSize(%s) must be >= 0", expectedSize);
         int actualSize = size(actual);
         check("size()").that(actualSize).isEqualTo(expectedSize);
+    }
+
+    private static int size(Iterable<?> iterable) {
+        if ((iterable instanceof Collection)) {
+            return ((Collection<?>) iterable).size();
+        }
+        Iterator<?> iterator = iterable.iterator();
+        long count = 0L;
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+            Preconditions.checkState(count < Integer.MAX_VALUE);
+        }
+        return (int) count;
     }
 
     /** Checks (with a side-effect failure) that the subject contains the supplied item. */
