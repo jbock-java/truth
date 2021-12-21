@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.collect.Iterables.isEmpty;
-
 /**
  * Utility methods used in {@code Subject} implementors.
  *
@@ -214,7 +212,7 @@ final class SubjectUtils {
      * <p>Example: {@code hasMatchingToStringPair([1L, 2L], [1]) == true}
      */
     static boolean hasMatchingToStringPair(Iterable<?> items1, Iterable<?> items2) {
-        if (isEmpty(items1) || isEmpty(items2)) {
+        if (!items1.iterator().hasNext() || !items2.iterator().hasNext()) {
             return false; // Bail early to avoid calling hashCode() on the elements unnecessarily.
         }
         return !retainMatchingToString(items1, items2).isEmpty();

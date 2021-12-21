@@ -15,8 +15,6 @@
  */
 package com.google.common.truth;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.truth.Correspondence.DiffFormatter;
 import com.google.common.truth.SubjectUtils.DuplicateGroupedAndTyped;
 
@@ -1356,7 +1354,7 @@ public class IterableSubject extends Subject {
             List<Fact> facts = new ArrayList<>();
             for (Object key : pairing.pairedKeysToExpectedValues.keySet()) {
                 E missing = pairing.pairedKeysToExpectedValues.get(key);
-                List<A> extras = pairing.pairedKeysToActualValues.get(key);
+                List<A> extras = pairing.pairedKeysToActualValues.getOrDefault(key, List.of());
                 facts.add(fact("for key", key));
                 facts.add(fact("missing", missing));
                 facts.addAll(formatExtras("unexpected", missing, extras, exceptions));
@@ -1681,7 +1679,7 @@ public class IterableSubject extends Subject {
             List<Fact> facts = new ArrayList<>();
             for (Object key : pairing.pairedKeysToExpectedValues.keySet()) {
                 E missing = pairing.pairedKeysToExpectedValues.get(key);
-                List<A> extras = pairing.pairedKeysToActualValues.get(key);
+                List<A> extras = pairing.pairedKeysToActualValues.getOrDefault(key, List.of());
                 facts.add(fact("for key", key));
                 facts.add(fact("missing", missing));
                 facts.addAll(
@@ -1820,7 +1818,7 @@ public class IterableSubject extends Subject {
             List<Fact> facts = new ArrayList<>();
             for (Object key : pairing.pairedKeysToExpectedValues.keySet()) {
                 E expected = pairing.pairedKeysToExpectedValues.get(key);
-                List<A> got = pairing.pairedKeysToActualValues.get(key);
+                List<A> got = pairing.pairedKeysToActualValues.getOrDefault(key, List.of());
                 facts.add(fact("for key", key));
                 facts.add(fact("expected any of", expected));
                 facts.addAll(formatExtras("but got", expected, got, exceptions));
@@ -1849,12 +1847,18 @@ public class IterableSubject extends Subject {
          */
         public void containsNoneIn(Collection<? extends E> excluded) {
             Collection<A> actual = iterableToCollection(getCastActual());
-            ListMultimap<E, A> present = LinkedListMultimap.create();
+            Map<E, List<A>> present = new LinkedHashMap<>();
             Correspondence.ExceptionStore exceptions = Correspondence.ExceptionStore.forIterable();
             for (E excludedItem : new LinkedHashSet<>(excluded)) {
                 for (A actualItem : actual) {
                     if (correspondence.safeCompare(actualItem, excludedItem, exceptions)) {
-                        present.put(excludedItem, actualItem);
+                        present.compute(excludedItem, (k, v) -> {
+                            if (v == null) {
+                                v = new LinkedList<>();
+                            }
+                            v.add(actualItem);
+                            return v;
+                        });
                     }
                 }
             }
@@ -1864,7 +1868,7 @@ public class IterableSubject extends Subject {
                 facts.add(fact("expected not to contain any of", annotateEmptyStrings(excluded)));
                 facts.addAll(correspondence.describeForIterable());
                 for (E excludedItem : present.keySet()) {
-                    List<A> actualItems = present.get(excludedItem);
+                    List<A> actualItems = present.getOrDefault(excludedItem, List.of());
                     facts.add(fact("but contained", annotateEmptyStrings(actualItems)));
                     facts.add(fact("corresponding to", excludedItem));
                     facts.add(simpleFact("---"));
@@ -1957,7 +1961,13 @@ public class IterableSubject extends Subject {
                 for (A actual : actualValues) {
                     Object key = actualKey(actual, exceptions);
                     if (pairing.pairedKeysToExpectedValues.containsKey(key)) {
-                        pairing.pairedKeysToActualValues.put(key, actual);
+                        pairing.pairedKeysToActualValues.compute(key, (k, v) -> {
+                            if (v == null) {
+                                v = new ArrayList<>();
+                            }
+                            v.add(actual);
+                            return v;
+                        });
                     } else {
                         pairing.unpairedActualValues.add(actual);
                     }
@@ -2027,7 +2037,7 @@ public class IterableSubject extends Subject {
              * the order they first appear in the actual values in the input, and values for each key
              * iterate in the order they appear too. Will never contain null keys.
              */
-            private final ListMultimap<Object, A> pairedKeysToActualValues = LinkedListMultimap.create();
+            private final Map<Object, List<A>> pairedKeysToActualValues = new LinkedHashMap<>();
 
             /**
              * List of the expected values not used in the pairing. Iterates in the order they appear in

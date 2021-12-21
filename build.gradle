@@ -43,7 +43,7 @@ tasks.withType(GenerateModuleMetadata) {
 
 dependencies {
     api('io.github.jbock-java:guava:31.0.1.0')
-    testImplementation('org.junit.jupiter:junit-jupiter:5.8.1')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 }
 
 jar {

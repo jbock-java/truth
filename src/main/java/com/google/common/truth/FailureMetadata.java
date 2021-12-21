@@ -16,16 +16,15 @@
 package com.google.common.truth;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verifyNotNull;
 import static com.google.common.truth.ComparisonFailures.makeComparisonFailureFacts;
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.LazyMessage.evaluateAll;
 import static com.google.common.truth.Platform.inferDescription;
 import static com.google.common.truth.Platform.makeComparisonFailure;
+import static com.google.common.truth.Preconditions.checkState;
 import static com.google.common.truth.SubjectUtils.append;
 import static com.google.common.truth.SubjectUtils.concat;
 import static java.util.Objects.requireNonNull;
@@ -61,7 +60,7 @@ public final class FailureMetadata {
      */
     private static final class Step {
         static Step subjectCreation(Subject subject) {
-            return new Step(checkNotNull(subject), null, null);
+            return new Step(requireNonNull(subject), null, null);
         }
 
         static Step checkCall(
@@ -135,7 +134,7 @@ public final class FailureMetadata {
 
     FailureMetadata updateForCheckCall(
             OldAndNewValuesAreSimilar valuesAreSimilar, Function<String, String> descriptionUpdate) {
-        checkNotNull(descriptionUpdate);
+        requireNonNull(descriptionUpdate);
         List<Step> steps =
                 append(this.steps, Step.checkCall(valuesAreSimilar, descriptionUpdate));
         return derive(messages, steps);
@@ -231,7 +230,7 @@ public final class FailureMetadata {
                     description = null;
                     descriptionIsInteresting = false;
                 } else {
-                    description = verifyNotNull(step.descriptionUpdate.apply(description));
+                    description = requireNonNull(step.descriptionUpdate.apply(description));
                     descriptionIsInteresting = true;
                 }
                 continue;
