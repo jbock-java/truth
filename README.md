@@ -5,4 +5,5 @@ but
 
 * with a `module-info.java`
 * gradle build
-* JUnit 5
+* no JUnit dependency
+* no [guava](https://github.com/google/guava/) dependency
