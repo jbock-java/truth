@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author David Saff
  * @author Christian Gruber
  */
-class SubjectTest extends BaseSubjectTestCase {
+class  SubjectTest extends BaseSubjectTestCase {
 
     private static final Object OBJECT_1 =
             new Object() {
@@ -70,7 +70,7 @@ class SubjectTest extends BaseSubjectTestCase {
                 "expected", "5");
         assertFailureValueIndexed(
                 failure,
-                "an instance of", 0, "com.google.common.truth.SubjectTest$IntWrapper");
+                "an instance of", 0, "io.jbock.common.truth.SubjectTest$IntWrapper");
         assertFailureValue(
                 failure,
                 "but was", "(non-equal value with same string representation)");
