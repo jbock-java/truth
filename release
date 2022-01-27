@@ -6,16 +6,14 @@ die () {
     exit 1
 }
 
-usage="Usage: release <version>"
-
-if [[ `git status --porcelain` ]]; then
+if [[ -n $(git status --porcelain) ]]; then
   die "dirty workspace"
 fi
 
 VERSION="$1"
 
 if [[ -z "$VERSION" ]]; then
-  die "$usage"
+  die "Usage: release <version>"
 fi
 
 git pull origin $(git rev-parse --abbrev-ref HEAD)
@@ -23,7 +21,7 @@ git pull origin $(git rev-parse --abbrev-ref HEAD)
 
 read -e -p "Upload successful. Also tag? [y/N]"
 if [[ "$REPLY" == [Yy]* ]]; then
-  git tag "v${VERSION}"
+  git tag "${VERSION}"
   git push origin --tags
 fi
 
